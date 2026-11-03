@@ -295,4 +295,2336 @@ pre.req{font:12px/1.55 var(--f-mono);background:var(--term);border:1px solid var
 .kf-cons{border:1px solid var(--line);border-radius:8px;padding:9px 10px;display:flex;flex-direction:column;gap:4px;background:var(--panel-2);transition:border-color .3s}
 .kf-cons .top{display:flex;align-items:center;gap:8px;font-size:13px}
 .kf-cons .stt{margin-left:auto;font:700 10.5px var(--f-mono);padding:2px 6px;border-radius:4px;color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent)}
-.kf
+.kf-cons .meta{font:11px var(--f-mono);color:var(--muted)}
+.kf-cons .meta b{color:var(--fg);font-weight:500}
+.kf-cons .act{font:11px var(--f-mono);color:var(--dim);min-height:16px}
+.kf-cons.s-STOPPED{border-color:color-mix(in srgb,var(--red) 55%,transparent)}
+.kf-cons.s-STOPPED .stt{color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent)}
+.kf-cons.s-REBALANCING{border-color:color-mix(in srgb,var(--amber) 55%,transparent)}
+.kf-cons.s-REBALANCING .stt{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent)}
+.st-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex:none}
+.s-STOPPED .st-dot{background:var(--red);box-shadow:0 0 6px var(--red)}
+.s-REBALANCING .st-dot{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.lag{display:flex;align-items:center;gap:8px}
+.lag-bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.lag-bar i{display:block;height:100%;width:0;background:var(--orange);transition:width .25s}
+.lag-n{font:11px var(--f-mono);color:var(--muted);min-width:48px;text-align:right}
+.kf-cons-ctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.kf-dlq{border:2px dashed color-mix(in srgb,var(--red) 55%,transparent);border-radius:10px;padding:10px;background:color-mix(in srgb,var(--red) 5%,var(--term))}
+.kf-dlq-h{display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+.kf-dlq-h b{color:var(--red);font-family:var(--f-mono)}
+.kf-dlq-h .mono{font-size:11px;color:var(--muted)}
+.kf-dlq-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;font:11.5px var(--f-mono)}
+.kf-dlq-item{border:1px solid color-mix(in srgb,var(--red) 40%,transparent);border-radius:6px;padding:6px 8px;color:var(--muted)}
+.kf-dlq-item b{color:var(--fg)}
+.kf-dlq-empty{color:var(--dim);font:11.5px var(--f-mono);margin-top:6px}
+.dlq-text{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.5;max-width:84ch}
+.dlq-text + .dlq-text{margin-top:6px}
+.kf-below{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);margin-top:12px}
+@media (min-width:1100px){.kf-below{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.kf-mon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kf-stat{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--panel-2)}
+.kf-stat b{display:block;font:700 18px var(--f-mono);font-variant-numeric:tabular-nums}
+.kf-stat span{font:11px var(--f-mono);color:var(--muted)}
+.kf-stat.warn b{color:var(--amber)} .kf-stat.bad b{color:var(--red)} .kf-stat.ok b{color:var(--green)}
+.kf-detail pre{margin:8px 0 0;font:11.5px/1.5 var(--f-mono);background:var(--term);border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto;max-height:280px;color:var(--fg)}
+.kv2{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:12px var(--f-mono);margin:0}
+.kv2 dt{color:var(--dim)} .kv2 dd{margin:0;color:var(--fg);min-width:0;overflow-wrap:anywhere}
+.kf-journal{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--term)}
+.kf-journal table{width:100%;border-collapse:collapse;font:11.5px var(--f-mono)}
+.kf-journal th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.kf-journal td{padding:4px 8px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--fg)}
+.kf-journal td.r-ok{color:var(--green)} .kf-journal td.r-bad{color:var(--red)} .kf-journal td.r-warn{color:var(--amber)} .kf-journal td.r-dim{color:var(--muted)}
+.kf-more{margin-top:12px}
+
+/* ===== UML ===== */
+.uml-bar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.uml-title{font-weight:600;font-size:14px;flex:1 1 280px;min-width:0}
+.uml-title small{display:block;font:11px var(--f-mono);color:var(--dim);font-weight:400}
+.uml-bar select{width:auto;max-width:100%;flex:0 1 300px}
+.uml-ctr{font:12px var(--f-mono);color:var(--muted);min-width:86px}
+.uml-scroll{overflow:auto;max-height:min(76vh,920px);background:var(--panel);border:1px solid var(--line);border-radius:10px;position:relative}
+.uml-head{position:sticky;top:0;z-index:2;display:block;background:var(--panel);border-bottom:1px solid var(--line)}
+#uml-body{display:block}
+.svg-uml text{font-family:var(--f-ui);fill:var(--fg)}
+.u-part rect{fill:var(--panel-2);stroke:color-mix(in srgb,var(--blue) 60%,var(--line-2));stroke-width:1.4}
+.svg-uml .u-part text{text-anchor:middle;font-size:13px;font-weight:600}
+.svg-uml .u-part .sub{font-size:11px;font-weight:400;fill:var(--muted);font-family:var(--f-mono)}
+.u-actor{fill:none;stroke:var(--fg);stroke-width:1.6;stroke-linecap:round}
+.u-ll{stroke:var(--line-2);stroke-width:1.2;stroke-dasharray:5 5}
+.u-ll.busy{stroke:color-mix(in srgb,var(--blue) 70%,transparent)}
+.u-act{fill:color-mix(in srgb,var(--blue) 22%,var(--panel-2));stroke:var(--blue);stroke-width:1.2}
+.u-act.ghost{opacity:.22}
+.um .ln{stroke:var(--fg);stroke-width:1.4;fill:none}
+.um.return .ln{stroke-dasharray:6 4}
+.um.drawing .ln{stroke:var(--cyan);stroke-width:2}
+.svg-uml .um text{font-size:12px;opacity:0;transition:opacity .35s}
+.svg-uml .um.done text{opacity:1}
+.um.ghost{opacity:.3}
+.um.muted{opacity:.26}
+.svg-uml .um.muted text{opacity:1}
+.um .hit{stroke:transparent;stroke-width:14;fill:none}
+.fr .box{fill:none;stroke:var(--muted);stroke-width:1.3}
+.fr.active .box{stroke:var(--cyan)}
+.fr .tab{fill:var(--panel-2);stroke:var(--muted);stroke-width:1.3}
+.fr.active .tab{stroke:var(--cyan)}
+.svg-uml .fr .kw{font:700 12px var(--f-mono)}
+.svg-uml .fr .cond{font:12px var(--f-mono);fill:var(--amber)}
+.svg-uml .fr .cond.off{fill:var(--dim);text-decoration:line-through}
+.svg-uml .fr .iter{font:600 11px var(--f-mono);fill:var(--cyan)}
+.fr .sep{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:6 4}
+.fr .bf{fill:transparent;transition:fill .3s;pointer-events:none}
+.fr .bf.chosen{fill:color-mix(in srgb,var(--cyan) 6%,transparent)}
+.fr .bf.unchosen{fill:color-mix(in srgb,var(--bg) 50%,transparent)}
+.fr.muted{opacity:.3}
+
+/* ===== Профиль ===== */
+.prof{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.prof{grid-template-columns:310px minmax(0,1fr)}}
+.sheet{display:flex;flex-direction:column;gap:16px;align-self:start}
+.sheet-top{display:flex;gap:14px;align-items:center}
+.sheet-ava{width:96px;height:96px;border-radius:14px;object-fit:cover;border:2px solid var(--cyan);flex:none}
+.sheet-name{font-family:var(--f-display);font-size:20px;font-weight:600;line-height:1.2;margin:0}
+.sheet-cls{color:var(--cyan);font-size:14px;margin:4px 0 0}
+.sheet-loc{color:var(--muted);font-size:13px;margin:2px 0 0}
+.kv{display:flex;flex-direction:column;gap:10px;margin:0}
+.kv > div{display:flex;flex-direction:column;gap:2px}
+.kv dt{font:600 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.kv dd{margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px}
+.kv dd .val{font-family:var(--f-mono);font-size:13px;user-select:all}
+.kv a{color:var(--cyan)}
+.copy{font:11px var(--f-mono);background:transparent;border:1px solid var(--line-2);color:var(--muted);border-radius:5px;padding:2px 7px;cursor:pointer}
+.copy:hover{border-color:var(--cyan);color:var(--cyan)}
+.sec-h{font-family:var(--f-display);font-size:14px;font-weight:600;margin:0 0 12px}
+.prof-main{display:flex;flex-direction:column;gap:12px;min-width:0}
+.about{max-width:72ch;margin:0}
+.about + .about{margin-top:10px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--panel-2)}
+.stat b{font-family:var(--f-display);font-size:22px;color:var(--cyan);display:block;line-height:1.2;font-weight:600}
+.stat span{font-size:13px;color:var(--muted)}
+.quests{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.quest{--qc:var(--cyan);display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;border:1px solid var(--line);border-top:3px solid var(--qc);border-radius:10px;padding:14px;background:var(--panel-2);transition:border-color .15s,transform .15s}
+.quest:hover{border-color:var(--qc);transform:translateY(-2px)}
+.quest[data-q="rest"]{--qc:var(--green)} .quest[data-q="kafka"]{--qc:var(--orange)} .quest[data-q="uml"]{--qc:var(--blue)}
+.quest .qk{font:600 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--qc)}
+.quest .qt{font-weight:600;font-size:15px}
+.quest p{margin:0;color:var(--muted);font-size:13px}
+.quest .qs{margin-top:auto;font:12px var(--f-mono);color:var(--dim)}
+.quest.done .qs{color:var(--amber)}
+.tl{list-style:none;margin:0;padding:0}
+.tl > li{position:relative;padding:0 0 20px 22px;border-left:2px solid var(--line-2)}
+.tl > li:last-child{padding-bottom:0}
+.tl > li::before{content:"";position:absolute;left:-7px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan)}
+.tl > li:first-child::before{background:var(--cyan)}
+.tl-when{font:12px var(--f-mono);color:var(--cyan)}
+.tl-role{font-weight:600;font-size:15px}
+.tl-org{color:var(--muted);font-weight:400}
+.tl-proj{margin:6px 0 0;font-weight:500}
+.tl ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:14px;max-width:80ch}
+.tl ul li + li{margin-top:3px}
+.tl .res{color:var(--fg)}
+.subp{margin-top:10px;padding-left:12px;border-left:1px dashed var(--line-2)}
+.subp + .subp{margin-top:8px}
+.subp .tl-proj{margin:0}
+.subp .when{font:11.5px var(--f-mono);color:var(--dim)}
+.stack{margin:6px 0 0;font:11.5px/1.6 var(--f-mono);color:var(--dim)}
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.sk h4{font:600 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:12px var(--f-mono);padding:3px 8px;border:1px solid var(--line-2);border-radius:5px;color:var(--fg);background:var(--panel-2)}
+a.tag{--qc:var(--cyan);text-decoration:none;border-color:var(--qc);color:var(--qc)}
+a.tag[data-q="rest"]{--qc:var(--green)} a.tag[data-q="kafka"]{--qc:var(--orange)} a.tag[data-q="uml"]{--qc:var(--blue)}
+a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
+.edu{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.edu .dim{font-size:13px}
+
+/* ===== Персонаж по разделам ===== */
+.page-visual{
+  width:112px;height:112px;flex:0 0 112px;margin:0 0 0 auto;
+  border:1px solid color-mix(in srgb,var(--page) 55%,var(--line));
+  border-radius:12px;overflow:hidden;background:var(--panel-2);
+  box-shadow:0 0 22px color-mix(in srgb,var(--page) 12%,transparent);
+}
+.page-visual img{display:block;width:100%;height:100%;object-fit:cover}
+.uml-visual{display:flex;align-items:center;gap:12px;margin:0 0 10px;padding:8px 12px;
+  border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.uml-visual img{width:76px;height:76px;object-fit:cover;border-radius:8px;border:1px solid var(--blue)}
+.uml-visual span{font:12px var(--f-mono);color:var(--muted)}
+@media(max-width:560px){
+  .page-visual{width:76px;height:76px;flex-basis:76px}
+  .uml-visual img{width:60px;height:60px}
+}
+
+/* Status bar */
+.status{position:sticky;bottom:0;z-index:8;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);border-bottom:none;border-radius:var(--r) var(--r) 0 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));margin-top:auto}
+.ach-btn{font:600 13px var(--f-mono);color:var(--amber);background:transparent;border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:6px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+.ach-last{font:12px var(--f-mono);color:var(--muted)}
+.ach-last b{color:var(--amber);font-weight:500}
+.st-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.st-right{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sbtn{font:12px var(--f-mono);background:transparent;color:var(--muted);border:1px solid var(--line-2);border-radius:6px;padding:5px 9px;cursor:pointer}
+.sbtn:hover{border-color:var(--cyan);color:var(--fg)}
+.sbtn b{color:var(--red)}
+.sbtn[aria-pressed="true"] b{color:var(--green)}
+.sbtn:disabled{opacity:.4;cursor:not-allowed}
+#ach-pop{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:25;width:min(420px,calc(100vw - 32px));max-height:min(70vh,560px);overflow:auto;background:var(--panel);border:1px solid var(--amber);border-radius:12px;padding:14px 16px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+#ach-pop h4{margin:12px 0 6px;font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#ach-pop h4:first-of-type{margin-top:4px}
+.ach-it{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.ach-it .i{font:700 12px var(--f-mono);color:var(--dim);width:16px;flex:none}
+.ach-it .n{font-weight:600}
+.ach-it .d{color:var(--dim);font-size:12px}
+.ach-it.on .i{color:var(--amber)} .ach-it.on .n{color:var(--amber)}
+.ach-pop-f{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--panel);border:1px solid var(--amber);color:var(--fg);padding:10px 16px;border-radius:10px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:14px;max-width:calc(100vw - 32px);animation:tipIn .25s ease-out}
+#toast b{color:var(--amber)}
+
+@keyframes blink{from{opacity:1}to{opacity:.35}}
+@keyframes dash{to{stroke-dashoffset:-22}}
+@keyframes nodePulse{0%{stroke-width:4}100%{}}
+@keyframes rowIn{0%{fill:color-mix(in srgb,var(--green) 40%,#0a111d);stroke:var(--green)}100%{}}
+@keyframes dupBlink{from{fill:color-mix(in srgb,var(--red) 45%,#0a111d)}to{fill:#0a111d}}
+@keyframes tipIn{from{opacity:0}to{opacity:1}}
+@keyframes lnIn{from{background:color-mix(in srgb,var(--cyan) 16%,transparent)}}
+@keyframes cellGlow{from{box-shadow:0 0 0 0 transparent}to{box-shadow:0 0 10px color-mix(in srgb,var(--cyan) 60%,transparent)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+@media (max-width:560px){.lvl{margin-left:0;width:100%}.xp{flex:1}.kf-mon{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hud">
+    <img class="hud-ava" src="assets/avatar.png" alt="Всеволод Шустров">
+    <div>
+      <div class="hud-name">Шустров Всеволод</div>
+      <div class="hud-class">Класс: <b>Системный аналитик</b> · интеграции, данные, процессы</div>
+    </div>
+    <div class="lvl">
+      <span class="lvl-badge" title="Уровень = лет в системном анализе">Ур. 5</span>
+      <div class="xp"><div class="xp-bar"><i id="xp-bar"></i></div><span class="xp-t" id="xp-t">ачивки 0/9</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Разделы портфолио">
+    <a class="tab" data-tab="profile" href="#profile"><span class="k">CV</span>Профиль</a>
+    <a class="tab" data-tab="bpmn" href="#bpmn"><span class="k">BPMN</span>Процесс BPMN<i class="dot"></i></a>
+    <a class="tab" data-tab="kafka" href="#kafka"><span class="k">KAFKA</span>Сообщения Kafka<i class="dot"></i></a>
+    <a class="tab" data-tab="rest" href="#rest"><span class="k">API</span>API REST<i class="dot"></i></a>
+    <a class="tab" data-tab="uml" href="#uml"><span class="k">UML</span>UML-сценарий<i class="dot"></i></a>
+  </nav>
+
+  <div class="work">
+    <main id="main">
+
+<!-- ======================= ПРОФИЛЬ ======================= -->
+<section id="page-profile" class="page" data-page="profile">
+  <div class="prof">
+    <aside class="panel sheet">
+      <div class="sheet-top">
+        <img class="sheet-ava" src="assets/avatar.png" alt="Всеволод Шустров">
+        <div>
+          <h1 class="sheet-name">Шустров Всеволод</h1>
+          <p class="sheet-cls">Системный аналитик</p>
+          <p class="sheet-loc">Тольятти · опыт с 2021 года</p>
+        </div>
+      </div>
+      <dl class="kv">
+        <div><dt>Telegram</dt><dd><a href="https://t.me/vshustrov" target="_blank" rel="noopener" class="val">@vshustrov</a></dd></div>
+      </dl>
+      <div>
+        <h3 class="sec-h">Образование</h3>
+        <div class="edu"><span>Тольяттинский государственный университет, 2000</span><span class="dim">Электротехнический факультет, «Автоматизация технологических процессов и производств»</span></div>
+      </div>
+      <div>
+        <h3 class="sec-h">Языки</h3>
+        <div class="edu"><span>Русский — родной</span><span>Английский — B2</span></div>
+      </div>
+    </aside>
+
+    <div class="prof-main">
+      <div class="panel">
+        <p class="eyebrow">О себе</p>
+        <p class="about">Системный аналитик с опытом более 5 лет в корпоративных, банковских и аналитических системах. Собираю и анализирую требования, прорабатываю функциональность, интеграции и модели данных. Пишу технические спецификации и API-контракты, описываю бизнес-процессы в BPMN, а взаимодействие компонентов — в UML Sequence.</p>
+        <p class="about">Работаю с REST API, SOAP, gRPC, Kafka, SQL, PostgreSQL и Oracle. Прорабатываю синхронные и асинхронные интеграции, правила обработки ошибок и требования к данным. Веду требования вместе с разработчиками, архитекторами и тестировщиками до приёмки.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>5+ лет</b><span>в системном анализе: банки, биржа, HR, DevOps</span></div>
+        <div class="stat"><b>8 модулей</b><span>ТЗ для системы электронных торгов биржи</span></div>
+        <div class="stat"><b>≈20 метрик</b><span>и управленческие дашборды для 3 проектов</span></div>
+        <div class="stat"><b>4 → 1</b><span>источника сведены в витрину истории операций банка</span></div>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Квесты · интерактивные демо</p>
+        <div class="quests">
+          <a class="quest" data-q="bpmn" href="#bpmn"><span class="qk">BPMN 2.0</span><span class="qt">Процессный лабиринт</span><p>Оформление и оплата заказа: два пула, XOR и AND-шлюзы, граничный таймер, повтор оплаты.</p><span class="qs" data-qs="bpmn"></span></a>
+          <a class="quest" data-q="kafka" href="#kafka"><span class="qk">Kafka</span><span class="qt">Сортировочная станция</span><p>Запросы на командировки: партиционирование по request_id, lag, rebalance, DLQ.</p><span class="qs" data-qs="kafka"></span></a>
+          <a class="quest" data-q="rest" href="#rest"><span class="qk">API / REST</span><span class="qt">Идемпотентность POST</span><p>Как Idempotency-Key защищает от дублей заказа при повторном запросе.</p><span class="qs" data-qs="rest"></span></a>
+          <a class="quest" data-q="uml" href="#uml"><span class="qk">UML Sequence</span><span class="qt">Вход через OIDC</span><p>Пошаговая диаграмма последовательности с фрагментами alt, opt и loop.</p><span class="qs" data-qs="uml">интерактивный рендерер</span></a>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Журнал опыта</p>
+        <ol class="tl">
+          <li>
+            <div class="tl-when">янв 2026 — сейчас</div>
+            <div class="tl-role">Ведущий системный аналитик <span class="tl-org">· IT_One, Москва</span></div>
+            <p class="tl-proj">Корпоративная HR-платформа: кадровые запросы, приказы, электронный архив, справочники, командировки. Группа интеграции.</p>
+            <ul>
+              <li>Прорабатывал интеграции HR-модулей с внешними системами через REST API, SOAP и Kafka; описывал сквозные сценарии обмена через интеграционную шину.</li>
+              <li>Спроектировал структуру БД для нового проекта: сущности, атрибуты, связи.</li>
+              <li>Проработал сквозной процесс оформления командировок — от HR-запроса до формирования документов и передачи в архив.</li>
+              <li>Описывал и проверял API в OpenAPI/Swagger и Postman; ускорял подготовку контрактов, Use Case и критериев приёмки с помощью ИИ, с последующей проверкой.</li>
+              <li class="res">Инициировал внедрение Requirement Yogi в Confluence для трассируемости требований и Definition of Ready для интеграционных контрактов.</li>
+            </ul>
+            <p class="stack">REST · SOAP · Kafka · интеграционная шина · PostgreSQL · 1С · СМЭВ · JSON/XML/XSD · OpenAPI · Kafka UI · PlantUML · C4 · Jira · Confluence</p>
+          </li>
+          <li>
+            <div class="tl-when">июл 2025 — янв 2026</div>
+            <div class="tl-role">Ведущий системный аналитик <span class="tl-org">· IT_One, Москва</span></div>
+            <p class="tl-proj">Система аналитики процессов разработки на данных Jira, Bitbucket и Git.</p>
+            <ul>
+              <li>Требования к метрикам эффективности разработки и данным для их расчёта.</li>
+              <li>Состав полей и структура данных от исходных систем до витрин DWH; маппинг между слоями и правила преобразования.</li>
+              <li>SQL-запросы в PostgreSQL, визуализация метрик в Apache Superset, макеты интерфейсов в Figma.</li>
+              <li>Участие в конвейере обработки данных на Apache Airflow, S3 и MinIO; ведение продукта от идеи до MVP.</li>
+              <li class="res">Итог: аналитика для 3 проектов разработки, около 20 метрик и набор управленческих дашбордов.</li>
+            </ul>
+            <p class="stack">PostgreSQL · SQL · Superset · Airflow · S3 · MinIO · Figma · Jira · Bitbucket · Git</p>
+          </li>
+          <li>
+            <div class="tl-when">июн 2022 — июл 2025</div>
+            <div class="tl-role">Системный аналитик <span class="tl-org">· HolyWeb, Москва</span></div>
+            <div class="subp"><p class="tl-proj">Корпоративная платформа CI/CD для банка</p>
+              <ul><li>Функциональные требования к сценариям платформы, интеграционные сценарии и контракты API, обработка ошибок, логирование и диагностика.</li><li>Проектные решения с PostgreSQL, Kafka, Keycloak, Vault и Docker; ПМИ, спецификации данных, руководства пользователя и администратора.</li></ul></div>
+            <div class="subp"><p class="tl-proj">Система управления проектами <span class="when">окт 2023 — мар 2024</span></p>
+              <ul><li>ТЗ с BPMN и UML Sequence, статусные и ролевые модели, правила переходов между состояниями; Camunda, макеты в Figma.</li></ul></div>
+            <div class="subp"><p class="tl-proj">Система электронных торгов для биржи <span class="when">фев 2023 — окт 2023</span></p>
+              <ul><li>Сквозные потоки данных по архитектурной схеме; взаимодействие через REST, gRPC и Kafka, авторизация через Keycloak; выбор хранилищ, включая Tarantool.</li><li class="res">Подготовил ТЗ для 8 ключевых модулей: Sequence-диаграммы, маппинг, protobuf-сообщения и gRPC-контракты.</li></ul></div>
+            <div class="subp"><p class="tl-proj">Витрина данных карточных счетов банка <span class="when">окт 2022 — фев 2023</span></p>
+              <ul><li>Анализ Oracle (SQL, materialized views), маппинг в целевую модель на Tarantool, экспорт через Oracle GoldenGate, ТЗ на структуру и загрузку витрины.</li></ul></div>
+            <div class="subp"><p class="tl-proj">Витрина истории операций и очереди заявок банка <span class="when">май 2022 — окт 2022</span></p>
+              <ul><li>Маппинг 4 разнородных источников в единую витрину; интеграции через Kafka, IBM MQ и REST API.</li></ul></div>
+            <p class="stack">REST · gRPC · Kafka · IBM MQ · PostgreSQL · Oracle · PL/SQL · Tarantool Data Grid · GitLab CI/CD · Docker · Keycloak · Vault · BPMN · UML · C4 · Camunda</p>
+          </li>
+          <li>
+            <div class="tl-when">июл 2021 — июн 2022</div>
+            <div class="tl-role">Аналитик <span class="tl-org">· EPAM Systems, Тольятти</span></div>
+            <p class="tl-proj">Омниканальные платформенные решения для крупного банка РФ.</p>
+            <ul><li>Сбор и уточнение требований, пользовательские сценарии, UML-диаграммы взаимодействия компонентов.</li><li>Требования к автоматическому распределению доступов и маппинг ролей; анализ взаимодействия с хранилищами при подготовке к миграции.</li></ul>
+            <p class="stack">MSSQL · REST API · Postman · Confluence · UML · XML</p>
+          </li>
+        </ol>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Инвентарь навыков</p>
+        <div class="skills">
+          <div class="sk"><h4>Интеграции</h4><div class="tags"><a class="tag" data-q="rest" href="#rest">REST API</a><span class="tag">SOAP</span><span class="tag">gRPC</span><a class="tag" data-q="kafka" href="#kafka">Kafka</a><span class="tag">IBM MQ</span><span class="tag">Интеграционная шина</span><span class="tag">СМЭВ</span><span class="tag">1С</span><span class="tag">GraphQL</span></div></div>
+          <div class="sk"><h4>Контракты и форматы</h4><div class="tags"><span class="tag">OpenAPI / Swagger</span><span class="tag">Postman</span><span class="tag">protobuf</span><span class="tag">JSON</span><span class="tag">XML</span><span class="tag">XSD</span><span class="tag">Kafka UI</span></div></div>
+          <div class="sk"><h4>Данные</h4><div class="tags"><span class="tag">SQL</span><span class="tag">PostgreSQL</span><span class="tag">Oracle</span><span class="tag">PL/SQL</span><span class="tag">MSSQL</span><span class="tag">Tarantool Data Grid</span><span class="tag">Oracle GoldenGate</span><span class="tag">DWH</span><span class="tag">Airflow</span><span class="tag">S3 / MinIO</span><span class="tag">Superset</span><span class="tag">Grafana</span></div></div>
+          <div class="sk"><h4>Моделирование</h4><div class="tags"><a class="tag" data-q="bpmn" href="#bpmn">BPMN</a><a class="tag" data-q="uml" href="#uml">UML Sequence</a><span class="tag">C4</span><span class="tag">PlantUML</span><span class="tag">Camunda</span></div></div>
+          <div class="sk"><h4>Требования</h4><div class="tags"><span class="tag">User Story</span><span class="tag">Use Case</span><span class="tag">Acceptance Criteria</span><span class="tag">ПМИ</span><span class="tag">Requirement Yogi</span><span class="tag">Definition of Ready</span></div></div>
+          <div class="sk"><h4>Инфраструктура и инструменты</h4><div class="tags"><span class="tag">Docker</span><span class="tag">Keycloak</span><span class="tag">Vault</span><span class="tag">GitLab CI/CD</span><span class="tag">Jira</span><span class="tag">Confluence</span><span class="tag">Figma</span><span class="tag">Git</span><span class="tag">Python, Go — чтение кода</span><span class="tag">AI-инструменты</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= BPMN ======================= -->
+<section id="page-bpmn" class="page" data-page="bpmn" hidden>
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Квест 1 · BPMN 2.0</p>
+      <h2>Процессный лабиринт: оформление и оплата заказа</h2>
+      <p class="lede">Токен проходит процесс по дорожкам «Клиент» и «Система заказов» и обменивается сообщениями с внешним пулом «Платёжная система». Решения на шлюзах принимаете вы.</p>
+    </div>
+    <div class="tools">
+      <span class="seg-l">скорость</span>
+      <div class="seg" data-speed-for="bpmn"><button type="button" data-v="0.5">0.5×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button></div>
+      <button class="btn ghost" type="button" data-pause="bpmn">Пауза</button>
+    </div>
+  
+    <figure class="page-visual"><img src="assets/bpmn-guide.png" alt="Аналитик представляет процессную модель" loading="lazy"></figure>
+  </div>
+  <div class="bp-controls">
+    <button class="btn primary" type="button" id="bp-run">Запустить процесс</button>
+    <button class="btn ghost" type="button" data-replay="bpmn">Replay / Сбросить</button>
+    <span class="sp"></span>
+    <span class="bp-status" id="bp-status">Состояние: <b>не запущен</b></span>
+    <div class="seg" id="bp-zoom"><button type="button" data-z="out" aria-label="Уменьшить">−</button><button type="button" data-z="fit">По ширине</button><button type="button" data-z="in" aria-label="Увеличить">+</button></div>
+  </div>
+  <div class="bp-wrap">
+    <div class="bp-modal" id="bp-modal" role="dialog" aria-labelledby="bp-modal-h" hidden>
+      <h4 id="bp-modal-h"></h4>
+      <p id="bp-modal-p"></p>
+      <div class="btnrow" id="bp-modal-b"></div>
+    </div>
+    <div class="stage-scroll" id="bp-stage">
+      <svg class="svg-stage" id="bp-svg" viewBox="0 0 2010 730" role="img" aria-label="BPMN-схема процесса «Оформление и оплата заказа»"></svg>
+    </div>
+  </div>
+  <div class="legend">
+    <span class="sim-note">Ускоренная симуляция: 24 часа за 2 секунды</span>
+    <span data-tip="Сплошная стрелка показывает порядок выполнения элементов внутри одного процесса"><svg width="34" height="10" viewBox="0 0 34 10"><path d="M1 5 H27" stroke="#94a3b8" stroke-width="1.8"/><path d="M26 1 L33 5 L26 9 z" fill="#94a3b8"/></svg>Sequence Flow</span>
+    <span data-tip="Пунктирная стрелка показывает обмен сообщениями между независимыми участниками процесса"><svg width="34" height="10" viewBox="0 0 34 10"><circle cx="4" cy="5" r="3" fill="none" stroke="#94a3b8"/><path d="M7 5 H29" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="5 3"/><path d="M26 1 L33 5 L26 9" fill="none" stroke="#94a3b8" stroke-width="1.4"/></svg>Message Flow</span>
+    <span><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#22d3ee" stroke-width="2.4"/></svg>active</span>
+    <span><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#34d399" stroke-width="2"/></svg>completed</span>
+    <span><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="4 2"/></svg>cancelled</span>
+  </div>
+  <div class="kf-more" style="margin-top:12px">
+    <details class="more"><summary>Авторизация и списание: что упрощено в демо</summary><div class="body">
+      <p>В реальном решении нужно заранее определить схему оплаты: двухэтапную (<code>authorize</code> → <code>capture</code>) или одностадийное списание.</p>
+      <p>В демо успешная авторизация условно считается достаточным условием для перехода к оплаченному заказу. Задача «Зафиксировать успешную оплату» фиксирует факт авторизации, а окончательное списание (capture) выполняется отдельным шагом, за пределами модели. Эти операции не смешиваются.</p>
+    </div></details>
+    <details class="more"><summary>Как читать схему</summary><div class="body">
+      <p>Pool «Процесс обработки заказа» — наш процесс с дорожками «Клиент» и «Система заказов». Pool «Платёжная система» — внешний участник: с ним процесс общается только сообщениями (Message Flow), а не потоками управления.</p>
+      <p>Граничный таймер на задаче «Ожидать подтверждение оплаты» прерывающий: если он сработал, ожидание отменяется, и процесс не может одновременно продолжить успешную ветку. Синхронизирующий AND ждёт обе параллельные ветки и только потом пропускает токен к «Заказ завершён».</p>
+    </div></details>
+  </div>
+  <div class="applied">
+    <h3>Где применял</h3>
+    <p>Проектирование и анализ бизнес-процессов: моделирование взаимодействия клиента, внутренних сервисов и внешних систем, описание альтернативных сценариев, обработки ошибок, таймеров ожидания и условий завершения процесса.</p>
+    <p class="note">Это учебная модель, а не схема реального проекта.</p>
+  </div>
+</section>
+
+<!-- ======================= KAFKA ======================= -->
+<section id="page-kafka" class="page" data-page="kafka" hidden>
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Квест 2 · Kafka</p>
+      <h2>Сортировочная станция: запросы на командировки</h2>
+      <p class="lede">HR System публикует запросы в топик, Partitioner раскладывает их по партициям по ключу request_id, consumer group обрабатывает и коммитит offsets.</p>
+    </div>
+    <div class="tools">
+      <span class="seg-l">скорость</span>
+      <div class="seg" data-speed-for="kafka"><button type="button" data-v="0.5">0.5×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button></div>
+      <button class="btn ghost" type="button" data-pause="kafka">Пауза</button>
+      <button class="btn ghost" type="button" data-replay="kafka">Сброс</button>
+    </div>
+  
+    <figure class="page-visual"><img src="assets/kafka-working.png" alt="Аналитик изучает поток данных и метрики" loading="lazy"></figure>
+  </div>
+  <ol class="kf-pipe" aria-label="Путь сообщения">
+    <li data-stage="producer">Producer</li><li class="arr">→</li>
+    <li data-stage="partitioner">Partitioner</li><li class="arr">→</li>
+    <li data-stage="topic">Topic</li><li class="arr">→</li>
+    <li data-stage="consumer">Consumer</li><li class="arr">→</li>
+    <li data-stage="commit">Commit Offset</li>
+  </ol>
+  <div class="kf-grid fly-host" id="kf-stage">
+    <div class="fly-layer"></div>
+    <div class="panel kf-prod">
+      <p class="zone-h">Producer</p>
+      <div class="kf-node" id="kf-hr"><span class="ico">HR</span><span><b>HR System</b><br><span class="dim" style="font-size:12px">кадровые запросы</span></span></div>
+      <div class="kf-keyline">Key: <b>request_id</b>
+        <button type="button" class="info" data-tip-always data-tip-click data-tip-kind="info" data-tip="Почему request_id, а не employee_id? Один запрос на командировку может включать нескольких сотрудников. request_id объединяет события в рамках одной бизнес-сущности и позволяет направлять их в одну партицию, сохраняя порядок обработки.&#10;&#10;TR-2026-001042 →&#10;  EMP-00128 — Иван Петров&#10;  EMP-00135 — Алексей Сидоров" aria-label="Почему ключ — request_id">i</button>
+      </div>
+      <button class="btn primary" type="button" id="kf-send">Отправить запрос</button>
+      <button class="btn" type="button" id="kf-batch">Отправить 10 запросов</button>
+      <button class="btn danger" type="button" id="kf-poison">Отправить некорректный запрос</button>
+      <div class="kf-node" id="kf-partitioner" data-tip="Partitioner выбирает партицию по ключу сообщения. Один и тот же request_id всегда попадает в одну партицию"><span class="ico">#</span><span><b>Partitioner</b><br><span class="kf-part-calc" id="kf-pcalc">ожидает сообщение</span></span></div>
+    </div>
+
+    <div class="panel kf-topic">
+      <p class="zone-h" style="margin-bottom:4px">Topic</p>
+      <div class="kf-keyline" style="margin-bottom:6px"><b>hr.business-trip.requests</b><span class="dim">· 3 партиции</span></div>
+      <div class="kf-prow" id="kf-row0"><div class="kf-phead"><b data-tip="Партиция — упорядоченный журнал сообщений. Порядок гарантируется только внутри одной партиции">P0</b><span class="meta" id="kf-pm0"></span><span class="own" id="kf-po0"></span></div><div class="kf-cells-wrap"><div class="kf-cells" id="kf-cells0"></div></div></div>
+      <div class="kf-prow" id="kf-row1"><div class="kf-phead"><b data-tip="Партиция — упорядоченный журнал сообщений. Порядок гарантируется только внутри одной партиции">P1</b><span class="meta" id="kf-pm1"></span><span class="own" id="kf-po1"></span></div><div class="kf-cells-wrap"><div class="kf-cells" id="kf-cells1"></div></div></div>
+      <div class="kf-prow" id="kf-row2"><div class="kf-phead"><b data-tip="Партиция — упорядоченный журнал сообщений. Порядок гарантируется только внутри одной партиции">P2</b><span class="meta" id="kf-pm2"></span><span class="own" id="kf-po2"></span></div><div class="kf-cells-wrap"><div class="kf-cells" id="kf-cells2"></div></div></div>
+      <div class="kf-legend">
+        <span><i style="border-color:var(--orange);background:color-mix(in srgb,var(--orange) 14%,transparent)"></i>ожидает</span>
+        <span><i style="border-color:var(--cyan)"></i>обрабатывается</span>
+        <span><i style="border-color:var(--green)"></i>обработано</span>
+        <span><i style="border-color:var(--amber);background:color-mix(in srgb,var(--amber) 20%,transparent)"></i>retry</span>
+        <span><i style="border-color:var(--red);border-style:dashed"></i>в DLQ</span>
+        <span data-tip="Committed offset — следующая позиция чтения для партиции, а не номер последнего обработанного сообщения"><i style="border:0;width:2px;background:var(--cyan)"></i>committed offset</span>
+      </div>
+      <div class="kf-dlq" id="kf-dlq">
+        <div class="kf-dlq-h"><b>DLQ</b><span class="mono">hr.business-trip.requests.dlq</span></div>
+        <p class="dlq-text">DLQ (Dead Letter Queue) — специальный топик для сообщений, которые не удалось успешно обработать после предусмотренного количества попыток.</p>
+        <p class="dlq-text">Причинами могут быть некорректный формат или структура данных, отсутствие обязательных полей, неизвестный идентификатор сотрудника, ссылка на несуществующую сущность или нарушение бизнес-правил.</p>
+        <p class="dlq-text">Такие ошибки не обязательно связаны с форматом JSON. Например, сообщение может быть синтаксически корректным, но содержать данные, которые невозможно обработать на уровне бизнес-логики.</p>
+        <p class="dlq-text">Сообщение перемещается в DLQ вместе с информацией об ошибке и контекстом обработки. Это позволяет анализировать причины сбоя, исправлять данные или логику и при необходимости повторно отправлять сообщение на обработку.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="zone-h">Consumer Group</p>
+      <div class="kf-group-h" id="kf-group-h" data-tip="Consumer group делит партиции между потребителями: каждую партицию в группе читает ровно один consumer"></div>
+      <div class="kf-cons-ctl">
+        <span class="seg-l">consumers</span>
+        <div class="seg" id="kf-scale" data-tip="Потребителей может быть больше, чем партиций, но лишние не получат работу, пока не появятся новые партиции"><button type="button" data-n="1">1</button><button type="button" data-n="2">2</button><button type="button" data-n="3" aria-pressed="true">3</button><button type="button" data-n="4">4</button></div>
+      </div>
+      <div class="kf-cons-ctl">
+        <button class="btn sm danger" type="button" id="kf-stop">Остановить Consumer 2</button>
+        <button class="btn sm ok" type="button" id="kf-restore" disabled>Восстановить Consumer 2</button>
+      </div>
+      <div class="kf-cons-list" id="kf-cons"></div>
+    </div>
+  </div>
+
+  <div class="kf-below">
+    <div class="panel">
+      <p class="zone-h">Мониторинг</p>
+      <div class="kf-mon" id="kf-mon"></div>
+    </div>
+    <div class="panel kf-detail">
+      <p class="zone-h">Подробности сообщения</p>
+      <div id="kf-detail"><span class="dim" style="font-size:13px">Нажмите на сообщение в партиции, чтобы увидеть JSON, ключ, offset и статус.</span></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <p class="zone-h">Журнал событий топика</p>
+    <div class="kf-journal" id="kf-journal-wrap"><table><thead><tr><th>Время</th><th>request_id</th><th>Partition</th><th>Offset</th><th>Consumer</th><th>Действие</th><th>Результат</th></tr></thead><tbody id="kf-journal"></tbody></table></div>
+  </div>
+  <div class="kf-more">
+    <details class="more"><summary>Как работает распределение сообщений</summary><div class="body">
+      <p>Partitioner по умолчанию вычисляет партицию по сериализованному ключу:</p>
+      <p><code>partition = (murmur2(serializedKey) &amp; 0x7fffffff) % partitionCount</code></p>
+      <p id="kf-calc-detail">Отправьте сообщение, и здесь появится расчёт для его ключа.</p>
+      <p>Распределение детерминированное: один и тот же ключ при неизменном числе партиций всегда даёт одну и ту же партицию.</p>
+    </div></details>
+    <details class="more"><summary>Роль ключа и порядок обработки</summary><div class="body">
+      <p>Ключ — <code>request_id</code>, а не <code>employee_id</code>: один запрос может включать нескольких сотрудников, а все события одного запроса (создание, согласование, отмена) должны идти в одну партицию.</p>
+      <p>Kafka гарантирует порядок только внутри партиции. Между партициями порядок не определён. Распределение зависит от ключа, partitioner и числа партиций: если число партиций изменить, ключи перераспределятся.</p>
+    </div></details>
+    <details class="more"><summary>Offsets, committed offset и lag</summary><div class="body">
+      <p>Offset — порядковый номер сообщения внутри партиции, растёт последовательно с 0. End offset — позиция, куда будет записано следующее сообщение.</p>
+      <p>Committed offset — <b>следующая позиция чтения</b>, а не номер последнего обработанного сообщения. Обработали offset 0 — коммитим 1.</p>
+      <p><code>Lag = End Offset − Committed Offset</code>. Lag растёт, когда consumer отстаёт, и уменьшается постепенно по мере обработки.</p>
+    </div></details>
+    <details class="more"><summary>Rebalance и повторная обработка</summary><div class="body">
+      <p>Если consumer перестал отправлять heartbeat, координатор группы после session timeout запускает rebalance: партиции отзываются и заново распределяются между оставшимися участниками. Новый владелец читает партицию с последнего committed offset.</p>
+      <p>Если сообщение уже обработано, но offset не закоммичен, после переназначения оно будет обработано повторно. Это семантика at-least-once, поэтому обработчик должен быть идемпотентным: повторная обработка того же request_id не должна создавать вторую командировку.</p>
+    </div></details>
+    <details class="more"><summary>Retry и DLQ</summary><div class="body">
+      <p>Некорректное сообщение (нет employee_id, неверная дата, end_date раньше start_date) нельзя обработать сколько ни повторяй. После трёх неудачных попыток consumer публикует его в <code>hr.business-trip.requests.dlq</code> с причиной ошибки и коммитит offset, чтобы не блокировать партицию.</p>
+      <p>DLQ — архитектурный паттерн, а не встроенная функция Kafka: retry, публикация в DLQ и replay реализуются на уровне приложения. Replay публикует исправленное сообщение обратно в основной топик.</p>
+    </div></details>
+    <details class="more"><summary>Особенности Consumer Group</summary><div class="body">
+      <p>Каждую партицию в группе читает ровно один consumer. Здесь используется range-стратегия назначения: при 2 потребителях первый получает P0 и P1, второй — P2.</p>
+      <p>Потребителей может быть больше, чем партиций, но лишние не получат работу, пока не появятся новые партиции. При 4 потребителях consumer-3 остаётся без назначения.</p>
+    </div></details>
+  </div>
+  <div class="applied">
+    <h3>Где применял</h3>
+    <p>Работа с асинхронными интеграциями в HR-проекте. Проектирование взаимодействия информационных систем при передаче кадровых данных и запросов на командировки. Анализ структуры сообщений, идентификаторов сотрудников, соответствия атрибутов между системами и сценариев обработки событий.</p>
+    <p class="note">Rebalance, DLQ, retry и Replay здесь — демонстрационная модель на клиенте, без реального Kafka. Реальный опыт описан в профиле.</p>
+  </div>
+</section>
+
+<!-- ======================= REST ======================= -->
+<section id="page-rest" class="page" data-page="rest" hidden>
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Квест 3 · API / REST</p>
+      <h2>Идемпотентность POST /orders</h2>
+      <p class="lede">Клиент отправил заказ, ответ потерялся, клиент повторил запрос. Заголовок Idempotency-Key решает, появится ли в базе второй заказ.</p>
+    </div>
+    <div class="tools">
+      <span class="seg-l">скорость</span>
+      <div class="seg" data-speed-for="rest"><button type="button" data-v="0.5">0.5×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button></div>
+      <button class="btn ghost" type="button" data-pause="rest">Пауза</button>
+      <button class="btn ghost" type="button" data-replay="rest">Replay</button>
+    </div>
+  
+    <figure class="page-visual"><img src="assets/rest-thinking.png" alt="Аналитик обдумывает решение API" loading="lazy"></figure>
+  </div>
+  <div class="rest-grid">
+    <div class="panel client">
+      <p class="zone-h">Клиент</p>
+      <div class="field"><label for="rest-key">Idempotency-Key</label>
+        <div class="inrow"><input type="text" id="rest-key" value="abc-123" spellcheck="false" autocomplete="off"><button class="btn ghost" type="button" id="rest-newkey">новый</button></div></div>
+      <button class="switch" type="button" role="switch" id="rest-idem" aria-checked="true" data-tip="Без ключа — классическая ошибка: каждый повтор создаёт новый заказ"><span class="track"></span><span>Идемпотентность</span><span class="sw-v" id="rest-idem-v">ON</span></button>
+      <div class="btnrow"><button class="btn primary" type="button" id="rest-post">POST /orders</button><button class="btn" type="button" id="rest-double">Двойной клик</button></div>
+      <div><div class="lbl" style="margin-bottom:6px">Запрос</div><pre class="req" id="rest-req"></pre></div>
+      <div class="resp" id="rest-resp" aria-live="polite"><div class="resp-top"><span class="lbl">Ответ</span><span class="code" id="rest-code">—</span></div><pre id="rest-body">запрос ещё не отправлен</pre></div>
+      <div class="chips">
+        <span class="lbl">Сценарии</span>
+        <button class="chip" type="button" id="rest-s1"><span class="n">1</span><span>Первый запрос<small>NOT FOUND → INSERT → 201 Created</small></span></button>
+        <button class="chip" type="button" id="rest-s2"><span class="n">2</span><span>Повтор с тем же ключом<small>FOUND → cache HIT → 200 OK, дубль не создан</small></span></button>
+        <button class="chip" type="button" id="rest-s3"><span class="n">3</span><span>Без ключа, два клика<small>две строки в БД → DUPLICATE ORDER</small></span></button>
+      </div>
+    </div>
+    <div class="stage-scroll" id="rest-stage"><div class="stage-inner">
+      <svg class="svg-stage" id="rest-svg" viewBox="0 0 960 440" role="img" aria-label="Схема: клиент, API Gateway, Order Service, база данных и кэш">
+        <path id="rest-p-cg" class="wire" d="M160 220 C 195 190, 220 190, 255 220"/>
+        <path id="rest-p-gs" class="wire" d="M405 220 C 432 192, 452 192, 480 220"/>
+        <path id="rest-p-sd" class="wire" d="M640 205 C 690 205, 690 130, 730 130"/>
+        <path id="rest-p-sc" class="wire" d="M640 240 C 690 240, 690 336, 730 336"/>
+        <path id="rest-p-resp" class="wire" d="M560 260 C 540 372, 130 372, 95 260"/>
+        <text class="wire-l" x="207" y="184" text-anchor="middle">HTTPS</text>
+        <text class="wire-l" x="442" y="186" text-anchor="middle">route</text>
+        <text class="wire-l" x="676" y="150">SQL</text>
+        <text class="wire-l" x="676" y="300">GET/SET</text>
+        <text class="wire-l" x="330" y="366" text-anchor="middle">HTTP response</text>
+        <g id="rest-n-client" class="node" data-tip="Клиент: мобильное приложение магазина"><rect class="node-box" x="30" y="180" width="130" height="80" rx="10"/><text class="node-t" x="95" y="215" text-anchor="middle">Клиент</text><text class="node-s" x="95" y="236" text-anchor="middle">mobile app</text></g>
+        <g id="rest-n-gateway" class="node" data-tip="API Gateway: аутентификация и маршрутизация"><rect class="node-box" x="255" y="185" width="150" height="70" rx="10"/><text class="node-t" x="330" y="216" text-anchor="middle">API Gateway</text><text class="node-s" x="330" y="236" text-anchor="middle">auth · routing</text></g>
+        <g id="rest-n-service" class="node" data-tip="Проверка: был ли такой запрос"><rect class="node-box" x="480" y="180" width="160" height="80" rx="10"/><text class="node-t" x="560" y="215" text-anchor="middle">Order Service</text><text class="node-s" x="560" y="236" text-anchor="middle">POST /orders</text></g>
+        <g id="rest-n-db" class="node" data-tip="Таблица orders: каждая строка — реальный заказ"><rect class="node-box" x="730" y="24" width="210" height="210" rx="10"/><text class="node-t" x="744" y="50">PostgreSQL</text><text class="node-s" x="926" y="50" text-anchor="end">orders</text><text class="node-s" x="746" y="82">order_id</text><text class="node-s" x="808" y="82">status</text><text class="node-s" x="884" y="82">key</text><text class="t-empty" id="rest-db-empty" x="835" y="150" text-anchor="middle">пусто</text><g id="rest-db-rows"></g></g>
+        <g id="rest-n-cache" class="node" data-tip="Возврат сохранённого ответа — дубль не создаётся"><rect class="node-box" x="730" y="262" width="210" height="150" rx="10"/><text class="node-t" x="744" y="288">Cache</text><text class="node-s" x="926" y="288" text-anchor="end">idempotency · 24h</text><text class="t-empty" id="rest-cache-empty" x="835" y="350" text-anchor="middle">пусто</text><g id="rest-cache-rows"></g></g>
+        <g class="pkt-layer"></g>
+      </svg>
+    </div></div>
+  </div>
+  <div class="applied">
+    <h3>Где применял</h3>
+    <p>Интеграции HR-платформы IT_One (OpenAPI, Postman) и контракты API CI/CD-платформы банка: правила обработки ошибок, повторов и требования к данным.</p>
+  </div>
+</section>
+
+<!-- ======================= UML ======================= -->
+<section id="page-uml" class="page" data-page="uml" hidden>
+  <div class="uml-visual"><img src="assets/uml-presenting.png" alt="Аналитик представляет UML-сценарий" loading="lazy"><span>UML SEQUENCE · взаимодействие компонентов и альтернативные сценарии</span></div>
+  <div class="uml-bar">
+    <div class="uml-title" id="uml-title">—<small id="uml-sub"></small></div>
+    <select id="uml-scn" aria-label="Сценарий"></select>
+    <button class="btn primary sm" type="button" id="uml-play">▶ Play</button>
+    <button class="btn sm" type="button" id="uml-pause">❚❚ Pause</button>
+    <button class="btn sm" type="button" id="uml-step">Step ⏭</button>
+    <button class="btn sm" type="button" id="uml-replay">↺ Replay</button>
+    <div class="seg" id="uml-speed"><button type="button" data-v="1" aria-pressed="true">1x</button><button type="button" data-v="2">2x</button><button type="button" data-v="4">4x</button></div>
+    <div class="seg" id="uml-zoom"><button type="button" data-z="out" aria-label="Уменьшить">−</button><button type="button" data-z="fit">Fit</button><button type="button" data-z="in" aria-label="Увеличить">+</button></div>
+    <span class="uml-ctr" id="uml-ctr">шаг 0/0</span>
+  </div>
+  <div class="uml-scroll" id="uml-scroll">
+    <svg class="svg-uml uml-head" id="uml-head" role="img" aria-label="Участники"></svg>
+    <svg class="svg-uml" id="uml-body" role="img" aria-label="Диаграмма последовательности"></svg>
+  </div>
+</section>
+
+    </main>
+    <aside class="logp" aria-label="Журнал событий">
+      <div class="log-h"><b>Журнал событий</b><span class="mono dim"><span id="log-count">0</span> строк · <button class="sbtn" type="button" id="log-clear">очистить</button></span></div>
+      <div class="log-body" id="log-panel" role="log" aria-live="off"></div>
+    </aside>
+  </div>
+
+  <footer class="status">
+    <div class="st-left">
+      <button class="ach-btn" type="button" id="ach-btn" aria-expanded="false" aria-controls="ach-pop">Ачивки 🏆 <span id="ach-count">0</span>/<span id="ach-total">9</span></button>
+      <span class="ach-last" id="ach-last"></span>
+    </div>
+    <div class="st-right">
+      <button class="sbtn" type="button" id="debug-toggle" aria-pressed="true">Debug tooltips: <b id="debug-v">ON</b></button>
+      <button class="sbtn" type="button" id="page-reset">Replay / Сброс</button>
+    </div>
+  </footer>
+</div>
+<div id="ach-pop" hidden></div>
+<div id="tip" hidden></div>
+<div id="toast" role="status" hidden></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   УТИЛИТЫ
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const SVGNS = 'http://www.w3.org/2000/svg';
+function S(tag, attrs = {}, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const store = {
+  get(area, key, fb) { try { const v = window[area].getItem(key); return v == null ? fb : JSON.parse(v); } catch (e) { return fb; } },
+  set(area, key, val) { try { window[area].setItem(key, JSON.stringify(val)); } catch (e) { /* без хранилища тоже работаем */ } }
+};
+const REDUCED = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+const easeInOut = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+const pad2 = n => String(n).padStart(2, '0');
+const hhmm = (d = new Date()) => pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+const hhmmss = (d = new Date()) => hhmm(d) + ':' + pad2(d.getSeconds());
+let DEBUG = store.get('localStorage', 'sa.debug', true);
+
+/* =====================================================================
+   ЛОГИ — общий массив, общая панель, sessionStorage.
+   ===================================================================== */
+const logHistory = store.get('sessionStorage', 'sa.log', []);
+const logPanel = $('#log-panel');
+function renderLogLine(e, fresh) {
+  const div = document.createElement('div');
+  if (e.sep) { div.className = 'ln sep'; div.textContent = e.text; }
+  else {
+    div.className = 'ln lv-' + e.level + (fresh ? ' new' : '');
+    const t = document.createElement('time'); t.textContent = e.time;
+    const lv = document.createElement('span'); lv.className = 'lv'; lv.textContent = ' ' + e.level.padEnd(7, ' ') + ' ';
+    const c = document.createElement('span'); c.className = 'comp'; c.textContent = '[' + e.comp + '] ';
+    const m = document.createElement('span'); m.textContent = e.text;
+    div.append(t, lv, c, m);
+  }
+  logPanel.appendChild(div);
+  while (logPanel.childElementCount > 500) logPanel.firstElementChild.remove();
+}
+let logSaveT;
+function persistLog() { clearTimeout(logSaveT); logSaveT = setTimeout(() => store.set('sessionStorage', 'sa.log', logHistory.slice(-500)), 300); }
+function pushLog(e) {
+  logHistory.push(e); if (logHistory.length > 500) logHistory.shift();
+  const stick = logPanel.scrollHeight - logPanel.scrollTop - logPanel.clientHeight < 48;
+  renderLogLine(e, true);
+  if (stick) logPanel.scrollTop = logPanel.scrollHeight;
+  $('#log-count').textContent = logHistory.length;
+  persistLog();
+}
+function appendLog(level, comp, text) { pushLog({ time: hhmm(), level, comp, text }); }
+function appendSep(text) { pushLog({ sep: true, text }); }
+
+/* =====================================================================
+   АЧИВКИ — localStorage, у каждой страницы свой набор
+   ===================================================================== */
+const ACH = {
+  bpmn: [
+    { id: 'bp-first',   name: 'Первый процесс', desc: 'запущен экземпляр процесса' },
+    { id: 'bp-card',    name: 'Оплата прошла',  desc: 'завершён сценарий успешной оплаты картой' },
+    { id: 'bp-invoice', name: 'Счёт оплачен',   desc: 'пройден сценарий оплаты по счёту' },
+    { id: 'bp-timeout', name: 'Время вышло',    desc: 'сработал граничный таймер, заказ отменён' },
+    { id: 'bp-knot',    name: 'Разрубил узел',  desc: 'пройдены XOR и AND-шлюзы до «Заказ завершён»' }
+  ],
+  kafka: [
+    { id: 'kf-first',     name: 'Первый запрос',     desc: 'отправлено первое сообщение' },
+    { id: 'kf-batch',     name: 'Пакетная отправка', desc: 'отправлено 10 запросов' },
+    { id: 'kf-rebalance', name: 'Пережил Rebalance', desc: 'партиции перераспределены' }
+  ],
+  rest: [
+    { id: 'rest-dup', name: 'Ловец дублей', desc: 'повтор с тем же ключом не создал второй заказ' }
+  ]
+};
+const ACH_ALL = Object.values(ACH).flat();
+let ach = store.get('localStorage', 'sa.ach2', null);
+if (!ach) { ach = {}; const old = store.get('localStorage', 'sa.ach', {}); if (old && old.rest) ach['rest-dup'] = true; }
+let achLast = null;
+function renderAch() {
+  const n = ACH_ALL.filter(a => ach[a.id]).length;
+  $('#ach-count').textContent = n; $('#ach-total').textContent = ACH_ALL.length;
+  $('#xp-bar').style.setProperty('--xp', (n / ACH_ALL.length * 100) + '%');
+  $('#xp-t').textContent = `ачивки ${n}/${ACH_ALL.length}`;
+  $('#ach-last').innerHTML = achLast ? `последняя: <b>«${esc(achLast)}»</b>` : '';
+  for (const page in ACH) {
+    const got = ACH[page].filter(a => ach[a.id]).length, tot = ACH[page].length;
+    const tab = $(`.tab[data-tab="${page}"]`);
+    tab.classList.toggle('done', got === tot); tab.classList.toggle('part', got > 0 && got < tot);
+    const q = $(`[data-qs="${page}"]`);
+    q.textContent = got === tot ? `🏆 ачивки ${got}/${tot}` : `ачивки ${got}/${tot}`;
+    q.closest('.quest').classList.toggle('done', got === tot);
+  }
+  const pop = $('#ach-pop');
+  const names = { bpmn: 'Процесс BPMN', kafka: 'Сообщения Kafka', rest: 'API REST' };
+  pop.innerHTML = Object.keys(ACH).map(p => `<h4>${names[p]}</h4>` + ACH[p].map(a =>
+    `<div class="ach-it ${ach[a.id] ? 'on' : ''}"><span class="i">${ach[a.id] ? '★' : '·'}</span><span><span class="n">${esc(a.name)}</span><br><span class="d">${esc(a.desc)}</span></span></div>`).join('')).join('') +
+    `<div class="ach-pop-f"><span class="dim" style="font-size:12px">UML-сценарий без ачивок</span><button class="sbtn" type="button" id="ach-reset">Сбросить ачивки</button></div>`;
+  $('#ach-reset').onclick = () => { ach = {}; achLast = null; store.set('localStorage', 'sa.ach2', ach); renderAch(); appendLog('INFO', 'achievement', 'progress reset'); };
+}
+function unlock(id) {
+  if (ach[id]) return;
+  const a = ACH_ALL.find(x => x.id === id); if (!a) return;
+  ach[id] = true; achLast = a.name;
+  store.set('localStorage', 'sa.ach2', ach);
+  renderAch();
+  toast(`Ачивка получена: <b>«${esc(a.name)}»</b>`);
+  appendLog('SUCCESS', 'achievement', `unlocked «${a.name}»`);
+}
+let toastT;
+function toast(html) { const t = $('#toast'); t.innerHTML = html; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2800); }
+
+/* =====================================================================
+   DEBUG TOOLTIPS
+   ===================================================================== */
+const TIP = {
+  el: null, cur: null, autoT: 0,
+  init() {
+    this.el = $('#tip');
+    document.addEventListener('pointerover', e => {
+      if (e.pointerType !== 'mouse') return;
+      const t = e.target.closest && e.target.closest('[data-tip]');
+      if (t && t !== this.cur && this.ok(t) && !t.hasAttribute('data-tip-click')) this.show(t);
+    });
+    document.addEventListener('pointerout', e => {
+      if (e.pointerType !== 'mouse' || !this.cur || this.cur.hasAttribute('data-tip-click')) return;
+      const to = e.relatedTarget;
+      if (!to || !this.cur.contains(to)) this.hide();
+    });
+    document.addEventListener('click', e => {
+      const t = e.target.closest && e.target.closest('[data-tip]');
+      if (t && this.ok(t) && (e.pointerType !== 'mouse' || t.hasAttribute('data-tip-click'))) {
+        if (this.cur === t) this.hide(); else this.show(t);
+        return;
+      }
+      this.hide();
+    });
+    window.addEventListener('scroll', () => this.hide(), { passive: true });
+    window.addEventListener('resize', () => this.hide());
+  },
+  ok(t) { return DEBUG || t.hasAttribute('data-tip-always'); },
+  show(t, text) {
+    const el = this.el;
+    el.textContent = text || t.dataset.tip;
+    el.dataset.kind = t.dataset.tipKind || (t.hasAttribute('data-tip-always') ? 'info' : 'debug');
+    el.hidden = false;
+    const r = t.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
+    let x = r.left + r.width / 2 - w / 2;
+    x = Math.max(8, Math.min(innerWidth - w - 8, x));
+    let y = r.top - h - 8;
+    if (y < 8) y = Math.min(innerHeight - h - 8, r.bottom + 8);
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+    this.cur = t;
+  },
+  hide() { this.el.hidden = true; this.cur = null; clearTimeout(this.autoT); },
+  auto(id, text, ms = 2600) {
+    if (!DEBUG) return;
+    const t = document.getElementById(id);
+    if (!t || !t.getClientRects().length) return;
+    const r = t.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    this.show(t, text || t.dataset.tip);
+    clearTimeout(this.autoT);
+    this.autoT = setTimeout(() => { if (this.cur === t) this.hide(); }, ms);
+  }
+};
+function applyDebug() {
+  $('#debug-toggle').setAttribute('aria-pressed', String(DEBUG));
+  $('#debug-v').textContent = DEBUG ? 'ON' : 'OFF';
+  if (!DEBUG && TIP.cur && !TIP.cur.hasAttribute('data-tip-always')) TIP.hide();
+}
+
+/* =====================================================================
+   SCENARIO ENGINE
+   ===================================================================== */
+class ScenarioEngine {
+  constructor(name) {
+    this.name = name; this.speed = 1; this.paused = false; this.stepping = false;
+    this.clock = 0; this.queue = []; this.anims = new Set(); this.raf = 0; this.last = 0; this.seq = 0;
+    this.onState = null; this.onReplay = null; this._sig = '';
+  }
+  get busy() { return this.queue.length > 0 || this.anims.size > 0; }
+  run(steps, tag) { for (const s of steps) this._push(this.clock + (s.t || 0), () => dispatch(s.action, s, this), s.tag || tag); this._wake(); }
+  after(ms, fn, tag) { this._push(this.clock + Math.max(0, ms), fn, tag); this._wake(); }
+  wait(ms, tag) { return new Promise(r => this.after(ms, r, tag)); }
+  animate(dur, onFrame, tag) {
+    const D = REDUCED ? 1 : Math.max(1, dur);
+    return new Promise(res => {
+      const a = { start: this.clock, dur: D, onFrame, res, tag };
+      this.anims.add(a); onFrame(0); this._wake();
+    });
+  }
+  cancel(tag) { this.queue = this.queue.filter(q => q.tag !== tag); for (const a of [...this.anims]) if (a.tag === tag) this.anims.delete(a); this._emit(); }
+  has(tag) { return this.queue.some(q => q.tag === tag) || [...this.anims].some(a => a.tag === tag); }
+  _push(at, fn, tag) { this.queue.push({ at, fn, tag, n: this.seq++ }); this.queue.sort((a, b) => a.at - b.at || a.n - b.n); }
+  _wake() { if (!this.raf && !this.paused && this.busy) { this.last = performance.now(); this.raf = requestAnimationFrame(t => this._loop(t)); } this._emit(); }
+  _fire(q) { try { q.fn(); } catch (e) { console.error(e); } }
+  _tickAnims() {
+    for (const a of [...this.anims]) {
+      const k = Math.min(1, Math.max(0, (this.clock - a.start) / a.dur));
+      try { a.onFrame(k); } catch (e) { console.error(e); }
+      if (k >= 1) { this.anims.delete(a); a.res(); }
+    }
+  }
+  _loop(ts) {
+    this.raf = 0;
+    if (this.paused) { this._emit(); return; }
+    const dt = Math.min(64, Math.max(0, ts - this.last)); this.last = ts;
+    let target = this.clock + dt * this.speed;
+    if (this.stepping && this.queue.length && target >= this.queue[0].at) target = Math.max(this.clock, this.queue[0].at - 0.01);
+    this.clock = target;
+    if (!this.stepping) while (this.queue.length && this.queue[0].at <= this.clock) this._fire(this.queue.shift());
+    this._tickAnims();
+    if (this.stepping && this.anims.size === 0) { this.stepping = false; this.paused = true; }
+    if (!this.paused && this.busy) this.raf = requestAnimationFrame(t => this._loop(t));
+    this._emit();
+  }
+  pause() { this.paused = true; this.stepping = false; if (this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; } this._emit(true); }
+  resume() { this.paused = false; this.stepping = false; this._wake(); this._emit(true); }
+  step() {
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; }
+    this.paused = false;
+    if (this.anims.size === 0) {
+      if (!this.queue.length) { this.paused = true; this._emit(true); return; }
+      const at = this.queue[0].at; this.clock = Math.max(this.clock, at);
+      while (this.queue.length && this.queue[0].at <= at) this._fire(this.queue.shift());
+    }
+    if (this.anims.size === 0) { this.paused = true; this._emit(true); return; }
+    this.stepping = true; this._wake();
+  }
+  setSpeed(x) { this.speed = x; this._emit(true); }
+  reset() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; this.queue = []; this.anims.clear(); this.paused = false; this.stepping = false; this._emit(true); }
+  replay() { this.reset(); if (this.onReplay) this.onReplay(); }
+  _emit(force) { const sig = (this.busy ? 1 : 0) + '|' + (this.paused ? 1 : 0); if (force || sig !== this._sig) { this._sig = sig; if (this.onState) this.onState(this); } }
+}
+async function runSequence(engine, steps) {
+  for (const s of steps) {
+    if (s.t) await engine.wait(s.t);
+    const r = dispatch(s.action, s, engine);
+    if (r && typeof r.then === 'function') await r;
+  }
+}
+
+/* =====================================================================
+   АНИМАЦИИ
+   ===================================================================== */
+function pulse(el) {
+  if (!el) return;
+  el.classList.remove('pulse'); void el.getBoundingClientRect(); el.classList.add('pulse');
+  clearTimeout(el._pt); el._pt = setTimeout(() => el.classList.remove('pulse'), 900);
+}
+function flyAlongPath(engine, pathId, o = {}) {
+  const path = document.getElementById(pathId);
+  if (!path) return Promise.resolve();
+  const layer = path.ownerSVGElement.querySelector('.pkt-layer');
+  const color = o.color || 'var(--cyan)';
+  const g = S('g', { class: 'pkt' }, layer);
+  S('circle', { r: 13, class: 'halo', style: `fill:${color}` }, g);
+  S('circle', { r: 6.5, style: `fill:${color}` }, g);
+  if (o.label) S('text', { y: -14, class: 'pkt-l', 'text-anchor': 'middle', style: `fill:${color}` }, g).textContent = o.label;
+  const len = path.getTotalLength();
+  path.classList.add('live');
+  return engine.animate(o.dur || 400, k => {
+    const p = path.getPointAtLength(easeInOut(k) * len);
+    g.setAttribute('transform', `translate(${p.x} ${p.y})`);
+    if (k >= 1) { path.classList.remove('live'); g.remove(); }
+  });
+}
+function flyBetween(engine, host, fromEl, toEl, o = {}) {
+  const layer = host.querySelector(':scope > .fly-layer');
+  const hr = host.getBoundingClientRect(), a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+  const x1 = a.left + a.width / 2 - hr.left, y1 = a.top + a.height / 2 - hr.top;
+  const x2 = b.left + b.width / 2 - hr.left, y2 = b.top + b.height / 2 - hr.top;
+  const p = document.createElement('div');
+  p.className = 'kf-pkt';
+  p.style.cssText = `position:absolute;left:0;top:0;width:${o.size || 12}px;height:${o.size || 12}px;border-radius:3px;background:${o.color || 'var(--orange)'};box-shadow:0 0 10px ${o.color || 'var(--orange)'}`;
+  layer.appendChild(p);
+  const arc = o.arc == null ? 30 : o.arc;
+  return engine.animate(o.dur || 500, k => {
+    const e = easeInOut(k);
+    const x = x1 + (x2 - x1) * e, y = y1 + (y2 - y1) * e - Math.sin(Math.PI * e) * arc;
+    p.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%)`;
+    if (k >= 1) p.remove();
+  });
+}
+
+/* =====================================================================
+   DISPATCH
+   ===================================================================== */
+function dispatch(action, p, engine) {
+  switch (action) {
+    case 'log':   appendLog(p.level, p.comp, typeof p.text === 'function' ? p.text() : p.text); return;
+    case 'tip':   TIP.auto(p.id, p.text); return;
+    case 'ach':   unlock(p.id); return;
+    case 'call':  return p.fn && p.fn();
+    case 'noop':  return;
+    // ---- REST ----
+    case 'pulseNode':    pulse(document.getElementById(p.id)); return;
+    case 'flyPacket':    flyAlongPath(engine, p.path, p); return;
+    case 'addDbRow':     REST.addDbRow(p); return;
+    case 'addCacheEntry':REST.addCacheEntry(p); return;
+    case 'dbHit':        REST.flashRow('db', p.id); return;
+    case 'cacheHit':     REST.flashRow('cache', p.key); return;
+    case 'markDup':      REST.markDup(p.ids); return;
+    case 'showResponse': REST.showResponse(p); return;
+    case 'restDone':     REST.jobDone(); return;
+    // ---- BPMN ----
+    case 'place':        BPMN.place(p.tok || 'main', p.node, p.x, p.y); return;
+    case 'hideTok':      BPMN.hideTok(p.tok); return;
+    case 'enter':        BPMN.setNode(p.id, 'active'); return;
+    case 'leave':        BPMN.setNode(p.id, 'completed'); return;
+    case 'cancelMark':   (p.ids || []).forEach(id => BPMN.setNode(id, 'cancelled')); (p.flows || []).forEach(f => BPMN.flowState(f, 'cancelled')); return;
+    case 'move':         return BPMN.move(p.tok || 'main', p.path, p.k || 1);
+    case 'msg':          return BPMN.sendMessage(p.path);
+    case 'par':          return Promise.all(p.branches.map(b => runSequence(engine, b)));
+    case 'split':        BPMN.split(); return;
+    case 'join':         BPMN.join(p.tok); return;
+    case 'choose':       BPMN.choose(p.kind); return;
+    case 'attempt':      BPMN.attempt(); return;
+    case 'waitPayment':  BPMN.waitPayment(); return;
+    case 'timerFire':    BPMN.timerFire(); return;
+    case 'paidBy':       BPMN.paidBy = p.via; return;
+    case 'complete':     BPMN.complete(p.outcome); return;
+    default: appendLog('WARN', 'engine', `unknown action "${action}" on ${engine.name}`);
+  }
+}
+
+/* =====================================================================
+   СТРАНИЦА: REST
+   ===================================================================== */
+const REST = {
+  engine: new ScenarioEngine('rest'),
+  st: null, jobs: [], running: false,
+  fresh() { return { db: [], cache: new Map(), nextId: 1042, offRows: [] }; },
+  init() {
+    this.st = this.fresh();
+    this.key = $('#rest-key'); this.sw = $('#rest-idem');
+    $('#rest-post').onclick = () => this.post();
+    $('#rest-double').onclick = () => { this.post(); this.post(); };
+    this.sw.onclick = () => this.setIdem(!this.idem());
+    this.key.oninput = () => this.renderReq();
+    $('#rest-newkey').onclick = () => { this.key.value = this.newKey(); this.renderReq(); };
+    $('#rest-s1').onclick = () => { if (!this.idem()) this.setIdem(true); if (this.st.cache.has(this.curKey())) { this.key.value = this.newKey(); this.renderReq(); } this.post(); };
+    $('#rest-s2').onclick = () => { if (!this.idem()) this.setIdem(true); if (!this.st.cache.has(this.curKey())) this.post(); this.post(); };
+    $('#rest-s3').onclick = () => { if (this.idem()) this.setIdem(false); this.post(); this.post(); };
+    this.engine.onReplay = () => this.resetView();
+    this.render(); this.renderReq();
+  },
+  idem() { return this.sw.getAttribute('aria-checked') === 'true'; },
+  setIdem(on) {
+    this.sw.setAttribute('aria-checked', String(on)); $('#rest-idem-v').textContent = on ? 'ON' : 'OFF';
+    this.key.disabled = !on; $('#rest-newkey').disabled = !on; this.renderReq();
+    appendLog(on ? 'INFO' : 'WARN', 'client', on ? 'idempotency ON: Idempotency-Key передаётся в заголовке' : 'idempotency OFF: запросы уходят без ключа');
+  },
+  curKey() { return this.key.value.trim() || 'abc-123'; },
+  newKey() { let n = 124; while (this.st.cache.has('abc-' + n)) n++; return 'abc-' + n; },
+  post() { this.jobs.push(() => this.build()); if (!this.running) this.next(); },
+  next() {
+    const job = this.jobs.shift(); if (!job) { this.running = false; return; }
+    this.running = true;
+    const steps = job();
+    const end = steps.reduce((m, s) => Math.max(m, s.t), 0);
+    this.engine.run([...steps, { t: end + 150, action: 'restDone' }]);
+  },
+  jobDone() { this.running = false; this.next(); },
+  build() {
+    if (!this.idem()) return this.stepsNoKey(this.st.nextId++);
+    const k = this.curKey();
+    return this.st.cache.has(k) ? this.stepsRepeat(k, this.st.cache.get(k).id) : this.stepsFirst(k, this.st.nextId++);
+  },
+  stepsFirst(key, id) {
+    return [
+      { t: 0,    action: 'log', level: 'INFO', comp: 'client', text: `POST /orders Idempotency-Key: ${key}` },
+      { t: 0,    action: 'pulseNode', id: 'rest-n-client' },
+      { t: 0,    action: 'flyPacket', path: 'rest-p-cg', dur: 400, label: 'POST' },
+      { t: 400,  action: 'pulseNode', id: 'rest-n-gateway' },
+      { t: 400,  action: 'log', level: 'INFO', comp: 'gateway', text: 'auth ok → route /orders → order-service' },
+      { t: 400,  action: 'flyPacket', path: 'rest-p-gs', dur: 300 },
+      { t: 700,  action: 'pulseNode', id: 'rest-n-service' },
+      { t: 700,  action: 'tip', id: 'rest-n-service', text: 'Проверка: был ли такой запрос' },
+      { t: 700,  action: 'log', level: 'INFO', comp: 'order-service', text: `db lookup idempotency_key=${key}` },
+      { t: 700,  action: 'flyPacket', path: 'rest-p-sd', dur: 200, label: 'SELECT' },
+      { t: 900,  action: 'pulseNode', id: 'rest-n-db' },
+      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: 'lookup → NOT FOUND' },
+      { t: 900,  action: 'addDbRow', id, status: 'CREATED', key },
+      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `INSERT orders order_id=${id} status=CREATED` },
+      { t: 1000, action: 'flyPacket', path: 'rest-p-sc', dur: 100 },
+      { t: 1000, action: 'addCacheEntry', key, id },
+      { t: 1000, action: 'log', level: 'INFO', comp: 'cache', text: `SET ${key} → 201 order_id=${id} ttl=24h` },
+      { t: 1100, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '201', color: 'var(--green)' },
+      { t: 1300, action: 'pulseNode', id: 'rest-n-client' },
+      { t: 1300, action: 'showResponse', kind: 'ok', code: '201 Created', body: `{\n  "order_id": ${id},\n  "status": "CREATED"\n}` },
+      { t: 1300, action: 'log', level: 'SUCCESS', comp: 'client', text: `← 201 Created order_id=${id}` }
+    ];
+  },
+  stepsRepeat(key, id) {
+    return [
+      { t: 0,    action: 'log', level: 'INFO', comp: 'client', text: `POST /orders Idempotency-Key: ${key} (retry)` },
+      { t: 0,    action: 'pulseNode', id: 'rest-n-client' },
+      { t: 0,    action: 'flyPacket', path: 'rest-p-cg', dur: 400, label: 'POST' },
+      { t: 400,  action: 'pulseNode', id: 'rest-n-gateway' },
+      { t: 400,  action: 'flyPacket', path: 'rest-p-gs', dur: 300 },
+      { t: 700,  action: 'pulseNode', id: 'rest-n-service' },
+      { t: 700,  action: 'log', level: 'INFO', comp: 'order-service', text: `db lookup idempotency_key=${key}` },
+      { t: 700,  action: 'flyPacket', path: 'rest-p-sd', dur: 200, label: 'SELECT' },
+      { t: 900,  action: 'pulseNode', id: 'rest-n-db' },
+      { t: 900,  action: 'dbHit', id },
+      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `lookup → FOUND order_id=${id}, INSERT пропущен` },
+      { t: 1000, action: 'flyPacket', path: 'rest-p-sc', dur: 100 },
+      { t: 1000, action: 'pulseNode', id: 'rest-n-cache' },
+      { t: 1000, action: 'cacheHit', key },
+      { t: 1000, action: 'tip', id: 'rest-n-cache', text: 'Возврат сохранённого ответа — дубль не создаётся' },
+      { t: 1000, action: 'log', level: 'INFO', comp: 'cache', text: `HIT ${key} → stored response 201 order_id=${id}` },
+      { t: 1100, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '200', color: 'var(--cyan)' },
+      { t: 1300, action: 'pulseNode', id: 'rest-n-client' },
+      { t: 1300, action: 'showResponse', kind: 'replay', code: '200 OK', body: `Idempotent-Replayed: true\n{\n  "order_id": ${id},\n  "status": "CREATED"\n}\n# duplicate prevented` },
+      { t: 1300, action: 'log', level: 'SUCCESS', comp: 'client', text: `← 200 OK order_id=${id} (duplicate prevented)` },
+      { t: 1400, action: 'ach', id: 'rest-dup' }
+    ];
+  },
+  stepsNoKey(id) {
+    const prev = this.st.offRows[this.st.offRows.length - 1];
+    this.st.offRows.push(id);
+    const steps = [
+      { t: 0,    action: 'log', level: 'WARN', comp: 'client', text: 'POST /orders (без Idempotency-Key)' },
+      { t: 0,    action: 'pulseNode', id: 'rest-n-client' },
+      { t: 0,    action: 'flyPacket', path: 'rest-p-cg', dur: 400, label: 'POST', color: 'var(--amber)' },
+      { t: 400,  action: 'pulseNode', id: 'rest-n-gateway' },
+      { t: 400,  action: 'flyPacket', path: 'rest-p-gs', dur: 300, color: 'var(--amber)' },
+      { t: 700,  action: 'pulseNode', id: 'rest-n-service' },
+      { t: 700,  action: 'tip', id: 'rest-idem', text: 'Без ключа — классическая ошибка' },
+      { t: 700,  action: 'log', level: 'WARN', comp: 'order-service', text: 'no Idempotency-Key → проверка дублей пропущена' },
+      { t: 700,  action: 'flyPacket', path: 'rest-p-sd', dur: 200, label: 'INSERT', color: 'var(--amber)' },
+      { t: 900,  action: 'pulseNode', id: 'rest-n-db' },
+      { t: 900,  action: 'addDbRow', id, status: 'CREATED', key: '—' },
+      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `INSERT orders order_id=${id} status=CREATED` },
+      { t: 1100, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '201', color: 'var(--amber)' },
+      { t: 1300, action: 'pulseNode', id: 'rest-n-client' }
+    ];
+    if (prev != null) steps.push(
+      { t: 950,  action: 'markDup', ids: [prev, id] },
+      { t: 950,  action: 'log', level: 'ERROR', comp: 'system', text: `DUPLICATE ORDER CREATED — idempotency missing (order_id ${prev} и ${id})` },
+      { t: 1300, action: 'showResponse', kind: 'bad', code: '201 Created', body: `{\n  "order_id": ${id},\n  "status": "CREATED"\n}\n# второй заказ на тот же товар: ${prev} и ${id}` });
+    else steps.push({ t: 1300, action: 'showResponse', kind: 'warn', code: '201 Created', body: `{\n  "order_id": ${id},\n  "status": "CREATED"\n}\n# ключа нет: повтор создаст ещё один заказ` });
+    steps.push({ t: 1300, action: 'log', level: 'INFO', comp: 'client', text: `← 201 Created order_id=${id}` });
+    return steps;
+  },
+  addDbRow(p) { this.st.db.push({ id: p.id, status: p.status, key: p.key, fx: 'new' }); this.render(); this._unfx(); },
+  addCacheEntry(p) { this.st.cache.set(p.key, { id: p.id, fx: 'new' }); this.render(); this._unfx(); },
+  flashRow(kind, k) {
+    if (kind === 'db') { const r = this.st.db.find(x => x.id === k); if (r && r.fx !== 'dupd') r.fx = 'hit'; }
+    else { const c = this.st.cache.get(k); if (c) c.fx = 'hit'; }
+    this.render(); this._unfx(900);
+  },
+  markDup(ids) {
+    this.st.db.forEach(r => { if (ids.includes(r.id)) r.fx = 'dup'; }); this.render();
+    clearTimeout(this._dupT); this._dupT = setTimeout(() => { this.st.db.forEach(r => { if (r.fx === 'dup') r.fx = 'dupd'; }); }, 3000);
+  },
+  _unfx(ms = 1200) {
+    clearTimeout(this._fxT);
+    this._fxT = setTimeout(() => { this.st.db.forEach(r => { if (r.fx === 'new' || r.fx === 'hit') r.fx = ''; }); this.st.cache.forEach(c => { c.fx = ''; }); this.render(); }, ms);
+  },
+  showResponse(p) { $('#rest-resp').className = 'resp ' + (p.kind || ''); $('#rest-code').textContent = p.code; $('#rest-body').textContent = p.body; },
+  renderReq() {
+    const on = this.idem(), k = this.curKey();
+    $('#rest-req').innerHTML = `<span class="h">POST</span> /orders HTTP/1.1\nHost: api.shop.local\nContent-Type: application/json\n` +
+      (on ? `<span class="h">Idempotency-Key:</span> ${esc(k)}` : `<span class="bad"># Idempotency-Key не передан</span>`) + `\n\n{"sku": "SKU-77", "qty": 1}`;
+  },
+  render() {
+    const trunc = s => s.length > 8 ? s.slice(0, 7) + '…' : s;
+    const g = $('#rest-db-rows'); g.textContent = '';
+    const rows = this.st.db.slice(-5);
+    $('#rest-db-empty').setAttribute('visibility', rows.length ? 'hidden' : 'visible');
+    rows.forEach((r, i) => {
+      const y = 94 + i * 26, rg = S('g', { class: 'row ' + (r.fx || '') }, g);
+      S('rect', { x: 738, y, width: 194, height: 22, rx: 4, class: 'row-bg' }, rg);
+      S('text', { x: 746, y: y + 15 }, rg).textContent = r.id;
+      S('text', { x: 808, y: y + 15, class: (r.fx === 'dup' || r.fx === 'dupd') ? 't-bad' : 't-ok' }, rg).textContent = r.status;
+      S('text', { x: 884, y: y + 15, class: 't-dim' }, rg).textContent = trunc(r.key);
+    });
+    const c = $('#rest-cache-rows'); c.textContent = '';
+    const entries = Array.from(this.st.cache.entries()).slice(-4);
+    $('#rest-cache-empty').setAttribute('visibility', entries.length ? 'hidden' : 'visible');
+    entries.forEach(([k, v], i) => {
+      const y = 304 + i * 26, rg = S('g', { class: 'row ' + (v.fx || '') }, c);
+      S('rect', { x: 738, y, width: 194, height: 22, rx: 4, class: 'row-bg' }, rg);
+      S('text', { x: 746, y: y + 15 }, rg).textContent = trunc(k);
+      S('text', { x: 924, y: y + 15, 'text-anchor': 'end', class: 't-ok' }, rg).textContent = `201 · #${v.id}`;
+    });
+  },
+  resetView() {
+    this.jobs = []; this.running = false;
+    $$('#rest-svg .pkt-layer > *').forEach(n => n.remove());
+    $$('#rest-svg .wire.live').forEach(n => n.classList.remove('live'));
+    this.st = this.fresh(); this.key.value = 'abc-123';
+    this.sw.setAttribute('aria-checked', 'true'); $('#rest-idem-v').textContent = 'ON';
+    this.key.disabled = false; $('#rest-newkey').disabled = false;
+    this.showResponse({ kind: '', code: '—', body: 'запрос ещё не отправлен' });
+    this.render(); this.renderReq();
+  }
+};
+
+/* =====================================================================
+   СТРАНИЦА: BPMN
+   ===================================================================== */
+const BPMN = {
+  engine: new ScenarioEngine('bpmn'),
+  W: 2010, H: 730, z: 0.86, phase: 'idle', attempts: 0, MAX_ATTEMPTS: 3, paidBy: null,
+  tokens: {}, joinCount: 0,
+  build() {
+    const svg = $('#bp-svg');
+    const env = (cx, cy, fill) => `<rect class="env${fill ? ' fill' : ''}" x="${cx - 8}" y="${cy - 5.5}" width="16" height="11" rx="1"/><path class="env${fill ? ' fill' : ''}" d="M${cx - 8} ${cy - 5.5} L${cx} ${cy + 1} L${cx + 8} ${cy - 5.5}"/>`;
+    const task = (id, cx, cy, l1, l2, opt = {}) => `<g id="bp-${id}" class="bn task"${opt.tip ? ` data-tip="${opt.tip}"` : ''}><rect class="shape" x="${cx - 58}" y="${cy - 28}" width="116" height="56" rx="10"/>${opt.receive ? env(cx - 44, cy - 16, false) : ''}${(opt.lines || [l1, l2]).map((t, i, arr) => `<text x="${cx}" y="${cy + 5 - (arr.length - 1) * (arr.length > 2 ? 8 : 8) + i * (arr.length > 2 ? 14 : 16)}">${t}</text>`).join('')}</g>`;
+    const gw = (id, cx, cy, type, tip) => `<g id="bp-${id}" class="bn gw" data-tip="${tip}"><polygon class="shape" points="${cx},${cy - 28} ${cx + 28},${cy} ${cx},${cy + 28} ${cx - 28},${cy}"/>` +
+      (type === 'xor' ? `<path class="mark" d="M${cx - 9} ${cy - 9} L${cx + 9} ${cy + 9} M${cx + 9} ${cy - 9} L${cx - 9} ${cy + 9}"/>` : `<path class="mark" d="M${cx} ${cy - 12} V${cy + 12} M${cx - 12} ${cy} H${cx + 12}"/>`) + `</g>`;
+    const ev = (id, cx, cy, kind, tip) => {
+      let inner = '';
+      if (kind === 'msgStart') inner = env(cx, cy, false);
+      if (kind === 'msgEnd') inner = env(cx, cy, true);
+      if (kind === 'catch') inner = `<circle class="ring" cx="${cx}" cy="${cy}" r="14"/>` + env(cx, cy, false);
+      const cls = kind === 'start' || kind === 'msgStart' ? 'start' : (kind === 'end' || kind === 'msgEnd') ? 'end' : '';
+      return `<g id="bp-${id}" class="bn ev ${cls}"${tip ? ` data-tip="${tip}"` : ''}><circle class="shape" cx="${cx}" cy="${cy}" r="18"/>${inner}</g>`;
+    };
+    const flow = (id, d) => `<path id="bp-${id}" class="flow" d="${d}"/>`;
+    const lab = (x, y, t, anchor = 'start', cls = 'bp-l') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${t}</text>`;
+    const SEQ_TIP = 'Сплошная стрелка показывает порядок выполнения элементов внутри одного процесса';
+    const MSG_TIP = 'Пунктирная стрелка показывает обмен сообщениями между независимыми участниками процесса';
+    const XOR_TIP = 'Эксклюзивный шлюз XOR: выбирается ровно одна исходящая ветка в зависимости от условия';
+    const AND_TIP = 'Параллельный шлюз AND: запускает несколько веток одновременно. Синхронизирующий AND ожидает завершения всех веток';
+    const TIMER_TIP = 'Граничное таймерное событие: если подтверждение оплаты не поступило за установленный срок, ожидание прерывается и запускается отмена заказа';
+    svg.innerHTML = `
+<defs>
+  <marker id="bp-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/></marker>
+  <marker id="bp-arr-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.4"/></marker>
+  <marker id="bp-circ" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3.6" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.4"/></marker>
+  <filter id="bp-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect class="pool" x="0" y="0" width="2010" height="540"/>
+<rect class="pool-h" x="0" y="0" width="30" height="540"/>
+<rect class="lane-h" x="30" y="0" width="36" height="110"/>
+<rect class="lane-h" x="30" y="110" width="36" height="430"/>
+<line class="lane-sep" x1="30" y1="110" x2="2010" y2="110"/>
+<text class="pool-t" transform="translate(20 270) rotate(-90)" text-anchor="middle">Процесс обработки заказа</text>
+<text class="lane-t" transform="translate(53 55) rotate(-90)" text-anchor="middle">Клиент</text>
+<text class="lane-t" transform="translate(53 325) rotate(-90)" text-anchor="middle">Система заказов</text>
+<rect class="pool" x="0" y="580" width="2010" height="140"/>
+<rect class="pool-h" x="0" y="580" width="30" height="140"/>
+<text class="pool-t" transform="translate(20 650) rotate(-90)" text-anchor="middle">Платёжная система</text>
+<text class="lane-t" x="44" y="602">внешний пул · платёжный шлюз</text>
+
+<g class="sflow" data-tip="${SEQ_TIP}">
+${flow('f0', 'M128 55 H162')}${flow('f1', 'M220 83 V252')}${flow('f2', 'M278 280 H302')}${flow('f3', 'M418 280 H442')}${flow('f4', 'M558 280 H592')}
+${flow('f_card', 'M620 308 V480 H662')}${flow('f_inv', 'M620 252 V170 H662')}
+${flow('f_i2', 'M778 170 H802')}${flow('f_i3', 'M918 170 H942')}${flow('f_conf', 'M1058 170 H1140')}${flow('f_inv_merge', 'M1256 170 H1360 V252')}
+${flow('f_timeout', 'M1042 214 V252')}${flow('f_c2', 'M972 280 H838')}
+${flow('f_preq_catch', 'M778 480 H962')}${flow('f_catch_ok', 'M998 480 H1052')}${flow('f_ok', 'M1108 480 H1172')}${flow('f_card_merge', 'M1288 480 H1360 V308')}
+${flow('f_rej', 'M1080 452 V380 H1010')}${flow('f_rg', 'M894 380 H848')}${flow('f_retry', 'M792 380 H720 V452')}${flow('f_cancel1', 'M820 352 V298')}
+${flow('f_m1', 'M1388 280 H1422')}${flow('f_m2', 'M1538 280 H1572')}${flow('f_s1', 'M1600 252 V170 H1672')}${flow('f_s2', 'M1600 308 V390 H1672')}
+${flow('f_j1', 'M1788 170 H1860 V252')}${flow('f_j2', 'M1788 390 H1860 V308')}${flow('f_end', 'M1888 280 H1932')}
+${flow('f_p2a', 'M738 640 H792')}${flow('f_p2b', 'M908 640 H962')}
+</g>
+<g class="mflow" data-tip="${MSG_TIP}"><path class="hit" d="M720 508 V622"/><path id="bp-mf1" class="flow msg" d="M720 512 V618"/></g>
+<g class="mflow" data-tip="${MSG_TIP}"><path class="hit" d="M980 622 V498"/><path id="bp-mf2" class="flow msg" d="M980 618 V502"/></g>
+<text class="bp-l" x="730" y="565">платёжный запрос</text>
+<text class="bp-l" x="990" y="565">результат авторизации</text>
+
+${ev('E0', 110, 55, 'start', 'Стартовое событие: тонкий круг')}${lab(110, 95, 'Заказ оформлен', 'middle')}
+${task('T_order', 220, 55, 'Оформить', 'заказ')}
+${task('T_recv', 220, 280, 'Получить', 'заказ')}
+${task('T_valid', 360, 280, 'Валидация', 'заказа')}
+${task('T_stock', 500, 280, 'Проверить', 'наличие товара')}
+${gw('G_pay', 620, 280, 'xor', XOR_TIP)}${lab(604, 238, 'Способ оплаты?', 'end')}
+${lab(628, 222, 'По счёту', 'start', 'bp-cond')}${lab(628, 400, 'Карта', 'start', 'bp-cond')}
+
+${task('T_invgen', 720, 170, 'Сформировать', 'счёт')}
+${task('T_invsend', 860, 170, 'Отправить счёт', 'клиенту')}
+${task('T_wait', 1000, 170, '', '', { lines: ['Ожидать', 'подтверждение', 'оплаты'], receive: true, tip: 'Receive Task: процесс ждёт сообщение о подтверждении оплаты' })}
+<g id="bp-TM" class="bn ev timer" data-tip="${TIMER_TIP}"><circle class="shape" cx="1042" cy="198" r="16"/><circle class="ring" cx="1042" cy="198" r="12.5"/><circle class="clock" cx="1042" cy="198" r="8"/><path class="clock" d="M1042 192 V198 L1046 201"/></g>
+<circle id="bp-ring" cx="1042" cy="198" r="21" style="fill:none;stroke:var(--amber);stroke-width:3;opacity:0" transform="rotate(-90 1042 198)"/>
+<text class="bp-count" id="bp-count" x="1000" y="130" text-anchor="middle" visibility="hidden"></text>
+<text class="bp-cond" x="1099" y="188" text-anchor="middle" style="font-size:9.5px">Подтверждение</text><text class="bp-cond" x="1099" y="200" text-anchor="middle" style="font-size:9.5px">получено</text>
+${lab(1052, 240, 'Срок истёк', 'start', 'bp-cond')}
+${task('T_cancel', 1030, 280, 'Отменить', 'заказ')}
+${ev('E_cancel', 820, 280, 'end', 'Конечное событие «Заказ отменён»: отменённый заказ не попадает в успешную ветку')}${lab(820, 248, 'Заказ отменён', 'middle')}
+${task('T_invpaid', 1198, 170, 'Зафиксировать', 'оплату по счёту')}
+
+${task('T_preq', 720, 480, 'Создать', 'платёжный запрос')}
+${ev('E_catch', 980, 480, 'catch', 'Промежуточное событие-сообщение: процесс ждёт ответ платёжной системы')}${lab(980, 436, 'Получить', 'middle')}${lab(980, 450, 'результат', 'middle')}
+${gw('G_ok', 1080, 480, 'xor', XOR_TIP)}${lab(1080, 528, 'Платёж успешен?', 'middle')}
+${lab(1114, 470, 'Успешно', 'start', 'bp-cond')}${lab(1088, 425, 'Отклонён', 'start', 'bp-cond')}
+${task('T_cardpaid', 1230, 480, 'Зафиксировать', 'успешную оплату')}
+${task('T_reject', 952, 380, 'Обработать', 'отказ платежа')}
+${gw('G_retry', 820, 380, 'xor', XOR_TIP)}${lab(820, 426, 'Повторить оплату?', 'middle')}
+${lab(756, 372, 'Повторить', 'middle', 'bp-cond')}${lab(828, 334, 'Отменить', 'start', 'bp-cond')}
+
+${gw('G_merge', 1360, 280, 'xor', 'Сливающий XOR: продолжает процесс, как только пришла любая из веток оплаты')}
+${task('T_paid', 1480, 280, 'Обновить статус', 'заказа: PAID')}
+${gw('G_split', 1600, 280, 'and', AND_TIP)}
+${task('T_notify', 1730, 170, 'Уведомить', 'клиента')}
+${task('T_crm', 1730, 390, 'Записать данные', 'в CRM')}
+${gw('G_join', 1860, 280, 'and', AND_TIP)}
+${ev('E_done', 1950, 280, 'end', 'Конечное событие: круг с толстой границей')}${lab(1950, 322, 'Заказ завершён', 'middle')}
+
+${ev('E_p2start', 720, 640, 'msgStart', 'Стартовое событие-сообщение внешнего пула')}${lab(720, 684, 'Запрос получен', 'middle')}
+${task('T_auth', 850, 640, 'Авторизация', 'платежа')}
+${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщение: ответ отправлен в процесс заказа')}${lab(980, 684, 'Ответ отправлен', 'middle')}
+<g id="bp-tokens"></g>`;
+    const tg = $('#bp-tokens');
+    for (const id of ['main', 'a', 'b', 'p2']) {
+      const g = S('g', { visibility: 'hidden' }, tg);
+      const trails = [.32, .2, .1].map((o, i) => S('circle', { r: 8 - i * 1.6, class: 'tok-trail', 'fill-opacity': o }, g));
+      const core = S('circle', { r: 9, class: 'tok-core' }, g);
+      this.tokens[id] = { g, core, trails, hist: [], x: 0, y: 0 };
+    }
+    const eg = S('g', { class: 'tok-env', visibility: 'hidden' }, tg);
+    S('rect', { x: -10, y: -7, width: 20, height: 14, rx: 2 }, eg);
+    S('path', { d: 'M-10 -7 L0 1 L10 -7', style: 'fill:none;stroke:var(--bg);stroke-width:1.4' }, eg);
+    this.envTok = eg;
+  },
+  node(id) { return document.getElementById('bp-' + id); },
+  center(id) {
+    const s = this.node(id).querySelector('.shape'), a = k => +s.getAttribute(k);
+    if (s.tagName === 'circle') return [a('cx'), a('cy')];
+    if (s.tagName === 'rect') return [a('x') + a('width') / 2, a('y') + a('height') / 2];
+    const pts = s.getAttribute('points').split(' ').map(q => q.split(',').map(Number));
+    return [(pts[1][0] + pts[3][0]) / 2, (pts[0][1] + pts[2][1]) / 2];
+  },
+  init() {
+    this.build();
+    this.stage = $('#bp-stage'); this.svg = $('#bp-svg');
+    this.applyZoom();
+    $('#bp-run').onclick = () => this.start();
+    $$('#bp-zoom button').forEach(b => b.onclick = () => {
+      const v = b.dataset.z;
+      if (v === 'fit') this.z = Math.max(.3, (this.stage.clientWidth - 4) / this.W);
+      else this.z = Math.min(1.6, Math.max(.3, this.z + (v === 'in' ? .12 : -.12)));
+      this.applyZoom();
+    });
+    this.engine.onReplay = () => this.resetView();
+    this.resetView(true);
+  },
+  applyZoom() { this.svg.setAttribute('width', Math.round(this.W * this.z)); this.svg.setAttribute('height', Math.round(this.H * this.z)); },
+  setNode(id, st) {
+    const n = this.node(id); if (!n) return;
+    if (st === 'completed' && n.classList.contains('cancelled')) return;
+    n.classList.remove('active', 'completed', 'cancelled');
+    if (st) n.classList.add(st);
+    if (st === 'active') pulse(n);
+  },
+  flowState(id, st) { const f = this.node(id); f.classList.remove('live', 'done', 'cancelled'); if (st) f.classList.add(st); },
+  setPos(t, x, y) {
+    t.x = x; t.y = y;
+    t.core.setAttribute('cx', x); t.core.setAttribute('cy', y);
+    t.hist.unshift([x, y]); if (t.hist.length > 14) t.hist.length = 14;
+    t.trails.forEach((c, i) => { const h = t.hist[Math.min(t.hist.length - 1, (i + 1) * 3)]; c.setAttribute('cx', h[0]); c.setAttribute('cy', h[1]); });
+  },
+  place(id, node, x, y) {
+    const t = this.tokens[id]; if (node) [x, y] = this.center(node);
+    t.hist = []; this.setPos(t, x, y); t.g.setAttribute('visibility', 'visible');
+  },
+  hideTok(id) { this.tokens[id].g.setAttribute('visibility', 'hidden'); },
+  move(id, pathId, k = 1) {
+    const t = this.tokens[id], path = this.node(pathId);
+    const len = path.getTotalLength();
+    t.hist = []; t.g.setAttribute('visibility', 'visible');
+    this.flowState(pathId, 'live');
+    return this.engine.animate(Math.max(260, len * 2.1 / k), e => {
+      const p = path.getPointAtLength(easeInOut(e) * len);
+      this.setPos(t, p.x, p.y); this.follow(p.x, p.y);
+      if (e >= 1) { this.flowState(pathId, 'done'); t.hist = []; this.setPos(t, p.x, p.y); }
+    });
+  },
+  sendMessage(pathId) {
+    const path = this.node(pathId), len = path.getTotalLength(), g = this.envTok;
+    g.setAttribute('visibility', 'visible'); this.flowState(pathId, 'live');
+    return this.engine.animate(Math.max(400, len * 3), e => {
+      const p = path.getPointAtLength(easeInOut(e) * len);
+      g.setAttribute('transform', `translate(${p.x} ${p.y})`); this.follow(p.x, p.y);
+      if (e >= 1) { g.setAttribute('visibility', 'hidden'); this.flowState(pathId, 'done'); }
+    });
+  },
+  follow(x, y) {
+    const c = this.stage, px = x * this.z, py = y * this.z;
+    if (px < c.scrollLeft + 60 || px > c.scrollLeft + c.clientWidth - 60) c.scrollLeft = px - c.clientWidth / 2;
+    if (py < c.scrollTop + 40 || py > c.scrollTop + c.clientHeight - 40) c.scrollTop = py - c.clientHeight / 2;
+  },
+  split() {
+    this.joinCount = 0;
+    const [x, y] = this.center('G_split');
+    this.hideTok('main'); this.place('a', null, x, y); this.place('b', null, x, y);
+    appendLog('INFO', 'process', 'parallel gateway: split into 2');
+  },
+  join(id) {
+    this.joinCount++;
+    this.hideTok(id);
+    if (this.joinCount === 1) { this.setNode('G_join', 'active'); appendLog('INFO', 'process', 'parallel gateway: waiting for second branch (1/2)'); }
+    else { this.place('main', 'G_join'); }
+  },
+  attempt() { this.attempts++; appendLog('INFO', 'payment', `authorization request sent (attempt ${this.attempts}/${this.MAX_ATTEMPTS})`); },
+  setPhase(ph, text) {
+    this.phase = ph;
+    $('#bp-run').disabled = !(ph === 'idle' || ph === 'done');
+    $('#bp-run').textContent = ph === 'done' ? 'Запустить ещё раз' : 'Запустить процесс';
+    $('#bp-status').innerHTML = 'Состояние: <b>' + esc(text || { idle: 'не запущен', running: 'выполняется', pay: 'ждёт выбора способа оплаты', result: 'ждёт результат авторизации', retry: 'платёж отклонён', waiting: 'ожидание оплаты по счёту', done: 'завершён' }[ph]) + '</b>';
+    $('.tab[data-tab="bpmn"]').classList.toggle('running', ph !== 'idle' && ph !== 'done');
+  },
+  modal(title, text, buttons) {
+    $('#bp-modal-h').textContent = title; $('#bp-modal-p').textContent = text;
+    const box = $('#bp-modal-b'); box.innerHTML = '';
+    buttons.forEach(([label, cls, fn, dis]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + cls; b.textContent = label; b.disabled = !!dis; b.onclick = fn; box.appendChild(b); });
+    $('#bp-modal').hidden = false;
+    const f = box.querySelector('button:not(:disabled)'); if (f) f.focus({ preventScroll: true });
+  },
+  closeModal() { $('#bp-modal').hidden = true; },
+  choose(kind) {
+    if (kind === 'pay') {
+      this.setPhase('pay');
+      TIP.auto('bp-G_pay');
+      this.modal('Выберите способ оплаты', 'Шлюз XOR «Способ оплаты» пропустит токен ровно по одной ветке.', [
+        ['Оплатить картой', 'primary', () => this.go('card')], ['Оплатить по счёту', 'primary', () => this.go('invoice')]]);
+    } else if (kind === 'result') {
+      this.setPhase('result');
+      this.modal('Результат авторизации', `Платёжная система ответила на запрос (попытка ${this.attempts} из ${this.MAX_ATTEMPTS}). Какой результат пришёл?`, [
+        ['Платёж успешен', 'ok', () => this.go('ok')], ['Платёж отклонён', 'danger', () => this.go('decline')]]);
+    } else if (kind === 'retry') {
+      this.setPhase('retry');
+      const left = this.MAX_ATTEMPTS - this.attempts;
+      this.modal('Платёж отклонён', left > 0 ? `Осталось попыток: ${left}. Повторить оплату или отменить заказ?` : `Лимит попыток исчерпан (${this.MAX_ATTEMPTS} из ${this.MAX_ATTEMPTS}). Заказ можно только отменить.`, [
+        ['Повторить оплату', 'primary', () => this.decide('retry'), left <= 0], ['Отменить заказ', 'danger', () => this.decide('cancel')]]);
+      if (left <= 0) appendLog('WARN', 'process', 'retry limit reached');
+    }
+  },
+  go(branch) {
+    this.closeModal(); this.setPhase('running');
+    const seq = { card: this.seqCard(), invoice: this.seqInvoice(), ok: this.seqOk(), decline: this.seqDecline() }[branch];
+    runSequence(this.engine, seq);
+  },
+  decide(what) {
+    if (this.phase !== 'retry') return;
+    if (what === 'retry' && this.attempts >= this.MAX_ATTEMPTS) return;
+    this.closeModal(); this.setPhase('running');
+    runSequence(this.engine, what === 'retry' ? this.seqRetry() : this.seqCancelCard());
+  },
+  waitPayment() {
+    this.setPhase('waiting');
+    $('#bp-TM').classList.add('armed');
+    const ring = $('#bp-ring'), cnt = $('#bp-count'), C = 2 * Math.PI * 21;
+    ring.style.opacity = 1; ring.style.strokeDasharray = C; cnt.setAttribute('visibility', 'visible');
+    this.engine.animate(2000, k => {
+      ring.style.strokeDashoffset = C * k;
+      cnt.textContent = `⏱ ${((1 - k) * 2).toFixed(1).replace('.', ',')} с · ускорено: 24 ч = 2 с`;
+    }, 'timer');
+    this.engine.after(2000, () => runSequence(this.engine, this.seqTimeout()), 'timer');
+  },
+  hideCountdown() { $('#bp-ring').style.opacity = 0; $('#bp-count').setAttribute('visibility', 'hidden'); $('#bp-TM').classList.remove('armed'); },
+  confirm() {
+    if (this.phase !== 'waiting') return;
+    this.engine.cancel('timer'); this.hideCountdown();
+    this.setPhase('running');
+    runSequence(this.engine, this.seqConfirm());
+  },
+  timerFire() { this.hideCountdown(); $('#bp-TM').classList.add('fired'); },
+  complete(outcome) {
+    this.setPhase('done', { paid: 'заказ завершён', cancelled: 'заказ отменён', timeout: 'заказ отменён по таймеру' }[outcome]);
+    if (outcome === 'paid') { unlock('bp-knot'); unlock(this.paidBy === 'card' ? 'bp-card' : 'bp-invoice'); }
+    if (outcome === 'timeout') unlock('bp-timeout');
+  },
+  start() {
+    if (!(this.phase === 'idle' || this.phase === 'done')) return;
+    if (this.phase === 'done') this.clearVisual();
+    this.attempts = 0; this.paidBy = null;
+    this.setPhase('running');
+    runSequence(this.engine, this.seqStart());
+  },
+
+  T(id, ms, ...logs) { return [{ action: 'enter', id }, ...logs, { t: ms, action: 'leave', id }]; },
+  L(level, comp, text) { return { action: 'log', level, comp, text }; },
+  seqStart() {
+    const { T, L } = this;
+    return [
+      { action: 'place', node: 'E0' }, { action: 'enter', id: 'E0' },
+      L('INFO', 'process', 'order received'), { action: 'ach', id: 'bp-first' },
+      { t: 250, action: 'leave', id: 'E0' }, { action: 'move', path: 'f0' },
+      ...T.call(this, 'T_order', 300), { action: 'move', path: 'f1' },
+      ...T.call(this, 'T_recv', 300), { action: 'move', path: 'f2' },
+      ...T.call(this, 'T_valid', 350, L('INFO', 'process', 'validation completed')), { action: 'move', path: 'f3' },
+      ...T.call(this, 'T_stock', 350, L('INFO', 'inventory', 'stock available: SKU-77 × 1')), { action: 'move', path: 'f4' },
+      { action: 'enter', id: 'G_pay' }, L('INFO', 'process', 'token entered gateway XOR'),
+      { action: 'choose', kind: 'pay' }
+    ];
+  },
+  seqRequest() {
+    const L = this.L;
+    return [
+      { action: 'enter', id: 'T_preq' }, { action: 'attempt' }, { t: 300, action: 'leave', id: 'T_preq' },
+      { action: 'par', branches: [
+        [{ action: 'move', path: 'f_preq_catch' }, { action: 'enter', id: 'E_catch' }],
+        [{ action: 'msg', path: 'mf1' }, { action: 'place', tok: 'p2', node: 'E_p2start' }, { action: 'enter', id: 'E_p2start' },
+         { t: 150, action: 'leave', id: 'E_p2start' }, { action: 'move', tok: 'p2', path: 'f_p2a' },
+         { action: 'enter', id: 'T_auth' }, L('INFO', 'payment-system', 'authorization processing'), { t: 500, action: 'leave', id: 'T_auth' },
+         { action: 'move', tok: 'p2', path: 'f_p2b' }, { action: 'enter', id: 'E_p2end' }, { t: 150, action: 'hideTok', tok: 'p2' }, { action: 'leave', id: 'E_p2end' }]
+      ] },
+      { action: 'msg', path: 'mf2' }, L('INFO', 'payment', 'authorization response received'),
+      { action: 'leave', id: 'E_catch' }, { action: 'move', path: 'f_catch_ok' },
+      { action: 'enter', id: 'G_ok' }, L('INFO', 'process', 'token entered gateway XOR «Платёж успешен?»'),
+      { action: 'choose', kind: 'result' }
+    ];
+  },
+  seqCard() {
+    return [this.L('INFO', 'process', 'condition: payment_type=card'), { action: 'leave', id: 'G_pay' }, { action: 'move', path: 'f_card' }, ...this.seqRequest()];
+  },
+  seqOk() {
+    const L = this.L;
+    return [
+      L('INFO', 'payment', 'payment authorized'), { action: 'leave', id: 'G_ok' }, { action: 'move', path: 'f_ok' },
+      ...this.T('T_cardpaid', 400, L('INFO', 'process', 'payment recorded: authorized (capture — отдельный шаг, вне демо)')),
+      { action: 'paidBy', via: 'card' }, { action: 'move', path: 'f_card_merge' }, ...this.seqCommon()
+    ];
+  },
+  seqDecline() {
+    const L = this.L;
+    return [
+      L('WARN', 'payment', 'authorization declined'), { action: 'leave', id: 'G_ok' }, { action: 'move', path: 'f_rej' },
+      { action: 'enter', id: 'T_reject' }, { action: 'call', fn: () => appendLog('ERROR', 'process', `payment declined: insufficient funds (attempt ${this.attempts}/${this.MAX_ATTEMPTS})`) },
+      { t: 400, action: 'leave', id: 'T_reject' }, { action: 'move', path: 'f_rg' },
+      { action: 'enter', id: 'G_retry' }, { action: 'choose', kind: 'retry' }
+    ];
+  },
+  seqRetry() {
+    return [this.L('INFO', 'process', 'payment retry requested'), { action: 'leave', id: 'G_retry' }, { action: 'move', path: 'f_retry' }, ...this.seqRequest()];
+  },
+  seqCancelCard() {
+    return [
+      this.L('INFO', 'process', 'order cancellation requested'), { action: 'cancelMark', ids: ['T_reject', 'G_retry'], flows: ['f_rej', 'f_rg'] },
+      { action: 'move', path: 'f_cancel1' }, { action: 'enter', id: 'E_cancel' }, { t: 200, action: 'cancelMark', ids: ['E_cancel'], flows: ['f_cancel1'] },
+      this.L('INFO', 'process', 'order cancelled'), { action: 'complete', outcome: 'cancelled' }
+    ];
+  },
+  seqInvoice() {
+    const L = this.L;
+    return [
+      L('INFO', 'process', 'condition: payment_type=invoice'), { action: 'leave', id: 'G_pay' }, { action: 'move', path: 'f_inv' },
+      ...this.T('T_invgen', 400, L('INFO', 'process', 'invoice generated')), { action: 'move', path: 'f_i2' },
+      ...this.T('T_invsend', 400, L('INFO', 'process', 'invoice sent to customer')), { action: 'move', path: 'f_i3' },
+      { action: 'enter', id: 'T_wait' }, L('WARN', 'timer', 'waiting 24h for payment confirmation'),
+      { action: 'waitPayment' }
+    ];
+  },
+  seqConfirm() {
+    const L = this.L;
+    return [
+      L('INFO', 'process', 'payment confirmation received, boundary timer cancelled'), { action: 'leave', id: 'T_wait' }, { action: 'move', path: 'f_conf' },
+      ...this.T('T_invpaid', 400, L('INFO', 'process', 'invoice payment recorded')),
+      { action: 'paidBy', via: 'invoice' }, { action: 'move', path: 'f_inv_merge' }, ...this.seqCommon()
+    ];
+  },
+  seqTimeout() {
+    const L = this.L;
+    return [
+      { action: 'timerFire' }, L('WARN', 'process', 'payment timeout'), L('WARN', 'process', 'escalation triggered'),
+      { action: 'cancelMark', ids: ['T_wait'] }, { action: 'place', x: 1042, y: 198 },
+      { action: 'move', path: 'f_timeout' }, { action: 'enter', id: 'T_cancel' }, L('INFO', 'process', 'task "Cancel order" started'),
+      { t: 400, action: 'cancelMark', ids: ['T_cancel'], flows: ['f_timeout'] }, { action: 'move', path: 'f_c2' },
+      { action: 'enter', id: 'E_cancel' }, { t: 200, action: 'cancelMark', ids: ['E_cancel'], flows: ['f_c2'] },
+      L('INFO', 'process', 'order cancelled'), { action: 'complete', outcome: 'timeout' }
+    ];
+  },
+  seqCommon() {
+    const L = this.L;
+    return [
+      { action: 'enter', id: 'G_merge' }, { t: 200, action: 'leave', id: 'G_merge' }, { action: 'move', path: 'f_m1' },
+      ...this.T('T_paid', 350, L('INFO', 'process', 'order status changed to PAID')), { action: 'move', path: 'f_m2' },
+      { action: 'enter', id: 'G_split' }, { action: 'call', fn: () => TIP.auto('bp-G_split') }, { t: 250, action: 'split' }, { action: 'leave', id: 'G_split' },
+      { action: 'par', branches: [
+        [{ action: 'move', tok: 'a', path: 'f_s1', k: 1.15 }, ...this.T('T_notify', 300, L('INFO', 'notification', 'customer notified')), { action: 'move', tok: 'a', path: 'f_j1', k: 1.15 }, { action: 'join', tok: 'a' }],
+        [{ action: 'move', tok: 'b', path: 'f_s2', k: .85 }, ...this.T('T_crm', 650, L('INFO', 'crm', 'order saved to CRM')), { action: 'move', tok: 'b', path: 'f_j2', k: .85 }, { action: 'join', tok: 'b' }]
+      ] },
+      L('INFO', 'process', 'parallel gateway: join completed'), { t: 200, action: 'leave', id: 'G_join' }, { action: 'move', path: 'f_end' },
+      { action: 'enter', id: 'E_done' }, { t: 250, action: 'leave', id: 'E_done' },
+      L('SUCCESS', 'process', 'order completed'), { action: 'complete', outcome: 'paid' }
+    ];
+  },
+  clearVisual() {
+    $$('#bp-svg .bn').forEach(n => n.classList.remove('active', 'completed', 'cancelled', 'pulse', 'armed', 'fired'));
+    $$('#bp-svg .flow').forEach(f => f.classList.remove('live', 'done', 'cancelled'));
+    for (const id in this.tokens) this.hideTok(id);
+    this.envTok.setAttribute('visibility', 'hidden');
+    this.hideCountdown(); this.closeModal();
+  },
+  resetView(first) {
+    this.clearVisual();
+    this.attempts = 0; this.paidBy = null; this.joinCount = 0;
+    this.place('main', 'E0');
+    this.setPhase('idle');
+    if (!first) { this.stage.scrollLeft = 0; this.stage.scrollTop = 0; }
+  }
+};
+
+/* =====================================================================
+   СТРАНИЦА: Kafka
+   ===================================================================== */
+function murmur2(str) {
+  const d = new TextEncoder().encode(str);
+  const len = d.length, m = 0x5bd1e995;
+  let h = (0x9747b28c ^ len) | 0;
+  const l4 = len & ~3;
+  for (let i = 0; i < l4; i += 4) {
+    let k = (d[i] & 0xff) | ((d[i + 1] & 0xff) << 8) | ((d[i + 2] & 0xff) << 16) | ((d[i + 3] & 0xff) << 24);
+    k = Math.imul(k, m); k ^= k >>> 24; k = Math.imul(k, m);
+    h = Math.imul(h, m); h ^= k;
+  }
+  switch (len % 4) {
+    case 3: h ^= (d[l4 + 2] & 0xff) << 16;
+    case 2: h ^= (d[l4 + 1] & 0xff) << 8;
+    case 1: h ^= d[l4] & 0xff; h = Math.imul(h, m);
+  }
+  h ^= h >>> 13; h = Math.imul(h, m); h ^= h >>> 15;
+  return h | 0;
+}
+const EMPLOYEES = [['EMP-00128', 'Иван Петров'], ['EMP-00135', 'Алексей Сидоров'], ['EMP-00142', 'Мария Кузнецова'], ['EMP-00151', 'Ольга Смирнова'], ['EMP-00163', 'Дмитрий Волков'],
+  ['EMP-00177', 'Екатерина Новикова'], ['EMP-00184', 'Сергей Морозов'], ['EMP-00190', 'Анна Лебедева'], ['EMP-00203', 'Павел Соколов'], ['EMP-00215', 'Наталья Козлова']];
+const CITIES = ['Казань', 'Екатеринбург', 'Новосибирск', 'Самара', 'Нижний Новгород', 'Санкт-Петербург', 'Пермь', 'Уфа', 'Тольятти', 'Краснодар'];
+const isoDate = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const isoNow = () => { const d = new Date(); return `${isoDate(d)}T${hhmmss(d)}`; };
+const rid = n => 'TR-2026-' + String(n).padStart(6, '0');
+
+const KAFKA = {
+  engine: new ScenarioEngine('kafka'),
+  PROCESS_MS: 700, COMMIT_MS: 250, RETRY_MS: 600, HEARTBEAT_MS: 3000, REBALANCE_MS: 1200, MAX_ATTEMPTS: 3,
+  init() {
+    this.host = $('#kf-stage');
+    $('#kf-send').onclick = () => this.sendForm();
+    $('#kf-batch').onclick = () => this.batch();
+    $('#kf-poison').onclick = () => this.poison();
+    $('#kf-stop').onclick = () => this.stopConsumer(2);
+    $('#kf-restore').onclick = () => this.restoreConsumer(2);
+    $$('#kf-scale button').forEach(b => b.onclick = () => this.scale(+b.dataset.n));
+    $('#kf-cons').innerHTML = [0, 1, 2, 3].map(i => `<div class="kf-cons" id="kf-c${i}"><div class="top"><span class="st-dot"></span><b>consumer-${i}</b><span class="stt" id="kf-cst${i}">RUNNING</span></div><div class="meta" id="kf-cas${i}"></div><div class="meta" id="kf-cpr${i}"></div><div class="lag" data-tip="Lag = End Offset − Committed Offset. Растёт, когда consumer не успевает"><div class="lag-bar"><i id="kf-clb${i}"></i></div><span class="lag-n" id="kf-cln${i}">lag 0</span></div><div class="act" id="kf-cact${i}"></div></div>`).join('');
+    $('#kf-cells0').parentElement.parentElement.parentElement.addEventListener('click', e => {
+      const c = e.target.closest('.kf-cell[data-p]'); if (!c) return;
+      this.sel = { p: +c.dataset.p, o: +c.dataset.o }; this.render();
+    });
+    this.engine.onReplay = () => this.resetView();
+    this.resetView(true);
+  },
+  resetView(first) {
+    $$('.fly-layer > *', this.host).forEach(n => n.remove());
+    this.parts = [[], [], []];
+    this.committed = [0, 0, 0];
+    this.consumers = [0, 1, 2].map(i => this.mkCons(i));
+    this.group = 'STABLE'; this.gen = 1;
+    this.rangeAssign();
+    this.dlq = []; this.failed = 0; this.nextSingle = 1042; this.sel = null; this.batchBusy = false; this.lastCalc = null;
+    $('#kf-journal').innerHTML = '';
+    $('#kf-pcalc').textContent = 'ожидает сообщение';
+    $('#kf-calc-detail').textContent = 'Отправьте сообщение, и здесь появится расчёт для его ключа.';
+    $('#kf-detail').innerHTML = '<span class="dim" style="font-size:13px">Нажмите на сообщение в партиции, чтобы увидеть JSON, ключ, offset и статус.</span>';
+    this.render();
+  },
+  mkCons(i) { return { id: i, status: 'RUNNING', assigned: [], processed: 0, busy: null, rr: 0 }; },
+  rangeAssign() {
+    const act = this.consumers.filter(c => c.status !== 'STOPPED');
+    this.consumers.forEach(c => { c.assigned = []; });
+    const n = act.length; if (!n) return;
+    const per = Math.floor(3 / n), extra = 3 % n; let idx = 0;
+    act.forEach((c, i) => { const k = per + (i < extra ? 1 : 0); for (let j = 0; j < k; j++) c.assigned.push(idx++); });
+  },
+  owner(p) { return this.consumers.find(c => c.assigned.includes(p)); },
+  lag(p) { return this.parts[p].length - this.committed[p]; },
+  stage(name) { $$('.kf-pipe li[data-stage]').forEach(li => li.classList.toggle('on', li.dataset.stage === name)); clearTimeout(this._stT); this._stT = setTimeout(() => $$('.kf-pipe li').forEach(li => li.classList.remove('on')), 700); },
+  journal(m, consumer, action, result, cls = '', offset) {
+    const tr = document.createElement('tr');
+    const cells = [hhmmss(), m ? m.id : '—', m ? 'P' + m.part : '—', 'Offset ' + (offset != null ? offset : m ? m.off : '—'), consumer || '—', action, result || ''];
+    tr.innerHTML = cells.map((c, i) => `<td${i === 6 && cls ? ` class="r-${cls}"` : ''}>${esc(c)}</td>`).join('');
+    const tb = $('#kf-journal'); tb.appendChild(tr);
+    while (tb.childElementCount > 400) tb.firstElementChild.remove();
+    const w = $('#kf-journal-wrap'); w.scrollTop = w.scrollHeight;
+  },
+  genPayload(n, i, opts = {}) {
+    const e = EMPLOYEES[i % 10], parts = [{ employee_id: e[0], employee_name: e[1] }];
+    if (i % 3 === 0) { const e2 = EMPLOYEES[(i + 1) % 10]; parts.push({ employee_id: e2[0], employee_name: e2[1] }); }
+    const s = new Date(2026, 10, 16 + (i % 9)), en = new Date(2026, 10, 19 + (i % 9));
+    return { request_id: rid(n), employee_id: e[0], employee_name: e[1], participants: parts, destination: CITIES[(i + (opts.cityShift || 0)) % 10],
+      start_date: isoDate(s), end_date: isoDate(en), status: 'CREATED', created_at: isoNow() };
+  },
+  sendForm() {
+    const pl = this.genPayload(this.nextSingle, 0);
+    this.nextSingle++;
+    this.produce(pl);
+  },
+  produce(payload, opts = {}) {
+    const key = payload.request_id;
+    const h = murmur2(key), pos = h & 0x7fffffff, part = pos % 3;
+    const calc = { key, h, pos, part };
+    const from = opts.from === 'dlq' ? $('#kf-dlq') : $('#kf-hr');
+    this.stage('producer');
+    if (!opts.quiet) appendLog('INFO', 'producer', `send ${key} (key=request_id)`);
+    return flyBetween(this.engine, this.host, from, $('#kf-partitioner'), { dur: 380, size: opts.poison ? 13 : 11, color: opts.poison ? 'var(--red)' : undefined }).then(() => {
+      this.stage('partitioner');
+      const pn = $('#kf-partitioner'); pn.classList.add('flash'); setTimeout(() => pn.classList.remove('flash'), 400);
+      $('#kf-pcalc').innerHTML = `${esc(key)} → <b>P${part}</b>`;
+      this.lastCalc = calc; this.renderCalc();
+      const cells = $('#kf-cells' + part), target = cells.lastElementChild || cells;
+      return flyBetween(this.engine, this.host, pn, target, { dur: 420, size: opts.poison ? 13 : 11, color: opts.poison ? 'var(--red)' : undefined });
+    }).then(() => this.append(payload, part, opts));
+  },
+  append(payload, part, opts) {
+    const msg = { id: payload.request_id, key: payload.request_id, part, off: this.parts[part].length, payload, status: 'pending', attempts: 0, consumer: null,
+      poison: !!opts.poison, reason: opts.reason || null, replayed: !!opts.replayed, timesProcessed: 0 };
+    this.parts[part].push(msg);
+    this.stage('topic');
+    this.journal(msg, null, opts.replayed ? 'Message received (replay из DLQ)' : 'Message received', `end offset → ${msg.off + 1}`, 'dim');
+    if (!opts.quiet) appendLog('INFO', 'topic', `${msg.id} → P${part} offset ${msg.off}`);
+    unlock('kf-first');
+    this.render(true, part);
+    const c = this.owner(part); if (c) this.pump(c);
+    return msg;
+  },
+  batch() {
+    if (this.batchBusy) return;
+    this.batchBusy = true; this.render();
+    appendLog('INFO', 'producer', 'batch: TR-2026-001001 … TR-2026-001010');
+    let done = 0; const cnt = [0, 0, 0];
+    for (let i = 0; i < 10; i++) {
+      const pl = this.genPayload(1001 + i, i);
+      this.engine.after(i * 230, () => this.produce(pl, { quiet: true }).then(m => {
+        cnt[m.part]++;
+        if (++done === 10) {
+          this.batchBusy = false;
+          appendLog('SUCCESS', 'producer', `batch of 10 sent → P0: ${cnt[0]} · P1: ${cnt[1]} · P2: ${cnt[2]} (вычислено по murmur2)`);
+          unlock('kf-batch'); this.render();
+        }
+      }));
+    }
+  },
+  poison() {
+    const pl = { request_id: rid(1201 + this.dlqSeq()), employee_id: null, employee_name: 'Иван Петров', participants: [{ employee_id: null, employee_name: 'Иван Петров' }],
+      destination: 'Казань', start_date: '2026-11-14', end_date: '2026-11-10', status: 'CREATED', created_at: isoNow() };
+    appendLog('WARN', 'producer', `send ${pl.request_id}: некорректный запрос (нет employee_id, end_date < start_date)`);
+    this.produce(pl, { poison: true, reason: 'employee_id отсутствует; end_date 2026-11-10 раньше start_date 2026-11-14', quiet: true });
+  },
+  dlqSeq() { this._ps = (this._ps || 0) + 1; return this._ps - 1; },
+  pump(c) {
+    if (c.busy || c.status !== 'RUNNING' || this.group !== 'STABLE') return;
+    const cand = c.assigned.filter(p => this.committed[p] < this.parts[p].length);
+    if (!cand.length) { this.render(); return; }
+    const p = cand[c.rr++ % cand.length];
+    this.process(c, this.parts[p][this.committed[p]]);
+  },
+  process(c, msg) {
+    const dup = msg.timesProcessed > 0 && msg.status !== 'retrying';
+    c.busy = msg; msg.status = 'processing'; msg.consumer = 'consumer-' + c.id; msg.attempts++;
+    this.stage('consumer');
+    this.journal(msg, msg.consumer, 'Processing started', msg.attempts > 1 ? `попытка ${msg.attempts}/${this.MAX_ATTEMPTS}` : '', 'dim');
+    if (dup) {
+      appendLog('WARN', msg.consumer, `${msg.id} обрабатывается повторно: offset не был закоммичен (at-least-once) — нужен идемпотентный обработчик`);
+      this.journal(msg, msg.consumer, 'Duplicate delivery', 'at-least-once: нужна идемпотентность', 'warn');
+    }
+    this.render();
+    this.engine.after(this.PROCESS_MS, () => this.finish(c, msg), 'c' + c.id);
+  },
+  finish(c, msg) {
+    if (msg.poison) {
+      this.failed++;
+      this.journal(msg, msg.consumer, 'Processing failed', `${msg.reason} (попытка ${msg.attempts}/${this.MAX_ATTEMPTS})`, 'bad');
+      appendLog('ERROR', msg.consumer, `${msg.id}: validation failed, attempt ${msg.attempts}/${this.MAX_ATTEMPTS}`);
+      if (msg.attempts < this.MAX_ATTEMPTS) {
+        msg.status = 'retrying'; this.render();
+        this.journal(msg, msg.consumer, `Retry ${msg.attempts + 1}/${this.MAX_ATTEMPTS} scheduled`, `backoff ${this.RETRY_MS} мс`, 'warn');
+        this.engine.after(this.RETRY_MS, () => this.process(c, msg), 'c' + c.id);
+      } else {
+        msg.status = 'dlq';
+        this.dlq.push({ msg, reason: msg.reason, attempts: msg.attempts, at: hhmmss() });
+        this.journal(msg, msg.consumer, 'Moved to DLQ', 'hr.business-trip.requests.dlq', 'bad');
+        appendLog('WARN', 'dlq', `${msg.id} moved to hr.business-trip.requests.dlq after ${msg.attempts} attempts`);
+        TIP.auto('kf-dlq', 'DLQ — архитектурный паттерн, а не встроенная функция Kafka. Retry, публикация в DLQ и replay реализуются на уровне приложения');
+        this.render();
+        this.engine.after(this.COMMIT_MS, () => this.commit(c, msg), 'c' + c.id);
+      }
+      return;
+    }
+    msg.status = 'processed'; msg.timesProcessed++;
+    this.journal(msg, msg.consumer, 'Processing completed', 'OK', 'ok');
+    this.render();
+    this.engine.after(this.COMMIT_MS, () => this.commit(c, msg), 'c' + c.id);
+  },
+  commit(c, msg) {
+    this.committed[msg.part] = msg.off + 1;
+    if (msg.status === 'processed') c.processed++;
+    c.busy = null;
+    this.stage('commit');
+    this.journal(msg, 'consumer-' + c.id, 'Offset committed', `committed = ${msg.off + 1}`, 'ok', msg.off + 1);
+    if (msg.status === 'processed') appendLog('INFO', 'consumer-' + c.id, `${msg.id} processed, P${msg.part} committed=${msg.off + 1}`);
+    this.render(true, msg.part);
+    this.pump(c);
+  },
+  abortInflight(c, graceful) {
+    this.engine.cancel('c' + c.id);
+    const m = c.busy; if (!m) return;
+    if (m.status === 'processing' || m.status === 'retrying') { m.status = 'pending'; this.journal(m, 'consumer-' + c.id, 'Processing aborted', 'вернётся новому владельцу', 'warn'); }
+    else if (m.status === 'processed' || m.status === 'dlq') {
+      if (graceful) { this.committed[m.part] = m.off + 1; if (m.status === 'processed') c.processed++; this.journal(m, 'consumer-' + c.id, 'Offset committed', `при отзыве партиции, committed = ${m.off + 1}`, 'ok', m.off + 1); }
+      else this.journal(m, 'consumer-' + c.id, 'Commit lost', 'обработано, но offset не закоммичен', 'warn');
+    }
+    c.busy = null;
+  },
+  stopConsumer(i) {
+    const c = this.consumers[i];
+    if (!c || c.status === 'STOPPED' || this.group !== 'STABLE') return;
+    c.status = 'STOPPED'; this.abortInflight(c, false);
+    appendLog('ERROR', 'consumer-' + i, 'stopped: обработка и heartbeat прекращены');
+    this.journal(null, 'consumer-' + i, 'Consumer stopped', 'heartbeat не отправляется', 'bad');
+    TIP.auto('kf-c' + i, 'Lag = End Offset − Committed Offset. Растёт, когда consumer не успевает');
+    for (let j = 0; j < 14; j++) this.engine.after(150 + j * 190, () => this.produce(this.genPayload(1101 + j, j + 3, { cityShift: 2 }), { quiet: true }), 'traffic');
+    this.engine.after(this.HEARTBEAT_MS, () => {
+      appendLog('WARN', 'group', `consumer-${i}: heartbeat timeout (session.timeout.ms, ускорено до 3 с) → rebalance`);
+      this.rebalance(`consumer-${i} left the group`);
+    }, 'hb');
+    this.render();
+  },
+  restoreConsumer(i) {
+    const c = this.consumers[i];
+    if (!c || c.status !== 'STOPPED' || this.group !== 'STABLE') return;
+    c.status = 'RUNNING';
+    appendLog('INFO', 'consumer-' + i, 'restarted, joining group');
+    this.rebalance(`consumer-${i} joined the group`);
+  },
+  scale(n) {
+    if (this.group !== 'STABLE' || n === this.consumers.length) return;
+    if (n > this.consumers.length) { for (let i = this.consumers.length; i < n; i++) this.consumers.push(this.mkCons(i)); }
+    else { this.consumers.slice(n).forEach(c => this.abortInflight(c, true)); this.consumers.length = n; }
+    appendLog('INFO', 'group', `scale consumer group to ${n}`);
+    this.rebalance(`scale to ${n} consumers`);
+  },
+  rebalance(reason) {
+    this.engine.cancel('hb');
+    this.group = 'REBALANCING'; this.gen++;
+    const before = [0, 1, 2].map(p => { const o = this.owner(p); return o ? o.id : null; });
+    this.consumers.forEach(c => { if (c.status !== 'STOPPED') { this.abortInflight(c, true); c.status = 'REBALANCING'; } });
+    appendLog('WARN', 'group', `rebalance started (generation ${this.gen}): ${reason}`);
+    this.journal(null, '—', 'Rebalance started', reason, 'warn');
+    this.render();
+    this.engine.after(this.REBALANCE_MS, () => {
+      this.consumers.forEach(c => { if (c.status === 'REBALANCING') c.status = 'RUNNING'; });
+      this.rangeAssign(); this.group = 'STABLE';
+      const summary = this.consumers.map(c => `consumer-${c.id} ← ${c.assigned.length ? c.assigned.map(p => 'P' + p).join(',') : '—'}`).join('; ');
+      appendLog('INFO', 'group', `rebalance completed: ${summary}`);
+      [0, 1, 2].forEach(p => {
+        const o = this.owner(p);
+        const m = { id: '—', part: p, off: this.committed[p] };
+        this.journal(m, o ? 'consumer-' + o.id : '—', 'Partition assigned', `${before[p] !== (o ? o.id : null) ? 'новый владелец, ' : ''}чтение с offset ${this.committed[p]}`, 'dim', this.committed[p]);
+      });
+      unlock('kf-rebalance');
+      this.render();
+      this.consumers.forEach(c => this.pump(c));
+    }, 'rebalance');
+  },
+  renderCalc() {
+    const c = this.lastCalc; if (!c) return;
+    $('#kf-calc-detail').innerHTML = `Последнее сообщение: <code>murmur2("${esc(c.key)}") = ${c.h}</code>, <code>&amp; 0x7fffffff = ${c.pos}</code>, <code>${c.pos} % 3 = ${c.part}</code> → партиция <b>P${c.part}</b>.`;
+  },
+  render(scroll, part) {
+    for (let p = 0; p < 3; p++) {
+      const log = this.parts[p], cm = this.committed[p], o = this.owner(p);
+      const cells = log.map(m => `<button type="button" class="kf-cell st-${m.status}${m.off === cm ? ' cm' : ''}${this.sel && this.sel.p === p && this.sel.o === m.off ? ' sel' : ''}" data-p="${p}" data-o="${m.off}" title="${esc(m.id)} · offset ${m.off} · ${m.status}"><span class="o">${m.off}</span><span class="k">…${esc(m.id.slice(-4))}</span></button>`).join('')
+        + `<span class="kf-cell ghost${cm === log.length ? ' cm' : ''}"><span class="o">${log.length}</span><span class="k">end</span></span>`;
+      $('#kf-cells' + p).innerHTML = cells;
+      $('#kf-pm' + p).textContent = `end ${log.length} · committed ${cm} · lag ${log.length - cm}`;
+      const own = $('#kf-po' + p);
+      own.textContent = this.group === 'REBALANCING' ? 'rebalancing…' : o ? (o.status === 'STOPPED' ? `consumer-${o.id} (STOPPED)` : `consumer-${o.id}`) : 'нет владельца';
+      own.className = 'own' + ((!o || o.status === 'STOPPED') && this.group !== 'REBALANCING' ? ' none' : '');
+      if (scroll && part === p) { const w = $('#kf-cells' + p).parentElement; w.scrollLeft = w.scrollWidth; }
+    }
+    $('#kf-group-h').innerHTML = `<b>business-trip-processors</b> · <span class="${this.group === 'REBALANCING' ? 'rb' : ''}">${this.group}</span> · generation ${this.gen} · range assignor`;
+    for (let i = 0; i < 4; i++) {
+      const el = $('#kf-c' + i), c = this.consumers[i];
+      el.hidden = !c; if (!c) continue;
+      el.className = 'kf-cons s-' + c.status;
+      $('#kf-cst' + i).textContent = c.status;
+      $('#kf-cas' + i).innerHTML = 'партиции: <b>' + (c.assigned.length ? c.assigned.map(p => 'P' + p).join(', ') : 'нет назначения') + '</b>';
+      $('#kf-cpr' + i).innerHTML = `обработано: <b>${c.processed}</b>` + (c.assigned.length ? ' · committed: ' + c.assigned.map(p => `P${p}→<b>${this.committed[p]}</b>`).join(' ') : '');
+      const lag = c.assigned.reduce((s, p) => s + this.lag(p), 0);
+      $('#kf-clb' + i).style.width = Math.min(100, lag / 12 * 100) + '%';
+      $('#kf-cln' + i).textContent = 'lag ' + lag;
+      $('#kf-cact' + i).textContent = c.status === 'STOPPED' ? 'остановлен' : c.status === 'REBALANCING' ? 'ожидает назначения' : c.busy ? `${c.busy.status === 'processed' ? 'коммитит' : 'обрабатывает'} ${c.busy.id} (P${c.busy.part}, offset ${c.busy.off})` : c.assigned.length ? 'ожидает сообщений' : 'нет партиций — простаивает';
+    }
+    $$('#kf-scale button').forEach(b => { b.setAttribute('aria-pressed', String(+b.dataset.n === this.consumers.length)); b.disabled = this.group !== 'STABLE'; });
+    const c2 = this.consumers[2];
+    $('#kf-stop').disabled = !(c2 && c2.status !== 'STOPPED' && this.group === 'STABLE');
+    $('#kf-restore').disabled = !(c2 && c2.status === 'STOPPED' && this.group === 'STABLE');
+    $('#kf-batch').disabled = this.batchBusy;
+    const all = this.parts.flat();
+    const processed = all.filter(m => m.status === 'processed').length;
+    const lagSum = [0, 1, 2].reduce((s, p) => s + this.lag(p), 0);
+    const st = [['Total Messages', all.length, ''], ['Processed', processed, 'ok'], ['Pending', lagSum, lagSum ? 'warn' : ''], ['Failed', this.failed, this.failed ? 'bad' : ''], ['DLQ', this.dlq.length, this.dlq.length ? 'bad' : ''], ['Consumer Lag', lagSum, lagSum ? 'warn' : ''],
+      ['P0', this.parts[0].length, ''], ['P1', this.parts[1].length, ''], ['P2', this.parts[2].length, '']];
+    $('#kf-mon').innerHTML = st.map(([n, v, c]) => `<div class="kf-stat ${c}"><b>${v}</b><span>${n}</span></div>`).join('');
+    if (this.sel) {
+      const m = this.parts[this.sel.p][this.sel.o];
+      if (m) $('#kf-detail').innerHTML = `<dl class="kv2"><dt>Key</dt><dd>${esc(m.key)}</dd><dt>Partition</dt><dd>P${m.part}</dd><dt>Offset</dt><dd>${m.off}</dd><dt>Статус</dt><dd>${m.status}${m.replayed ? ' (replay из DLQ)' : ''}</dd><dt>Consumer</dt><dd>${m.consumer || '—'}</dd><dt>Попыток</dt><dd>${m.attempts}</dd><dt>Участники</dt><dd>${m.payload.participants.map(x => esc((x.employee_id || 'employee_id: null') + ' — ' + x.employee_name)).join('<br>')}</dd>${m.reason ? `<dt>Ошибка</dt><dd style="color:var(--red)">${esc(m.reason)}</dd>` : ''}</dl><pre>${esc(JSON.stringify(m.payload, null, 2))}</pre>`;
+    }
+  }
+};
+
+/* =====================================================================
+   СТРАНИЦА: UML Sequence
+   ===================================================================== */
+const call  = (f, t, l) => ({ m: 'sync', f, t, l });
+const ret   = (f, t, l) => ({ m: 'return', f, t, l });
+const asyn  = (f, t, l) => ({ m: 'async', f, t, l });
+const self_ = (p, l)    => ({ m: 'self', f: p, t: p, l });
+const UML_PARTICIPANTS = [
+  { id: 'user', name: 'User', actor: true },
+  { id: 'browser', name: 'Browser' },
+  { id: 'bff', name: 'Web Application', sub: '(BFF)' },
+  { id: 'idp', name: 'Identity Provider' },
+  { id: 'store', name: 'User Store' },
+  { id: 'api', name: 'Resource Server', sub: '(API)' }
+];
+const LOGIN_FLOW = () => [
+  asyn('user', 'browser', 'нажимает «Войти»'),
+  call('browser', 'bff', 'GET /login'),
+  self_('bff', 'создать state, nonce, code_verifier (PKCE)'),
+  ret('bff', 'browser', '302 → IdP /authorize?state&code_challenge'),
+  call('browser', 'idp', 'GET /authorize?client_id&state&code_challenge'),
+  ret('idp', 'browser', '200 форма входа'),
+  asyn('user', 'browser', 'вводит логин и пароль'),
+  call('browser', 'idp', 'POST /login'),
+  call('idp', 'store', 'проверить учётные данные'),
+  ret('store', 'idp', 'OK, mfa_enabled'),
+  { frag: 'opt', cond: '[MFA required]', when: c => c.mfa, items: [
+    ret('idp', 'browser', '200 форма одноразового кода'),
+    asyn('user', 'browser', 'вводит код из приложения'),
+    call('browser', 'idp', 'POST /mfa/verify'),
+    call('idp', 'store', 'проверить TOTP-код'),
+    ret('store', 'idp', 'код верный')
+  ] },
+  ret('idp', 'browser', '302 → /callback?code&state'),
+  call('browser', 'bff', 'GET /callback?code&state'),
+  { frag: 'alt', branches: [
+    { cond: '[state matches]', when: c => c.state === 'match', items: [
+      call('bff', 'idp', 'POST /token (code + code_verifier)'),
+      self_('idp', 'проверить code_verifier'),
+      ret('idp', 'bff', 'id_token, access_token, refresh_token'),
+      self_('bff', 'проверить подпись id_token, создать сессию'),
+      ret('bff', 'browser', '302 / + Set-Cookie: session (HttpOnly)'),
+      asyn('browser', 'user', 'показывает личный кабинет')
+    ] },
+    { cond: '[state mismatch]', when: c => c.state !== 'match', items: [
+      ret('bff', 'browser', '400 invalid_state, сессия не создана'),
+      asyn('browser', 'user', 'показывает ошибку входа')
+    ] }
+  ] }
+];
+const API_FLOW = () => [
+  asyn('user', 'browser', 'открывает раздел «Командировки»'),
+  { frag: 'loop', cond: '[для страниц 1…3]', times: 3, items: [
+    call('browser', 'bff', 'GET /api/trips?page={i}'),
+    call('bff', 'api', 'GET /v1/trips?page={i} (Bearer)'),
+    { frag: 'alt', branches: [
+      { cond: '[access_token действителен]', when: (c, i) => i !== 2, items: [
+        self_('api', 'проверить JWT по JWKS'),
+        ret('api', 'bff', '200 trips, страница {i}')
+      ] },
+      { cond: '[access_token истёк]', when: (c, i) => i === 2, items: [
+        ret('api', 'bff', '401 token_expired'),
+        call('bff', 'idp', 'POST /token (refresh_token)'),
+        call('idp', 'store', 'проверить, что учётная запись активна'),
+        ret('store', 'idp', 'active'),
+        ret('idp', 'bff', 'новый access_token'),
+        call('bff', 'api', 'повтор GET /v1/trips?page={i}'),
+        ret('api', 'bff', '200 trips, страница {i}')
+      ] }
+    ] },
+    ret('bff', 'browser', '200 JSON')
+  ] },
+  asyn('browser', 'user', 'показывает список командировок')
+];
+const UML_SCENARIOS = {
+  'login-mfa':   { title: 'OIDC-вход: Authorization Code + PKCE, MFA включена', sub: 'opt [MFA required] выполняется · alt → [state matches]', c: { mfa: true, state: 'match' }, items: LOGIN_FLOW },
+  'login-plain': { title: 'OIDC-вход без MFA', sub: 'opt пропускается · alt → [state matches]', c: { mfa: false, state: 'match' }, items: LOGIN_FLOW },
+  'login-csrf':  { title: 'OIDC-вход: подменённый state (защита от CSRF)', sub: 'alt → [state mismatch]', c: { mfa: false, state: 'mismatch' }, items: LOGIN_FLOW },
+  'api-refresh': { title: 'Запросы к API с обновлением access_token', sub: 'loop × 3, во 2-й итерации alt → [access_token истёк]', c: {}, items: API_FLOW }
+};
+
+const UML = {
+  engine: new ScenarioEngine('uml'),
+  PX0: 110, PDX: 200, HEAD: 86, z: 1, fit: false,
+  init() {
+    this.scroll = $('#uml-scroll'); this.head = $('#uml-head'); this.body = $('#uml-body');
+    this.idx = {}; UML_PARTICIPANTS.forEach((p, i) => { this.idx[p.id] = i; });
+    $('#uml-scn').innerHTML = Object.entries(UML_SCENARIOS).map(([k, s]) => `<option value="${k}">${esc(s.title)}</option>`).join('');
+    $('#uml-scn').onchange = () => this.load($('#uml-scn').value);
+    $('#uml-play').onclick = () => this.play();
+    $('#uml-pause').onclick = () => this.pause();
+    $('#uml-step').onclick = () => this.stepOnce();
+    $('#uml-replay').onclick = () => { this.load(this.key); this.play(); };
+    $$('#uml-speed button').forEach(b => b.onclick = () => {
+      this.engine.setSpeed(+b.dataset.v);
+      $$('#uml-speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    });
+    $$('#uml-zoom button').forEach(b => b.onclick = () => {
+      const v = b.dataset.z;
+      if (v === 'fit') { this.fit = true; this.fitZoom(); }
+      else { this.fit = false; this.z = Math.min(2, Math.max(.4, this.z + (v === 'in' ? .15 : -.15))); this.applyZoom(); }
+    });
+    window.addEventListener('resize', () => { if (this.fit) this.fitZoom(); });
+    this.engine.onState = e => this.ui();
+    this.engine.onReplay = () => this.load(this.key);
+    this.load('login-mfa');
+  },
+  px(id) { return this.PX0 + this.idx[id] * this.PDX; },
+  sub(l, i) { return l.replace(/\{i\}/g, i == null ? 'n' : i); },
+  wrap(text, avail) {
+    const max = Math.max(10, Math.floor(avail / 6.5)), lines = [];
+    const toks = [];
+    text.split(' ').forEach((w, i) => w.split(/(?=[?&])/).forEach((part, j) => toks.push({ t: part, sp: i > 0 && j === 0 })));
+    let cur = '';
+    for (const { t, sp } of toks) {
+      const cand = cur ? cur + (sp ? ' ' : '') + t : t;
+      if (cand.length > max && cur) { lines.push(cur); cur = t; } else cur = cand;
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  },
+  layout(items) {
+    let y = 26, n = 0; const frames = [], msgs = [];
+    const walk = (list, depth) => {
+      const box = { l: Infinity, r: -Infinity };
+      const grow = (l, r) => { box.l = Math.min(box.l, l); box.r = Math.max(box.r, r); };
+      for (const it of list) {
+        if (it.m) {
+          it.n = ++n; msgs.push(it);
+          const x1 = this.px(it.f), x2 = this.px(it.t);
+          if (it.m === 'self') {
+            it.lines = this.wrap(`${it.n}. ${it.l}`, 150);
+            it.y = y + 14;
+            y = it.y + Math.max(24, it.lines.length * 14) + 18;
+            const w = Math.max(...it.lines.map(s => s.length)) * 6.5;
+            grow(x1 - 40, x1 + 52 + w + 12);
+          } else {
+            it.lines = this.wrap(`${it.n}. ${it.l}`, Math.abs(x2 - x1) - 26);
+            it.y = y + it.lines.length * 14 + 8;
+            y = it.y + 16;
+            grow(Math.min(x1, x2) - 40, Math.max(x1, x2) + 40);
+          }
+        } else {
+          const fr = { type: it.frag, depth, y0: y, it, branches: [] };
+          it.fr = fr; frames.push(fr);
+          y += 30;
+          const inner = { l: Infinity, r: -Infinity };
+          const add = b => { inner.l = Math.min(inner.l, b.l); inner.r = Math.max(inner.r, b.r); };
+          if (it.frag === 'alt') {
+            it.branches.forEach((b, k) => {
+              if (k > 0) { b.sepY = y; y += 26; }
+              b.y0 = k ? b.sepY : fr.y0; add(walk(b.items, depth + 1)); b.y1 = y; fr.branches.push(b);
+            });
+          } else add(walk(it.items, depth + 1));
+          y += 12; fr.y1 = y; y += 12;
+          fr.x0 = inner.l - 14; fr.x1 = inner.r + 14;
+          grow(fr.x0, fr.x1);
+        }
+      }
+      return box;
+    };
+    const box = walk(items, 0);
+    this.W = Math.max(this.PX0 + (UML_PARTICIPANTS.length - 1) * this.PDX + 110, box.r + 20);
+    this.H = y + 30; this.frames = frames; this.msgs = msgs;
+  },
+  compile(items, c) {
+    const out = [];
+    const walk = (list, iter) => {
+      for (const it of list) {
+        if (it.m) out.push({ kind: 'msg', it, iter, logical: true });
+        else if (it.frag === 'opt') {
+          const on = !!it.when(c, iter);
+          out.push({ kind: 'enter', fr: it.fr, choice: on ? 0 : -1, iter, logical: true });
+          if (on) walk(it.items, iter);
+          out.push({ kind: 'exit', fr: it.fr, logical: false });
+        } else if (it.frag === 'alt') {
+          const k = it.branches.findIndex(b => b.when(c, iter));
+          out.push({ kind: 'enter', fr: it.fr, choice: k, iter, logical: true });
+          if (k >= 0) walk(it.branches[k].items, iter);
+          out.push({ kind: 'exit', fr: it.fr, logical: false });
+        } else if (it.frag === 'loop') {
+          for (let i = 1; i <= it.times; i++) {
+            out.push({ kind: 'iter', fr: it.fr, i, logical: true });
+            walk(it.items, i);
+          }
+          out.push({ kind: 'exit', fr: it.fr, logical: false });
+        }
+      }
+    };
+    walk(items, null);
+    return out;
+  },
+  load(key) {
+    this.engine.reset();
+    this.key = key; $('#uml-scn').value = key;
+    const s = UML_SCENARIOS[key];
+    this.scn = s; this.items = s.items();
+    this.layout(this.items);
+    this.steps = this.compile(this.items, s.c);
+    this.total = this.steps.filter(x => x.logical).length;
+    this.pc = 0; this.done = 0; this.finished = false; this.acts = []; this.lastY = 0; this.msgEls = {}; this.frEls = new Map();
+    $('#uml-title').firstChild.nodeValue = s.title;
+    $('#uml-sub').textContent = s.sub;
+    this.renderStatic();
+    if (this.fit) this.fitZoom(); else this.applyZoom();
+    this.scroll.scrollTop = 0; this.scroll.scrollLeft = 0;
+    this.ui();
+  },
+  play() {
+    if (this.finished) { this.load(this.key); }
+    if (this.engine.paused) this.engine.resume();
+    if (!this.engine.busy) this.engine.after(0, () => this.next(), 'uml');
+    this.ui();
+  },
+  pause() { this.engine.pause(); this.ui(); },
+  stepOnce() {
+    if (this.finished) return;
+    this.engine.pause();
+    if (!this.engine.busy) this.engine.after(0, () => this.next(), 'uml');
+    this.engine.step(); this.ui();
+  },
+  next() {
+    while (this.pc < this.steps.length && !this.steps[this.pc].logical) this.exec(this.steps[this.pc++]);
+    if (this.pc >= this.steps.length) { this.finish(); return; }
+    const s = this.steps[this.pc++];
+    this.done++;
+    const p = this.exec(s) || Promise.resolve();
+    this.ui();
+    p.then(() => this.engine.after(s.kind === 'msg' ? 320 : 420, () => this.next(), 'uml'));
+  },
+  finish() {
+    if (this.finished) return;
+    const lastY = (this.lastY || 40) + 18;
+    this.acts.filter(a => a.y1 == null).forEach(a => { a.y1 = lastY; this.drawAct(a); });
+    this.updateLifelines();
+    this.finished = true;
+    appendLog('SUCCESS', 'uml', `сценарий завершён: ${this.scn.title}`);
+    this.ui();
+  },
+  ui() {
+    const e = this.engine, playing = e.busy && !e.paused;
+    $('#uml-ctr').textContent = `шаг ${this.done}/${this.total}`;
+    $('#uml-play').disabled = playing;
+    $('#uml-pause').disabled = !playing;
+    $('#uml-step').disabled = this.finished;
+    $('.tab[data-tab="uml"]').classList.toggle('running', playing);
+  },
+  top(p) { const a = this.acts.filter(x => x.p === p && x.y1 == null); return a.length ? a[a.length - 1] : null; },
+  depth(p) { const t = this.top(p); return t ? t.d : -1; },
+  openAct(p, y) { if (UML_PARTICIPANTS[this.idx[p]].actor) return null; const a = { p, d: this.depth(p) + 1, y0: y, y1: null }; this.acts.push(a); this.drawAct(a, y + 10); return a; },
+  closeAct(p, y) { const a = this.top(p); if (a) { a.y1 = y; this.drawAct(a); } },
+  edge(p, d, towardRight) { const x = this.px(p); if (UML_PARTICIPANTS[this.idx[p]].actor || d < 0) return x; return x + d * 6 + (towardRight ? 5 : -5); },
+  exec(s) {
+    if (s.kind === 'msg') return this.execMsg(s);
+    if (s.kind === 'enter') return this.enterFrag(s);
+    if (s.kind === 'iter') return this.iterFrag(s);
+    if (s.kind === 'exit') { const g = this.frEls.get(s.fr); if (g) g.g.classList.remove('active'); }
+  },
+  execMsg(s) {
+    const it = s.it, y = it.y, f = it.f, t = it.t;
+    this.lastY = Math.max(this.lastY || 0, y + (it.m === 'self' ? 22 : 0));
+    const label = it.lines.map(l => this.sub(l, s.iter));
+    if ((it.m === 'sync' || it.m === 'async') && this.depth(f) < 0) this.openAct(f, y - 6);
+    const right = this.px(t) >= this.px(f);
+    let x1, x2, d;
+    if (it.m === 'self') {
+      const dd = Math.max(0, this.depth(f));
+      x1 = this.px(f) + dd * 6 + 5; d = `M${x1} ${y} H${x1 + 40} V${y + 20} H${this.px(f) + (dd + 1) * 6 + 5}`;
+    } else {
+      x1 = this.edge(f, this.depth(f), right);
+      const dTo = it.m === 'return' ? this.depth(t) : it.m === 'sync' ? this.depth(t) + 1 : Math.max(0, this.depth(t));
+      x2 = this.edge(t, dTo, !right);
+    }
+    const g = this.msgEl(it);
+    g.setAttribute('class', `um ${it.m} drawing`);
+    g.dataset.tip = { sync: 'Синхронный вызов: сплошная линия, закрашенная стрелка. Отправитель ждёт ответа', return: 'Ответ: пунктирная линия, открытая стрелка. Закрывает активацию', async: 'Асинхронное сообщение: сплошная линия, открытая стрелка. Отправитель не ждёт ответа', self: 'Вызов самого себя: внутренняя обработка, вложенная активация' }[it.m];
+    const texts = g.querySelectorAll('text');
+    texts.forEach((tx, i) => { tx.textContent = label[i] || ''; });
+    const line = g.querySelector('.ln'), hit = g.querySelector('.hit');
+    line.removeAttribute('marker-end');
+    if (it.m === 'self') {
+      hit.setAttribute('d', d); line.setAttribute('d', d);
+      const L = line.getTotalLength(); line.style.strokeDasharray = L;
+    } else {
+      line.setAttribute('x1', x1); line.setAttribute('y1', y); line.setAttribute('x2', x1); line.setAttribute('y2', y);
+      hit.setAttribute('d', `M${x1} ${y} H${x2}`);
+    }
+    this.autoScroll(y, Math.min(x1, x2 || x1), Math.max(x1, x2 || x1 + 60));
+    appendLog('INFO', 'uml', `${it.n}. ${UML_PARTICIPANTS[this.idx[f]].name} → ${UML_PARTICIPANTS[this.idx[t]].name}: ${this.sub(it.l, s.iter)}`);
+    return this.engine.animate(it.m === 'self' ? 520 : 260 + Math.abs(x2 - x1) * 0.9, k => {
+      const e = easeInOut(k);
+      if (it.m === 'self') line.style.strokeDashoffset = line.getTotalLength() * (1 - e);
+      else line.setAttribute('x2', x1 + (x2 - x1) * e);
+    }).then(() => {
+      if (it.m === 'self') { line.style.strokeDasharray = ''; line.style.strokeDashoffset = ''; }
+      line.setAttribute('marker-end', it.m === 'sync' || it.m === 'self' ? 'url(#um-sync)' : 'url(#um-open)');
+      g.setAttribute('class', `um ${it.m} done`);
+      if (it.m === 'sync') this.openAct(t, y);
+      else if (it.m === 'return') this.closeAct(f, y);
+      else if (it.m === 'async' && this.depth(t) < 0) this.openAct(t, y);
+      else if (it.m === 'self') { const a = { p: f, d: this.depth(f) + 1, y0: y + 2, y1: y + 22 }; this.acts.push(a); this.drawAct(a); }
+      this.growOpen(y + 14);
+      this.updateLifelines();
+    });
+  },
+  growOpen(y) { this.acts.filter(a => a.y1 == null).forEach(a => this.drawAct(a, y)); },
+  enterFrag(s) {
+    const fr = s.fr, g = this.frameEl(fr);
+    g.g.classList.remove('muted'); g.g.classList.add('active');
+    if (fr.type === 'opt') {
+      g.conds[0].classList.toggle('off', s.choice < 0);
+      g.fills[0].setAttribute('class', 'bf ' + (s.choice < 0 ? 'unchosen' : 'chosen'));
+      if (s.choice < 0) this.muteItems(fr.it.items, s.iter);
+      appendLog(s.choice < 0 ? 'WARN' : 'INFO', 'uml', `opt ${fr.it.cond}: ${s.choice < 0 ? 'условие ложно, фрагмент пропущен' : 'условие истинно'}`);
+    } else {
+      fr.branches.forEach((b, k) => {
+        g.fills[k].setAttribute('class', 'bf ' + (k === s.choice ? 'chosen' : 'unchosen'));
+        g.conds[k].classList.toggle('off', k !== s.choice);
+        if (k !== s.choice) this.muteItems(b.items, s.iter);
+      });
+      appendLog('INFO', 'uml', `alt: выбрана ветка ${fr.branches[s.choice].cond}`);
+    }
+    this.autoScroll(fr.y0, fr.x0, fr.x1);
+    return Promise.resolve();
+  },
+  iterFrag(s) {
+    const fr = s.fr, g = this.frameEl(fr);
+    g.g.classList.add('active');
+    g.iter.textContent = `итерация ${s.i}/${fr.it.times}`;
+    if (s.i > 1) {
+      this.msgs.forEach(m => { if (m.y > fr.y0 && m.y < fr.y1 && this.msgEls[m.n]) this.msgEls[m.n].classList.add('ghost'); });
+      this.acts.forEach(a => { if (a.y0 > fr.y0 && a.y0 < fr.y1 && a.el) a.el.classList.add('ghost'); });
+      this.frames.forEach(f2 => { if (f2 !== fr && f2.y0 > fr.y0 && f2.y1 < fr.y1) { const e2 = this.frEls.get(f2); if (e2) e2.g.classList.add('muted'); } });
+    }
+    appendLog('INFO', 'uml', `loop ${fr.it.cond}: итерация ${s.i}/${fr.it.times}`);
+    this.autoScroll(fr.y0, fr.x0, fr.x1);
+    return Promise.resolve();
+  },
+  muteItems(list, iter) {
+    for (const it of list) {
+      if (it.m) {
+        const g = this.msgEl(it), y = it.y, x1 = this.px(it.f), x2 = this.px(it.t);
+        g.setAttribute('class', `um ${it.m} muted`);
+        g.querySelectorAll('text').forEach((tx, i) => { tx.textContent = this.sub(it.lines[i] || '', iter); });
+        const line = g.querySelector('.ln');
+        if (it.m === 'self') line.setAttribute('d', `M${x1 + 5} ${y} H${x1 + 45} V${y + 20} H${x1 + 11}`);
+        else { line.setAttribute('x1', x1 + (x2 > x1 ? 5 : -5)); line.setAttribute('x2', x2 + (x2 > x1 ? -5 : 5)); line.setAttribute('y1', y); line.setAttribute('y2', y); }
+        line.setAttribute('marker-end', it.m === 'sync' || it.m === 'self' ? 'url(#um-sync)' : 'url(#um-open)');
+      } else {
+        const e = this.frameEl(it.fr); e.g.classList.add('muted');
+        if (it.frag === 'alt') it.branches.forEach(b => this.muteItems(b.items, iter)); else this.muteItems(it.items, iter);
+      }
+    }
+  },
+  renderStatic() {
+    const W = this.W, H = this.H;
+    this.head.setAttribute('viewBox', `0 0 ${W} ${this.HEAD}`);
+    this.body.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    this.head.innerHTML = ''; this.body.innerHTML = '';
+    UML_PARTICIPANTS.forEach(p => {
+      const x = this.px(p.id), g = S('g', { class: 'u-part' }, this.head);
+      if (p.actor) {
+        S('circle', { cx: x, cy: 20, r: 8, class: 'u-actor' }, g);
+        S('path', { d: `M${x} 28 V48 M${x - 12} 35 H${x + 12} M${x} 48 L${x - 9} 62 M${x} 48 L${x + 9} 62`, class: 'u-actor' }, g);
+        S('text', { x, y: 79 }, g).textContent = p.name;
+      } else {
+        S('rect', { x: x - 76, y: 16, width: 152, height: p.sub ? 54 : 44, rx: 6 }, g);
+        S('text', { x, y: p.sub ? 39 : 43 }, g).textContent = p.name;
+        if (p.sub) S('text', { x, y: 58, class: 'sub' }, g).textContent = p.sub;
+      }
+    });
+    const defs = S('defs', {}, this.body);
+    const mk = (id, d, filled) => { const m = S('marker', { id, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 9, markerHeight: 9, orient: 'auto-start-reverse' }, defs); S('path', { d, style: filled ? 'fill:var(--fg)' : 'fill:none;stroke:var(--fg);stroke-width:1.4' }, m); };
+    mk('um-sync', 'M0 0 L10 5 L0 10 z', true); mk('um-open', 'M1 1 L9 5 L1 9', false);
+    this.gFr = S('g', {}, this.body); this.gLl = S('g', {}, this.body); this.gAct = S('g', {}, this.body); this.gMsg = S('g', {}, this.body);
+    this.ll = {};
+    UML_PARTICIPANTS.forEach(p => { const x = this.px(p.id); this.ll[p.id] = S('line', { x1: x, y1: 0, x2: x, y2: H, class: 'u-ll' }, this.gLl); });
+  },
+  msgEl(it) {
+    if (this.msgEls[it.n]) return this.msgEls[it.n];
+    const g = S('g', { class: `um ${it.m}` }, this.gMsg);
+    S('path', { class: 'hit', d: '' }, g);
+    if (it.m === 'self') S('path', { class: 'ln' }, g); else S('line', { class: 'ln' }, g);
+    const x1 = this.px(it.f), x2 = this.px(it.t);
+    it.lines.forEach((l, i) => {
+      if (it.m === 'self') S('text', { x: x1 + 52, y: it.y + 4 + i * 14 }, g);
+      else S('text', { x: (x1 + x2) / 2, y: it.y - 6 - (it.lines.length - 1 - i) * 14, 'text-anchor': 'middle' }, g);
+    });
+    this.msgEls[it.n] = g;
+    return g;
+  },
+  frameEl(fr) {
+    if (this.frEls.has(fr)) return this.frEls.get(fr);
+    const g = S('g', { class: 'fr' }, this.gFr), it = fr.it;
+    const fills = [], conds = [];
+    const tips = { alt: 'alt — альтернатива: выполняется ровно одна ветка, чьё условие истинно; остальные приглушены', opt: 'opt — опциональный фрагмент: сообщения выполняются, только если условие истинно', loop: 'loop — цикл: тело повторяется, пока выполняется условие; номер итерации показан в заголовке' };
+    if (fr.type === 'alt') fr.branches.forEach((b, k) => { fills.push(S('rect', { class: 'bf', x: fr.x0, y: b.y0, width: fr.x1 - fr.x0, height: (k < fr.branches.length - 1 ? fr.branches[k + 1].sepY : fr.y1) - b.y0 }, g)); });
+    else fills.push(S('rect', { class: 'bf', x: fr.x0, y: fr.y0, width: fr.x1 - fr.x0, height: fr.y1 - fr.y0 }, g));
+    S('rect', { class: 'box', x: fr.x0, y: fr.y0, width: fr.x1 - fr.x0, height: fr.y1 - fr.y0 }, g);
+    const tw = fr.type === 'loop' ? 46 : 40;
+    S('path', { class: 'tab', d: `M${fr.x0} ${fr.y0} H${fr.x0 + tw} V${fr.y0 + 13} L${fr.x0 + tw - 8} ${fr.y0 + 21} H${fr.x0} Z`, 'data-tip': tips[fr.type] }, g);
+    S('text', { class: 'kw', x: fr.x0 + 7, y: fr.y0 + 15 }, g).textContent = fr.type;
+    if (fr.type === 'alt') fr.branches.forEach((b, k) => {
+      if (k > 0) S('line', { class: 'sep', x1: fr.x0, y1: b.sepY, x2: fr.x1, y2: b.sepY }, g);
+      conds.push(S('text', { class: 'cond', x: fr.x0 + (k ? 10 : tw + 10), y: (k ? b.sepY : fr.y0) + 16 }, g));
+      conds[k].textContent = b.cond;
+    });
+    else { conds.push(S('text', { class: 'cond', x: fr.x0 + tw + 10, y: fr.y0 + 16 }, g)); conds[0].textContent = it.cond; }
+    const iter = S('text', { class: 'iter', x: fr.x1 - 8, y: fr.y0 + 16, 'text-anchor': 'end' }, g);
+    const rec = { g, fills, conds, iter };
+    this.frEls.set(fr, rec);
+    return rec;
+  },
+  drawAct(a, curY) {
+    if (!a.el) a.el = S('rect', { class: 'u-act', width: 10, rx: 1.5 }, this.gAct);
+    const x = this.px(a.p) - 5 + a.d * 6;
+    const y1 = a.y1 != null ? a.y1 : Math.max(curY || a.y0 + 10, a.y0 + 10);
+    a.el.setAttribute('x', x); a.el.setAttribute('y', a.y0); a.el.setAttribute('height', Math.max(6, y1 - a.y0));
+  },
+  updateLifelines() { UML_PARTICIPANTS.forEach(p => this.ll[p.id].classList.toggle('busy', this.depth(p.id) >= 0)); },
+  autoScroll(y, xl, xr) {
+    const c = this.scroll, z = this.z, head = this.HEAD * z;
+    const ty = y * z + head, behavior = REDUCED ? 'auto' : 'smooth';
+    let top = c.scrollTop, left = c.scrollLeft;
+    if (ty > c.scrollTop + c.clientHeight - 70 || ty < c.scrollTop + head + 30) top = Math.max(0, ty - c.clientHeight * 0.55);
+    if (xl * z < c.scrollLeft + 10 || xr * z > c.scrollLeft + c.clientWidth - 10) left = Math.max(0, ((xl + xr) / 2) * z - c.clientWidth / 2);
+    if (top !== c.scrollTop || left !== c.scrollLeft) c.scrollTo({ top, left, behavior });
+  },
+  applyZoom() {
+    const z = this.z;
+    this.head.setAttribute('width', Math.round(this.W * z)); this.head.setAttribute('height', Math.round(this.HEAD * z));
+    this.body.setAttribute('width', Math.round(this.W * z)); this.body.setAttribute('height', Math.round(this.H * z));
+  },
+  fitZoom() { const w = this.scroll.clientWidth; if (w) { this.z = Math.max(.3, Math.min(2, (w - 4) / this.W)); this.applyZoom(); } },
+  reset() { this.load(this.key); }
+};
+
+/* =====================================================================
+   РОУТЕР
+   ===================================================================== */
+const PAGE_OBJ = { rest: REST, bpmn: BPMN, kafka: KAFKA, uml: UML };
+const PAGES = ['profile', 'bpmn', 'kafka', 'rest', 'uml'];
+let currentPage = null;
+function route() {
+  let h = location.hash.slice(1);
+  if (!PAGES.includes(h)) h = 'profile';
+  if (h === currentPage) return;
+  PAGES.forEach(p => { $('#page-' + p).hidden = p !== h; });
+  $$('.tab').forEach(t => { if (t.dataset.tab === h) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
+  document.body.dataset.page = h;
+  if (currentPage !== null) appendLog('INFO', 'ui', `tab → ${h}`);
+  currentPage = h;
+  TIP.hide();
+  $('#page-reset').disabled = h === 'profile';
+  if (h === 'uml' && UML.fit) UML.fitZoom();
+}
+function resetPage(name) {
+  if (name === 'uml') { UML.reset(); appendSep('--- reset: page uml ---'); return; }
+  PAGE_OBJ[name].engine.replay();
+  appendSep(`--- reset: page ${name} · выше — история предыдущего запуска ---`);
+}
+function bindEngineUI(name) {
+  const engine = PAGE_OBJ[name].engine;
+  const btn = $(`[data-pause="${name}"]`);
+  const prev = engine.onState;
+  engine.onState = e => {
+    if (prev) prev(e);
+    if (name !== 'bpmn') $(`.tab[data-tab="${name}"]`).classList.toggle('running', e.busy && !e.paused);
+    if (btn) { btn.textContent = e.paused ? 'Продолжить' : 'Пауза'; btn.setAttribute('aria-pressed', String(e.paused)); }
+  };
+  if (btn) btn.onclick = () => {
+    if (engine.paused) { engine.resume(); appendLog('INFO', 'engine', `${name}: resumed`); }
+    else { engine.pause(); appendLog('WARN', 'engine', `${name}: paused`); }
+  };
+  $$(`[data-replay="${name}"]`).forEach(b => b.onclick = () => resetPage(name));
+  $$(`[data-speed-for="${name}"] button`).forEach(b => b.onclick = () => {
+    engine.setSpeed(+b.dataset.v);
+    $$(`[data-speed-for="${name}"] button`).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  });
+  engine.onState(engine);
+}
+
+function init() {
+  logHistory.forEach(e => renderLogLine(e, false));
+  $('#log-count').textContent = logHistory.length;
+  logPanel.scrollTop = logPanel.scrollHeight;
+  if (!logHistory.length) appendLog('INFO', 'system', 'session started: выберите квест во вкладках');
+  TIP.init();
+  REST.init(); BPMN.init(); KAFKA.init(); UML.init();
+  ['rest', 'bpmn', 'kafka', 'uml'].forEach(bindEngineUI);
+  $('#log-clear').onclick = () => { logHistory.length = 0; logPanel.textContent = ''; $('#log-count').textContent = 0; persistLog(); };
+  $('#debug-toggle').onclick = () => { DEBUG = !DEBUG; store.set('localStorage', 'sa.debug', DEBUG); applyDebug(); appendLog('INFO', 'ui', `debug tooltips ${DEBUG ? 'ON' : 'OFF'}`); };
+  $('#page-reset').onclick = () => { if (currentPage !== 'profile') resetPage(currentPage); };
+  $('#ach-btn').onclick = e => { e.stopPropagation(); const p = $('#ach-pop'); p.hidden = !p.hidden; $('#ach-btn').setAttribute('aria-expanded', String(!p.hidden)); };
+  document.addEventListener('click', e => { const p = $('#ach-pop'); if (!p.hidden && !p.contains(e.target) && e.target !== $('#ach-btn')) { p.hidden = true; $('#ach-btn').setAttribute('aria-expanded', 'false'); } });
+  renderAch(); applyDebug();
+  window.addEventListener('hashchange', route);
+  route();
+}
+init();
+</script>
+
+</body>
+</html>
