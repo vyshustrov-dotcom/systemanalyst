@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Портфолио Всеволода Шустрова</title>
-<meta name="description" content="Игровое портфолио системного аналитика: резюме и интерактивные демо — BPMN, Kafka, REST-идемпотентность и UML Sequence.">
+<meta name="description" content="Игровое портфолио системного аналитика: резюме и интерактивные демо — BPMN, Kafka, REST, UML Sequence, требования, интеграции и DWH.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap">
@@ -490,6 +490,176 @@ a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
 @keyframes cellGlow{from{box-shadow:0 0 0 0 transparent}to{box-shadow:0 0 10px color-mix(in srgb,var(--cyan) 60%,transparent)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 @media (max-width:560px){.lvl{margin-left:0;width:100%}.xp{flex:1}.kf-mon{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* =====================================================================
+   НОВЫЕ СТРАНИЦЫ: Требования (req-), Интеграции (int-), Данные / DWH (dwh-)
+   ===================================================================== */
+:root{--int-violet:#a78bfa}
+body[data-page="req"]{--page:var(--amber)}
+body[data-page="int"]{--page:var(--cyan)}
+body[data-page="dwh"]{--page:var(--green)}
+.tab[data-tab="req"]{--tabc:var(--amber)} .tab[data-tab="int"]{--tabc:var(--cyan)} .tab[data-tab="dwh"]{--tabc:var(--green)}
+.quest[data-q="req"]{--qc:var(--amber)} .quest[data-q="int"]{--qc:var(--cyan)} .quest[data-q="dwh"]{--qc:var(--green)}
+
+/* общие панели шагов */
+.req-bar,.int-bar,.dwh-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.req-bar .sp,.int-bar .sp,.dwh-bar .sp{flex:1}
+.req-stepbtn .n{font:700 11px var(--f-mono);color:var(--page);margin-right:6px}
+.req-stepbtn.req-done{border-color:color-mix(in srgb,var(--green) 55%,transparent);color:var(--muted)}
+.req-stepbtn.req-done .n{color:var(--green)}
+.req-status{font:12px var(--f-mono);color:var(--muted)}
+.req-status b{color:var(--fg)}
+.req-chk{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--muted);padding:4px 0}
+.req-chk i{flex:none;width:15px;height:15px;margin-top:2px;border:1.5px solid var(--line-2);border-radius:4px;display:grid;place-items:center;font:700 10px var(--f-mono);font-style:normal;color:var(--bg);transition:all .25s}
+.req-chk.on{color:var(--fg)}
+.req-chk.on i{background:var(--green);border-color:var(--green)}
+.req-chk.on i::after{content:"✓"}
+.req-chk small{display:block;color:var(--dim);font:11px var(--f-mono)}
+.req-list{list-style:none;margin:0;padding:0}
+.req-visual img,.page-visual img[data-optional]{display:block}
+
+/* ===== Требования ===== */
+.req-goalbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);background:color-mix(in srgb,var(--amber) 7%,var(--panel));border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.req-goalbar .k{font:700 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.req-goalbar b{font-weight:600}
+.req-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.req-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
+.req-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.req-notes{position:relative;padding-right:54px}
+.req-notes-list{display:flex;flex-direction:column;gap:10px}
+.req-note{background:color-mix(in srgb,var(--amber) 9%,var(--panel-2));border:1px solid color-mix(in srgb,var(--amber) 32%,var(--line));border-radius:3px 12px 12px 12px;padding:10px 12px;box-shadow:0 6px 16px rgba(0,0,0,.28);transition:border-color .3s}
+.req-note.req-parsed{border-color:color-mix(in srgb,var(--amber) 70%,transparent)}
+.req-note.req-conflict{border-color:var(--red)}
+.req-note.req-resolved{border-color:var(--green)}
+.req-src{font:600 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
+.req-raw{margin:4px 0 0;font-style:italic}
+.req-fields{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px;margin:8px 0 0;transform-origin:top}
+.req-fields dt{color:var(--dim);font:11px var(--f-mono);padding-top:2px}
+.req-fields dd{margin:0;color:var(--fg)}
+.req-fields.req-open{animation:reqOpen .45s ease-out}
+.req-conf-svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.req-conf-svg path{fill:none;stroke:var(--red);stroke-width:2;stroke-dasharray:6 4}
+.req-conf-svg.req-ok path{stroke:var(--green);stroke-dasharray:none}
+.req-conf-badge{position:absolute;transform:translate(-50%,-50%);font:700 11px var(--f-mono);padding:4px 7px;border-radius:6px;border:1px solid var(--red);background:color-mix(in srgb,var(--red) 16%,var(--panel));color:var(--red);white-space:nowrap;cursor:help}
+.req-conf-badge.req-ok{border-color:var(--green);background:color-mix(in srgb,var(--green) 14%,var(--panel));color:var(--green)}
+.req-conflicts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.req-conf-item{border:1px solid color-mix(in srgb,var(--red) 45%,transparent);border-radius:8px;padding:9px 11px;font-size:13px;background:color-mix(in srgb,var(--red) 5%,var(--panel-2))}
+.req-conf-item.req-ok{border-color:color-mix(in srgb,var(--green) 50%,transparent);background:color-mix(in srgb,var(--green) 5%,var(--panel-2))}
+.req-conf-item b{display:block;margin-bottom:3px}
+.req-conf-item .res{color:var(--green);margin-top:4px}
+.req-empty{border:1px dashed var(--line-2);border-radius:8px;padding:14px;text-align:center;color:var(--dim);font-size:13px}
+.req-sub{font:600 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.req-backlog{display:flex;flex-direction:column;gap:8px}
+.req-story{border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:8px;padding:10px 12px;background:var(--panel-2);animation:reqIn .5s ease-out}
+.req-story h4{margin:0 0 4px;font:700 12.5px var(--f-mono);color:var(--amber);display:flex;gap:8px;flex-wrap:wrap}
+.req-story h4 span{color:var(--dim);font-weight:400}
+.req-story p{margin:0 0 6px;font-size:14px}
+.req-story ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.req-story .ac{font:600 10.5px var(--f-mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+#req-trace-svg{display:block;width:100%;height:auto}
+#req-trace-svg text{font-family:var(--f-ui);fill:var(--fg)}
+.req-tnode rect{fill:var(--panel-2);stroke:var(--line-2);stroke-width:1.4;stroke-dasharray:5 4;transition:all .3s}
+.req-tnode.on rect{stroke:var(--amber);stroke-dasharray:none}
+.req-tnode.goal rect{stroke:var(--amber);stroke-dasharray:none;fill:color-mix(in srgb,var(--amber) 9%,var(--panel-2))}
+#req-trace-svg .req-tnode text{font-size:12px}
+#req-trace-svg .req-tnode .k{font:700 11px var(--f-mono);fill:var(--amber)}
+#req-trace-svg .req-tnode.off text{fill:var(--dim)}
+.req-tline{fill:none;stroke:var(--amber);stroke-width:2;opacity:0}
+.req-dor-banner{display:flex;gap:10px;align-items:center;border:1px solid var(--green);background:color-mix(in srgb,var(--green) 11%,var(--panel));padding:10px 12px;border-radius:8px;color:var(--green);font-weight:600;margin-top:10px;animation:reqIn .4s ease-out}
+.req-modal-back{position:fixed;inset:0;z-index:22;background:rgba(5,8,14,.66);display:grid;place-items:center;padding:16px}
+.req-modal{background:var(--panel);border:1px solid var(--amber);border-radius:12px;max-width:540px;width:100%;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.req-modal h4{margin:0;font-family:var(--f-display);font-size:16px;font-weight:600}
+.req-modal p{margin:0;color:var(--muted);font-size:13.5px}
+.req-opt{text-align:left;border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;background:var(--panel-2);color:var(--fg);cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:4px}
+.req-opt:hover{border-color:var(--amber)}
+.req-opt b{font-size:14px}
+.req-opt span{color:var(--muted);font-size:13px}
+.req-opt.req-rej{border-color:var(--red);cursor:not-allowed}
+.req-opt .req-why{color:var(--red);font-size:12.5px}
+@keyframes reqOpen{from{transform:scaleY(.15);opacity:0}to{transform:none;opacity:1}}
+@keyframes reqIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+
+/* ===== Интеграции ===== */
+.int-seg button{font:600 13px var(--f-mono);padding:9px 16px}
+.int-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.int-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.int-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.int-fade{transition:opacity .15s ease}
+.int-fade.int-out{opacity:0}
+.int-code{font:12px/1.55 var(--f-mono);background:var(--term);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0;overflow:auto;max-height:320px;white-space:pre;color:var(--fg)}
+.int-code.int-wait{color:var(--dim)}
+.int-code .c{color:var(--dim)} .int-code .k{color:var(--cyan)} .int-code .s{color:var(--amber)}
+.int-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.int-h .lbl{font:600 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.int-h .meta{font:11px var(--f-mono);color:var(--dim)}
+.int-when{border-left:3px solid var(--page);padding:8px 12px;background:var(--panel-2);border-radius:0 8px 8px 0;font-size:14px}
+.int-when b{display:block;font:600 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--page);margin-bottom:4px}
+#int-svg{display:block;width:100%;height:auto}
+#int-svg text{font-family:var(--f-ui);fill:var(--fg)}
+#int-svg .int-cap{font:700 13px var(--f-mono);fill:var(--page)}
+#int-svg .int-lbl{font:12px var(--f-mono);fill:var(--fg)}
+#int-svg .int-sz{font:11px var(--f-mono);fill:var(--dim)}
+#int-svg .node-s{font:11px var(--f-mono);fill:var(--muted)}
+.int-line{fill:none;stroke:var(--muted);stroke-width:2}
+.int-line.int-live{stroke:var(--page);stroke-dasharray:6 5;animation:dash .5s linear infinite}
+.int-icon{fill:none;stroke:var(--page);stroke-width:1.6}
+.int-table{width:100%;border-collapse:collapse;font:12px var(--f-mono)}
+.int-table th{text-align:left;color:var(--muted);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.int-table td{padding:6px 8px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top}
+.int-table tr.int-on td{color:var(--fg);background:color-mix(in srgb,var(--page) 8%,transparent)}
+.int-table td:first-child{font-weight:700;white-space:nowrap}
+.int-tw{overflow-x:auto}
+
+/* ===== Данные / DWH ===== */
+.dwh-ribbon{display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.dwh-ribbon{grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr) 20px minmax(0,1fr) 20px minmax(0,1fr)}}
+.dwh-col{--dwh-c:var(--muted);background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--dwh-c);border-radius:10px;padding:10px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.dwh-col[data-l="raw"]{--dwh-c:var(--muted)} .dwh-col[data-l="ods"]{--dwh-c:var(--cyan)} .dwh-col[data-l="dds"]{--dwh-c:var(--blue)} .dwh-col[data-l="mart"]{--dwh-c:var(--green)}
+.dwh-col.dwh-active{box-shadow:0 0 0 3px color-mix(in srgb,var(--dwh-c) 22%,transparent)}
+.dwh-col h3{margin:0;font:700 12px var(--f-mono);letter-spacing:.12em;color:var(--dwh-c);display:flex;justify-content:space-between;gap:6px;cursor:help}
+.dwh-col h3 span{color:var(--dim);font-weight:400;letter-spacing:0}
+.dwh-col .dwh-sub{font-size:12px;color:var(--dim);margin:-4px 0 0}
+.dwh-arrow{display:flex;align-items:center;justify-content:center;min-height:20px}
+.dwh-arrow svg{overflow:visible}
+@media (max-width:899px){.dwh-arrow svg{transform:rotate(90deg)}}
+.dwh-arrow path{fill:none;stroke:var(--line-2);stroke-width:2}
+.dwh-arrow.dwh-live path{stroke:var(--green)}
+.dwh-arrow circle{fill:var(--green)}
+.dwh-tcard{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);overflow:hidden;min-width:0}
+.dwh-tcard.dwh-new{animation:dwhDrop .5s ease-out}
+.dwh-th{display:flex;justify-content:space-between;gap:6px;padding:6px 8px;font:600 11px var(--f-mono);border-bottom:1px solid var(--line);background:var(--term)}
+.dwh-th span{color:var(--dim);font-weight:400;white-space:nowrap}
+.dwh-tw{overflow-x:auto}
+.dwh-t{border-collapse:collapse;font:10.5px/1.45 var(--f-mono);width:100%}
+.dwh-t th{color:var(--muted);font-weight:500;text-align:left;padding:3px 7px;border-bottom:1px solid var(--line);white-space:nowrap}
+.dwh-t td{padding:3px 7px;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);white-space:nowrap;color:var(--fg);font-variant-numeric:tabular-nums}
+.dwh-t td.dwh-hl{color:var(--green)} .dwh-t td.dwh-bad{color:var(--red)} .dwh-t td.dwh-dim{color:var(--dim)}
+.dwh-t tr.dwh-hist td{color:var(--dim)}
+.dwh-t tr.dwh-cur td{background:color-mix(in srgb,var(--green) 8%,transparent)}
+.dwh-more{font:10.5px var(--f-mono);color:var(--dim);padding:4px 8px}
+.dwh-empty{border:1px dashed var(--line-2);border-radius:8px;padding:16px 8px;text-align:center;color:var(--dim);font:11.5px var(--f-mono)}
+.dwh-er{display:block;width:100%;height:auto}
+.dwh-er rect{fill:var(--term);stroke:var(--blue);stroke-width:1.2}
+.dwh-er rect.f{fill:color-mix(in srgb,var(--blue) 16%,var(--term))}
+.dwh-er text{font:10px var(--f-mono);fill:var(--fg)}
+.dwh-er path{fill:none;stroke:var(--blue);stroke-width:1.3;stroke-dasharray:4 3}
+.dwh-below{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);margin-top:12px}
+@media (min-width:1100px){.dwh-below{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}}
+.dwh-sup-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.dwh-sup-h b{font:600 13px var(--f-ui)}
+.dwh-sup-h .mono{font-size:11px;color:var(--dim)}
+.dwh-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.dwh-cards{grid-template-columns:minmax(0,1fr)}}
+.dwh-card{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel-2);min-width:0}
+.dwh-card .t{font:600 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dwh-card b{display:block;font:600 24px var(--f-display);color:var(--green);margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.dwh-card .w{font:11px var(--f-mono);color:var(--dim)}
+.dwh-card.dwh-nodata b{color:var(--dim)}
+.dwh-bars{display:flex;align-items:flex-end;gap:4px;height:28px;margin-top:6px}
+.dwh-bars i{flex:1;background:color-mix(in srgb,var(--green) 45%,transparent);border-radius:2px 2px 0 0}
+.dwh-bars i:last-child{background:var(--green)}
+.dwh-src{font:11px var(--f-mono);color:var(--dim);margin-top:8px}
+@keyframes dwhDrop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -502,7 +672,7 @@ a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
     </div>
     <div class="lvl">
       <span class="lvl-badge" title="Уровень = лет в системном анализе">Ур. 5</span>
-      <div class="xp"><div class="xp-bar"><i id="xp-bar"></i></div><span class="xp-t" id="xp-t">ачивки 0/9</span></div>
+      <div class="xp"><div class="xp-bar"><i id="xp-bar"></i></div><span class="xp-t" id="xp-t">ачивки 0/20</span></div>
     </div>
   </header>
 
@@ -512,6 +682,9 @@ a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
     <a class="tab" data-tab="kafka" href="#kafka"><span class="k">KAFKA</span>Сообщения Kafka<i class="dot"></i></a>
     <a class="tab" data-tab="rest" href="#rest"><span class="k">API</span>API REST<i class="dot"></i></a>
     <a class="tab" data-tab="uml" href="#uml"><span class="k">UML</span>UML-сценарий<i class="dot"></i></a>
+    <a class="tab" data-tab="req" href="#req"><span class="k">REQ</span>Требования<i class="dot"></i></a>
+    <a class="tab" data-tab="int" href="#int"><span class="k">INT</span>Интеграции<i class="dot"></i></a>
+    <a class="tab" data-tab="dwh" href="#dwh"><span class="k">DWH</span>Данные / DWH<i class="dot"></i></a>
   </nav>
 
   <div class="work">
@@ -561,6 +734,9 @@ a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
           <a class="quest" data-q="kafka" href="#kafka"><span class="qk">Kafka</span><span class="qt">Сортировочная станция</span><p>Запросы на командировки: партиционирование по request_id, lag, rebalance, DLQ.</p><span class="qs" data-qs="kafka"></span></a>
           <a class="quest" data-q="rest" href="#rest"><span class="qk">API / REST</span><span class="qt">Идемпотентность POST</span><p>Как Idempotency-Key защищает от дублей заказа при повторном запросе.</p><span class="qs" data-qs="rest"></span></a>
           <a class="quest" data-q="uml" href="#uml"><span class="qk">UML Sequence</span><span class="qt">Вход через OIDC</span><p>Пошаговая диаграмма последовательности с фрагментами alt, opt и loop.</p><span class="qs" data-qs="uml">интерактивный рендерер</span></a>
+          <a class="quest" data-q="req" href="#req"><span class="qk">Требования</span><span class="qt">Воронка требований</span><p>От сырых заметок к user stories: конфликт, трассировка до цели, Definition of Ready.</p><span class="qs" data-qs="req"></span></a>
+          <a class="quest" data-q="int" href="#int"><span class="qk">Интеграции</span><span class="qt">Четыре транспорта</span><p>Один кейс «создать заказ» в REST, gRPC, SOAP и GraphQL: запрос, ответ, контракт.</p><span class="qs" data-qs="int"></span></a>
+          <a class="quest" data-q="dwh" href="#dwh"><span class="qk">Данные / DWH</span><span class="qt">DORA-метрики</span><p>Jira, Bitbucket и Git через слои RAW → ODS → DDS → MART до дашборда Superset.</p><span class="qs" data-qs="dwh"></span></a>
         </div>
       </div>
       <div class="panel">
@@ -895,6 +1071,199 @@ a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
   </div>
 </section>
 
+
+<!-- ======================= ТРЕБОВАНИЯ ======================= -->
+<section id="page-req" class="page" data-page="req" hidden>
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Квест 4 · Требования</p>
+      <h2>Воронка требований: от сырой заметки до user story</h2>
+      <p class="lede">Три заметки от разных подразделений превращаются в user stories с критериями приёмки, привязанные к бизнес-цели и прошедшие Definition of Ready.</p>
+    </div>
+    <div class="tools">
+      <span class="seg-l">скорость</span>
+      <div class="seg" data-speed-for="req"><button type="button" data-v="0.5">0.5×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button></div>
+      <button class="btn ghost" type="button" data-pause="req">Пауза</button>
+      <button class="btn ghost" type="button" data-replay="req">Replay</button>
+    </div>
+    <figure class="page-visual"><img src="assets/requirements.png" alt="Аналитик разбирает требования" loading="lazy" onerror="this.parentNode.remove()"></figure>
+  </div>
+  <div class="req-bar">
+    <button class="btn req-stepbtn primary" type="button" id="req-b1"><span class="n">1</span>Разобрать заметки</button>
+    <button class="btn req-stepbtn" type="button" id="req-b2"><span class="n">2</span>Найти конфликты</button>
+    <button class="btn req-stepbtn" type="button" id="req-bres"><span class="n">2б</span>Разрешить конфликт</button>
+    <button class="btn req-stepbtn" type="button" id="req-b3"><span class="n">3</span>Сформулировать требования</button>
+    <button class="btn req-stepbtn" type="button" id="req-b4"><span class="n">4</span>Построить трассировку</button>
+    <button class="btn req-stepbtn" type="button" id="req-b5"><span class="n">5</span>Проверить DoR</button>
+    <span class="sp"></span>
+    <button class="btn ghost" type="button" id="req-auto">▶ Пройти всё</button>
+    <span class="req-status" id="req-status"></span>
+  </div>
+  <div class="req-goalbar"><span class="k">Бизнес-цель</span><b id="req-goal"></b></div>
+  <div class="req-grid">
+    <div class="req-col">
+      <div class="panel">
+        <p class="zone-h">Сырые заметки</p>
+        <div class="req-notes" id="req-notes">
+          <div class="req-notes-list" id="req-notes-list"></div>
+          <svg class="req-conf-svg" id="req-conf-svg" aria-hidden="true"><path id="req-conf-path" d=""/></svg>
+          <span class="req-conf-badge" id="req-conf-badge" hidden data-tip="Конфликт требований — норма. Задача аналитика — найти решение, а не выбрать сторону">⚠ Конфликт</span>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="zone-h">Анализ</p>
+        <p class="req-sub">Конфликты</p>
+        <div class="req-conflicts" id="req-conflicts"><div class="req-empty">Конфликты ещё не искались</div></div>
+        <p class="req-sub">Чек-лист качества заметок</p>
+        <ul class="req-list" id="req-quality"></ul>
+      </div>
+    </div>
+    <div class="req-col">
+      <div class="panel">
+        <p class="zone-h">Бэклог</p>
+        <div class="req-backlog" id="req-backlog"><div class="req-empty">User stories появятся после разбора заметок и разрешения конфликта</div></div>
+      </div>
+      <div class="panel">
+        <p class="zone-h" data-tip="Если требование ни к чему не привязано — возможно, оно лишнее">Трассировка</p>
+        <svg id="req-trace-svg" viewBox="0 0 640 230" role="img" aria-label="Трассировка: бизнес-цель и user stories"></svg>
+      </div>
+      <div class="panel">
+        <p class="zone-h" data-tip="Definition of Ready — критерии, при которых требование можно брать в разработку">Готово к разработке · Definition of Ready</p>
+        <ul class="req-list" id="req-dor"></ul>
+        <div class="req-dor-banner" id="req-dor-banner" hidden>✓ Готово к разработке: 3 user stories, конфликтов нет</div>
+      </div>
+    </div>
+  </div>
+  <div class="applied">
+    <h3>Где применял</h3>
+    <p>Сбор и анализ требований к метрикам эффективности разработки, user stories и критерии приёмки, трассировка требований до бизнес-целей, Definition of Ready. Работа с конфликтами требований и приоритизацией.</p>
+    <p class="note">Это учебная модель: заметки, конфликт и stories придуманы для демонстрации подхода.</p>
+  </div>
+  <div class="req-modal-back" id="req-modal" hidden>
+    <div class="req-modal" role="dialog" aria-labelledby="req-modal-h">
+      <h4 id="req-modal-h">Разрешить конфликт: скорость ↔ безопасность</h4>
+      <p>HR хочет быстрее, безопасность требует обязательного подтверждения руководителя. Как совместить оба требования с бизнес-целью «1 день»?</p>
+      <button class="req-opt" type="button" id="req-opt-par"><b>Параллельное согласование</b><span>Руководитель и безопасность получают заявку одновременно, SLA каждого — 4 часа. Подтверждение руководителя остаётся обязательным.</span></button>
+      <button class="req-opt" type="button" id="req-opt-seq"><b>Последовательное согласование с таймаутом</b><span>Сначала руководитель (до 24 ч), затем безопасность (до 24 ч). По таймауту заявка эскалируется.</span><span class="req-why" id="req-seq-why" hidden>Отклонено: в худшем случае 48 часов только на согласование — цель «1 день» недостижима.</span></button>
+      <div class="btnrow"><button class="btn ghost" type="button" id="req-modal-close">Закрыть</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ИНТЕГРАЦИИ ======================= -->
+<section id="page-int" class="page" data-page="int" hidden>
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Квест 5 · Интеграции</p>
+      <h2>Один кейс — четыре транспорта: создать заказ</h2>
+      <p class="lede">Одна и та же операция «создать заказ» в REST, gRPC, SOAP и GraphQL. Переключатель меняет запрос, ответ, контракт и схему обмена.</p>
+    </div>
+    <div class="tools">
+      <span class="seg-l">скорость</span>
+      <div class="seg" data-speed-for="int"><button type="button" data-v="0.5">0.5×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button></div>
+      <button class="btn ghost" type="button" data-pause="int">Пауза</button>
+      <button class="btn ghost" type="button" data-replay="int">Replay</button>
+    </div>
+    <figure class="page-visual"><img src="assets/integrations.png" alt="Аналитик проектирует интеграцию" loading="lazy" onerror="this.parentNode.remove()"></figure>
+  </div>
+  <div class="int-bar">
+    <div class="seg int-seg" id="int-switch">
+      <button type="button" data-t="rest" aria-pressed="true" data-tip="Универсальный, понятный, кэшируемый">REST</button>
+      <button type="button" data-t="grpc" data-tip="Быстрый, бинарный, для внутренних сервисов">gRPC</button>
+      <button type="button" data-t="soap" data-tip="Строгий контракт, WS-Security, legacy">SOAP</button>
+      <button type="button" data-t="graphql" data-tip="Гибкий выбор полей, один endpoint">GraphQL</button>
+    </div>
+    <button class="btn primary" type="button" id="int-send">Отправить</button>
+    <span class="sp"></span>
+    <span class="req-status" id="int-status"></span>
+  </div>
+  <div class="int-grid">
+    <div class="int-col">
+      <div class="panel int-fade">
+        <div class="int-h"><span class="lbl">Запрос</span><span class="meta" id="int-req-meta"></span></div>
+        <pre class="int-code" id="int-req"></pre>
+      </div>
+      <div class="panel int-fade">
+        <div class="int-h"><span class="lbl">Ответ</span><span class="meta" id="int-resp-meta"></span></div>
+        <pre class="int-code int-wait" id="int-resp"></pre>
+      </div>
+      <div class="int-when int-fade" id="int-when-box" data-tip=""><b>Когда уместно</b><span id="int-when"></span></div>
+    </div>
+    <div class="int-col">
+      <div class="panel int-fade">
+        <div class="int-h"><span class="lbl">Схема обмена</span><span class="meta" id="int-svg-meta"></span></div>
+        <svg id="int-svg" viewBox="0 0 520 270" role="img" aria-label="Схема: клиент и сервис"></svg>
+      </div>
+      <div class="panel int-fade">
+        <div class="int-h"><span class="lbl">Контракт</span><span class="meta" id="int-contract-meta"></span></div>
+        <pre class="int-code" id="int-contract"></pre>
+      </div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <p class="zone-h">Сравнение транспортов</p>
+    <div class="int-tw"><table class="int-table" id="int-table"></table></div>
+  </div>
+  <div class="applied">
+    <h3>Где применял</h3>
+    <p>Интеграции HR-платформы IT_One (OpenAPI, Postman) и контракты API CI/CD-платформы банка: правила обработки ошибок, повторов и требования к данным. Выбор транспорта под задачу: REST для публичных API, gRPC для внутренних высоконагруженных сервисов, SOAP для legacy с WSDL и WS-Security, GraphQL для гибкой выборки полей на клиенте.</p>
+    <p class="note">Время ответа в логах — демонстрационное, чтобы показать относительную разницу транспортов.</p>
+  </div>
+</section>
+
+<!-- ======================= ДАННЫЕ / DWH ======================= -->
+<section id="page-dwh" class="page" data-page="dwh" hidden>
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Квест 6 · Данные / DWH</p>
+      <h2>От сырых данных до DORA-метрик</h2>
+      <p class="lede">Данные Jira, Bitbucket и Git проходят слои RAW → ODS → DDS → DATA MART. На выходе — три DORA-метрики для дашборда в Superset и проверки качества между слоями.</p>
+    </div>
+    <div class="tools">
+      <span class="seg-l">скорость</span>
+      <div class="seg" data-speed-for="dwh"><button type="button" data-v="0.5">0.5×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button></div>
+      <button class="btn ghost" type="button" data-pause="dwh">Пауза</button>
+      <button class="btn ghost" type="button" data-replay="dwh">Replay</button>
+    </div>
+    <figure class="page-visual"><img src="assets/dwh.png" alt="Аналитик проектирует хранилище данных" loading="lazy" onerror="this.parentNode.remove()"></figure>
+  </div>
+  <div class="dwh-bar">
+    <button class="btn req-stepbtn primary" type="button" id="dwh-b1"><span class="n">1</span>Загрузить в RAW</button>
+    <button class="btn req-stepbtn" type="button" id="dwh-b2"><span class="n">2</span>Очистить в ODS</button>
+    <button class="btn req-stepbtn" type="button" id="dwh-b3"><span class="n">3</span>Связать в DDS</button>
+    <button class="btn req-stepbtn" type="button" id="dwh-b4"><span class="n">4</span>Построить витрины</button>
+    <button class="btn req-stepbtn" type="button" id="dwh-b5"><span class="n">5</span>Проверить качество</button>
+    <span class="sp"></span>
+    <button class="btn ghost" type="button" id="dwh-auto">▶ Пройти всё</button>
+    <span class="req-status" id="dwh-status"></span>
+  </div>
+  <div class="dwh-ribbon">
+    <div class="dwh-col" data-l="raw" id="dwh-c-raw"><h3 data-tip="Слой как есть: ничего не меняем, чтобы можно было перепроверить источник">RAW <span id="dwh-n-raw">0 строк</span></h3><p class="dwh-sub">payload как есть + метаданные загрузки</p><div id="dwh-raw"></div></div>
+    <div class="dwh-arrow" id="dwh-a1"><svg width="20" height="40" viewBox="0 0 20 40"><path d="M2 20 H16 M11 14 L17 20 L11 26"/></svg></div>
+    <div class="dwh-col" data-l="ods" id="dwh-c-ods"><h3 data-tip="Очищено и типизировано. Дедупликация по бизнес-ключу обязательна">ODS <span id="dwh-n-ods">0 строк</span></h3><p class="dwh-sub">типы, нормализация статусов, дедупликация</p><div id="dwh-ods"></div></div>
+    <div class="dwh-arrow" id="dwh-a2"><svg width="20" height="40" viewBox="0 0 20 40"><path d="M2 20 H16 M11 14 L17 20 L11 26"/></svg></div>
+    <div class="dwh-col" data-l="dds" id="dwh-c-dds"><h3 data-tip="Связано и обогащено: справочники, вычисляемые поля, суррогатные ключи">DDS <span id="dwh-n-dds">0 строк</span></h3><p class="dwh-sub">справочники, факт, суррогатные ключи</p><div id="dwh-dds"></div></div>
+    <div class="dwh-arrow" id="dwh-a3"><svg width="20" height="40" viewBox="0 0 20 40"><path d="M2 20 H16 M11 14 L17 20 L11 26"/></svg></div>
+    <div class="dwh-col" data-l="mart" id="dwh-c-mart"><h3 data-tip="Витрина под конкретного потребителя. Одна DDS — несколько витрин">DATA MART <span id="dwh-n-mart">0 витрин</span></h3><p class="dwh-sub">агрегаты под дашборд DORA</p><div id="dwh-mart"></div></div>
+  </div>
+  <div class="dwh-below">
+    <div class="panel">
+      <div class="dwh-sup-h"><b>Superset · DORA · dev-analytics</b><span class="mono">превью дашборда</span>
+        <button class="btn sm ghost" type="button" data-tip-always data-tip-click data-tip-kind="info" data-tip="Реальный дашборд собирался в Apache Superset по этим витринам">Открыть в Superset ↗</button></div>
+      <div class="dwh-cards" id="dwh-cards"></div>
+      <div class="dwh-src">Источник: DWH → витрины → Superset</div>
+    </div>
+    <div class="panel">
+      <p class="zone-h" data-tip="Контракт между слоями. Падение проверки останавливает пайплайн">Проверки качества данных</p>
+      <ul class="req-list" id="dwh-dq"></ul>
+    </div>
+  </div>
+  <div class="applied">
+    <h3>Где применял</h3>
+    <p>Система аналитики процессов разработки на данных Jira, Bitbucket и Git. Требования к ~20 метрикам эффективности (включая DORA: lead time, deployment frequency, change failure rate) и данным для их расчёта. Состав полей и структура DWH от источников до витрин, маппинг между слоями и правила преобразования. SQL в PostgreSQL, визуализация в Apache Superset, конвейер на Apache Airflow, S3 и MinIO. Вёл продукт от идеи до MVP.</p>
+    <p class="note">Учебная визуализация принципов DWH на примере DORA-метрик: данные вымышленные, реальный проект описан в профиле.</p>
+  </div>
+</section>
     </main>
     <aside class="logp" aria-label="Журнал событий">
       <div class="log-h"><b>Журнал событий</b><span class="mono dim"><span id="log-count">0</span> строк · <button class="sbtn" type="button" id="log-clear">очистить</button></span></div>
@@ -904,7 +1273,7 @@ a.tag:hover{background:color-mix(in srgb,var(--qc) 12%,var(--panel-2))}
 
   <footer class="status">
     <div class="st-left">
-      <button class="ach-btn" type="button" id="ach-btn" aria-expanded="false" aria-controls="ach-pop">Ачивки 🏆 <span id="ach-count">0</span>/<span id="ach-total">9</span></button>
+      <button class="ach-btn" type="button" id="ach-btn" aria-expanded="false" aria-controls="ach-pop">Ачивки 🏆 <span id="ach-count">0</span>/<span id="ach-total">20</span></button>
       <span class="ach-last" id="ach-last"></span>
     </div>
     <div class="st-right">
@@ -993,6 +1362,23 @@ const ACH = {
   ],
   rest: [
     { id: 'rest-dup', name: 'Ловец дублей', desc: 'повтор с тем же ключом не создал второй заказ' }
+  ],
+  req: [
+    { id: 'req-collect',  name: 'Собрал требования', desc: 'разобраны три сырые заметки' },
+    { id: 'req-conflict', name: 'Разрешил конфликт', desc: 'скорость ↔ безопасность: параллельное согласование' },
+    { id: 'req-dor',      name: 'DoR пройден',       desc: 'три user stories готовы к разработке' }
+  ],
+  int: [
+    { id: 'int-rest',    name: 'REST',    desc: 'заказ создан через REST' },
+    { id: 'int-grpc',    name: 'gRPC',    desc: 'заказ создан через gRPC' },
+    { id: 'int-soap',    name: 'SOAP',    desc: 'заказ создан через SOAP' },
+    { id: 'int-graphql', name: 'GraphQL', desc: 'заказ создан через GraphQL' }
+  ],
+  dwh: [
+    { id: 'dwh-ods',  name: 'Raw→ODS',         desc: 'данные очищены и типизированы' },
+    { id: 'dwh-dds',  name: 'ODS→DDS',         desc: 'справочники и факт связаны' },
+    { id: 'dwh-mart', name: 'DDS→Mart',        desc: 'построены три DORA-витрины' },
+    { id: 'dwh-dq',   name: 'Качество данных', desc: 'пройдены 5 проверок DQ' }
   ]
 };
 const ACH_ALL = Object.values(ACH).flat();
@@ -1014,7 +1400,7 @@ function renderAch() {
     q.closest('.quest').classList.toggle('done', got === tot);
   }
   const pop = $('#ach-pop');
-  const names = { bpmn: 'Процесс BPMN', kafka: 'Сообщения Kafka', rest: 'API REST' };
+  const names = { bpmn: 'Процесс BPMN', kafka: 'Сообщения Kafka', rest: 'API REST', req: 'Требования', int: 'Интеграции', dwh: 'Данные / DWH' };
   pop.innerHTML = Object.keys(ACH).map(p => `<h4>${names[p]}</h4>` + ACH[p].map(a =>
     `<div class="ach-it ${ach[a.id] ? 'on' : ''}"><span class="i">${ach[a.id] ? '★' : '·'}</span><span><span class="n">${esc(a.name)}</span><br><span class="d">${esc(a.desc)}</span></span></div>`).join('')).join('') +
     `<div class="ach-pop-f"><span class="dim" style="font-size:12px">UML-сценарий без ачивок</span><button class="sbtn" type="button" id="ach-reset">Сбросить ачивки</button></div>`;
@@ -1243,6 +1629,23 @@ function dispatch(action, p, engine) {
     case 'timerFire':    BPMN.timerFire(); return;
     case 'paidBy':       BPMN.paidBy = p.via; return;
     case 'complete':     BPMN.complete(p.outcome); return;
+    // ---- Требования ----
+    case 'reqParse':     REQ.parse(p.i); return;
+    case 'reqConflict':  REQ.conflict(); return;
+    case 'reqResolve':   REQ.resolved(p.option); return;
+    case 'reqStory':     REQ.story(p.i); return;
+    case 'reqTrace':     return REQ.trace();
+    case 'reqDor':       REQ.dor(p); return;
+    // ---- Интеграции ----
+    case 'intSwitch':    INT.switchTo(p.tr); return;
+    case 'intSend':      INT.delivered(); return;
+    case 'intPacket':    return INT.packet(p.dir);
+    // ---- Данные / DWH ----
+    case 'dwhRaw':       DWH.raw(p.src); return;
+    case 'dwhOds':       return DWH.ods(p.phase);
+    case 'dwhDds':       return DWH.dds(p.phase);
+    case 'dwhMart':      DWH.mart(p.m); return;
+    case 'dwhDq':        DWH.dq(p); return;
     default: appendLog('WARN', 'engine', `unknown action "${action}" on ${engine.name}`);
   }
 }
@@ -2562,10 +2965,727 @@ const UML = {
 };
 
 /* =====================================================================
+   СТРАНИЦА: Требования — воронка от сырой заметки до user story
+   ===================================================================== */
+const REQ = {
+  engine: new ScenarioEngine('req'),
+  GOAL: 'Сократить время оформления командировки с 3 дней до 1 дня',
+  NOTES: [
+    { id: 1, src: 'HR', key: 'HR', raw: '«Командировки долго согласуют, люди ждут по три дня»', who: 'HR-специалист, отдел кадров', problem: 'Согласование заявки занимает в среднем 3 рабочих дня', result: 'Решение по заявке принимается в течение дня', affected: 'сотрудники, HR' },
+    { id: 2, src: 'Финансы', key: 'Finance', raw: '«Командировки нужно видеть в бюджетном отчёте»', who: 'финансовый контролёр', problem: 'Расходы на командировки собираются вручную из писем и таблиц', result: 'Все заявки с суммой автоматически попадают в бюджетный отчёт', affected: 'финансовый отдел' },
+    { id: 3, src: 'Безопасность', key: 'Security', raw: '«Обязательно подтверждение руководителя»', who: 'служба информационной безопасности', problem: 'Командировки оформляются без явного согласия руководителя', result: 'Каждая заявка имеет зафиксированное решение руководителя', affected: 'руководители, служба безопасности' }
+  ],
+  QUALITY: [
+    ['Источник заметки известен', 'кто сказал и в какой роли'],
+    ['Проблема описана без готового решения', 'что болит, а не «сделайте кнопку»'],
+    ['Ожидаемый результат проверяем', 'можно измерить или увидеть'],
+    ['Затронутые роли определены', 'для кого и на кого влияет']
+  ],
+  STORIES: [
+    { id: 'US-1', role: 'сотрудник', want: 'отправить заявку на командировку за 2 минуты', so: 'не тратить время на переписку с HR', ac: ['обязательные поля проверяются до отправки', 'заявка сохраняется в статусе DRAFT'], from: '#1 HR', sp: 3, short: 'Заявка за 2 минуты' },
+    { id: 'US-2', role: 'финансовый контролёр', want: 'видеть все командировки в бюджетном отчёте', so: 'планировать расходы без ручного сбора', ac: ['каждая заявка с суммой попадает в отчёт', 'отчёт выгружается в CSV'], from: '#2 Финансы', sp: 5, short: 'Командировки в отчёте' },
+    { id: 'US-3', role: 'руководитель', want: 'подтверждать командировку одним кликом', so: 'согласование не задерживало оформление', ac: ['в заявке есть кнопки «Согласовать» и «Отклонить»', 'решение сохраняется с timestamp'], from: '#3 Безопасность + решение конфликта', sp: 3, short: 'Согласование одним кликом' }
+  ],
+  DOR: [
+    ['Понятная бизнес-ценность', 'каждая story ведёт к цели «1 день»'],
+    ['Есть критерии приёмки', 'по 2 AC на story'],
+    ['Нет открытых конфликтов', 'скорость ↔ безопасность решён'],
+    ['Есть оценка сложности', '3 + 5 + 3 story points'],
+    ['Зависимости выявлены', 'US-3 → уведомления, US-2 → бюджетный отчёт']
+  ],
+  stage: 0, running: false, auto: false, conf: null,
+  init() {
+    $('#req-goal').textContent = this.GOAL;
+    $('#req-notes-list').innerHTML = this.NOTES.map((n, i) => `<article class="req-note" id="req-note${i}" data-tip="Сырая заметка — не требование. Сначала пойми источник, проблему, ожидаемый результат"><div class="req-src">Заметка #${n.id} · ${esc(n.src)}</div><p class="req-raw">${esc(n.raw)}</p><dl class="req-fields" hidden><dt>Источник</dt><dd>${esc(n.who)}</dd><dt>Проблема</dt><dd>${esc(n.problem)}</dd><dt>Результат</dt><dd>${esc(n.result)}</dd><dt>Затронуты</dt><dd>${esc(n.affected)}</dd></dl></article>`).join('');
+    $('#req-quality').innerHTML = this.QUALITY.map(([q, s], i) => `<li class="req-chk" id="req-q${i}"><i></i><span>${esc(q)}<small>${esc(s)}</small></span></li>`).join('');
+    $('#req-dor').innerHTML = this.DOR.map(([q, s], i) => `<li class="req-chk" id="req-d${i}"><i></i><span>${esc(q)}<small>${esc(s)}</small></span></li>`).join('');
+    this.buildTrace();
+    $('#req-b1').onclick = () => this.run(1);
+    $('#req-b2').onclick = () => this.run(2);
+    $('#req-bres').onclick = () => this.openModal();
+    $('#req-b3').onclick = () => this.run(4);
+    $('#req-b4').onclick = () => this.run(5);
+    $('#req-b5').onclick = () => this.run(6);
+    $('#req-auto').onclick = () => this.autoRun();
+    $('#req-opt-par').onclick = () => this.resolve('parallel');
+    $('#req-opt-seq').onclick = () => this.resolve('sequential');
+    $('#req-modal-close').onclick = () => { $('#req-modal').hidden = true; };
+    if (typeof ResizeObserver === 'function') new ResizeObserver(() => this.drawConflict()).observe($('#req-notes'));
+    this.engine.onState = () => this.ui();
+    this.engine.onReplay = () => this.resetView();
+    this.resetView(true);
+  },
+  /* Трассировка: бизнес-цель слева, три story справа */
+  buildTrace() {
+    const svg = $('#req-trace-svg');
+    const goalLines = this.wrapGoal(this.GOAL);
+    let html = `<g class="req-tnode goal" data-tip="Бизнес-цель — корень трассировки"><rect x="8" y="70" width="210" height="90" rx="10"/><text class="k" x="22" y="94">ЦЕЛЬ G-1</text>${goalLines.map((l, i) => `<text x="22" y="${114 + i * 16}">${esc(l)}</text>`).join('')}</g>`;
+    this.STORIES.forEach((s, i) => {
+      const y = 14 + i * 74;
+      html += `<path class="req-tline" id="req-tl${i}" d="M218 115 C 300 115, 320 ${y + 27}, 404 ${y + 27}"/>`;
+      html += `<g class="req-tnode off" id="req-tn${i}"><rect x="404" y="${y}" width="226" height="54" rx="8"/><text class="k" x="418" y="${y + 22}">${s.id}</text><text x="418" y="${y + 41}" id="req-tt${i}">—</text></g>`;
+    });
+    svg.innerHTML = html;
+  },
+  wrapGoal(t) { const w = t.split(' '), out = []; let cur = ''; for (const x of w) { if ((cur + ' ' + x).trim().length > 24) { out.push(cur); cur = x; } else cur = (cur + ' ' + x).trim(); } if (cur) out.push(cur); return out; },
+  /* ---- сценарии (массивы шагов для ScenarioEngine) ---- */
+  steps(k) {
+    const done = (t, n) => ({ t, action: 'call', fn: () => this.stageDone(n) });
+    if (k === 1) return [{ t: 0, action: 'reqParse', i: 0 }, { t: 450, action: 'reqParse', i: 1 }, { t: 900, action: 'reqParse', i: 2 }, { t: 1250, action: 'ach', id: 'req-collect' }, done(1300, 1)];
+    if (k === 2) return [{ t: 0, action: 'reqConflict' }, done(500, 2)];
+    if (k === 3) return [{ t: 0, action: 'reqResolve', option: 'parallel' }, { t: 400, action: 'ach', id: 'req-conflict' }, done(450, 3)];
+    if (k === 4) return [{ t: 0, action: 'reqStory', i: 0 }, { t: 450, action: 'reqStory', i: 1 }, { t: 900, action: 'reqStory', i: 2 }, done(1200, 4)];
+    if (k === 5) return [{ t: 0, action: 'reqTrace' }, done(1500, 5)];
+    if (k === 6) return [...this.DOR.map((_, i) => ({ t: i * 380, action: 'reqDor', i })), { t: 2050, action: 'reqDor', done: true }, { t: 2100, action: 'ach', id: 'req-dor' }, done(2150, 6)];
+    return [];
+  },
+  run(k) {
+    if (this.running || k !== this.stage + 1 || (k === 3 && this.stage !== 2)) return;   // строго по порядку, без параллельных запусков
+    this.running = true; this.ui();
+    this.engine.run(this.steps(k));
+  },
+  stageDone(n) {
+    this.stage = n; this.running = false; this.ui();
+    if (!this.auto) return;
+    if (n === 2) this.engine.after(600, () => this.resolve('parallel'));
+    else if (n < 6) this.engine.after(500, () => this.run(n + 1));
+    else this.auto = false;
+  },
+  autoRun() { if (this.running || this.stage >= 6) return; this.auto = true; if (this.stage === 2) this.resolve('parallel'); else this.run(this.stage + 1); },
+  openModal() { if (this.stage !== 2 || this.running) return; $('#req-seq-why').hidden = true; $('#req-opt-seq').classList.remove('req-rej'); $('#req-modal').hidden = false; $('#req-opt-par').focus({ preventScroll: true }); },
+  resolve(opt) {
+    if (this.stage !== 2) return;
+    if (opt === 'sequential') {
+      $('#req-opt-seq').classList.add('req-rej'); $('#req-seq-why').hidden = false;
+      appendLog('WARN', 'req', 'option rejected: sequential approval + timeout — до 48 ч, цель «1 день» недостижима');
+      return;
+    }
+    $('#req-modal').hidden = true;
+    this.run(3);
+  },
+  /* ---- действия для dispatch ---- */
+  parse(i) {
+    const n = this.NOTES[i], card = $('#req-note' + i), dl = card.querySelector('.req-fields');
+    dl.hidden = false; dl.classList.remove('req-open'); void dl.offsetWidth; dl.classList.add('req-open');
+    card.classList.add('req-parsed');
+    [[0, 1], [2], [3]][i].forEach(q => $('#req-q' + q).classList.add('on'));
+    appendLog('INFO', 'req', `note #${n.id} parsed: source=${n.key}, affected=${n.affected}`);
+  },
+  conflict() {
+    this.conf = 'open';
+    $('#req-note0').classList.add('req-conflict'); $('#req-note2').classList.add('req-conflict');
+    $('#req-conflicts').innerHTML = `<div class="req-conf-item" id="req-conf-item"><b>⚠ #1 HR ↔ #3 Безопасность</b>«быстрее согласовывать» против «дополнительное обязательное согласование руководителя»</div>`;
+    this.drawConflict();
+    appendLog('WARN', 'req', 'conflict detected: speed vs security');
+    TIP.auto('req-conf-badge');
+  },
+  resolved(opt) {
+    this.conf = 'ok';
+    $('#req-note0').classList.replace('req-conflict', 'req-resolved'); $('#req-note2').classList.replace('req-conflict', 'req-resolved');
+    const it = $('#req-conf-item'); it.classList.add('req-ok');
+    it.innerHTML = `<b>✓ #1 HR ↔ #3 Безопасность</b>«быстрее» против «дополнительное согласование»<div class="res">Решение: параллельное согласование руководителем и безопасностью, SLA 4 ч каждый</div>`;
+    this.drawConflict();
+    appendLog('INFO', 'req', `conflict resolved: ${opt} approval`);
+  },
+  story(i) {
+    const s = this.STORIES[i], box = $('#req-backlog');
+    if (i === 0) box.innerHTML = '';
+    box.insertAdjacentHTML('beforeend', `<article class="req-story"><h4>${s.id} <span>· ${s.sp} SP · ← ${esc(s.from)}</span></h4><p>Как <b>${esc(s.role)}</b>, я хочу ${esc(s.want)}, чтобы ${esc(s.so)}.</p><div class="ac">Критерии приёмки</div><ul>${s.ac.map(a => `<li>${esc(a)}</li>`).join('')}</ul></article>`);
+    $('#req-tn' + i).classList.replace('off', 'on'); $('#req-tt' + i).textContent = s.short;
+    appendLog('INFO', 'req', `${s.id} created: ${s.role} — ${s.want} (${s.ac.length} AC)`);
+  },
+  trace() {
+    const lines = [0, 1, 2].map(i => $('#req-tl' + i));
+    lines.forEach(l => { const L = l.getTotalLength(); l.style.opacity = 1; l.style.strokeDasharray = L; l.style.strokeDashoffset = L; });
+    const p = Promise.all(lines.map((l, i) => this.engine.wait(i * 300).then(() => this.engine.animate(700, k => { l.style.strokeDashoffset = l.getTotalLength() * (1 - easeInOut(k)); }))));
+    p.then(() => { appendLog('INFO', 'req', 'traceability built: goal → 3 stories'); TIP.auto('req-trace-svg', 'Если требование ни к чему не привязано — возможно, оно лишнее'); });
+    return p;
+  },
+  dor(p) {
+    if (p.done) { $('#req-dor-banner').hidden = false; appendLog('SUCCESS', 'req', 'definition of ready passed'); return; }
+    $('#req-d' + p.i).classList.add('on');
+    appendLog('INFO', 'req', `DoR: ${this.DOR[p.i][0]} ✓`);
+  },
+  /** Красная/зелёная связь между заметками #1 и #3 */
+  drawConflict() {
+    const svg = $('#req-conf-svg'), badge = $('#req-conf-badge'), path = $('#req-conf-path');
+    if (!this.conf) { path.setAttribute('d', ''); badge.hidden = true; return; }
+    const box = $('#req-notes'), br = box.getBoundingClientRect();
+    if (!br.width) return;
+    const a = $('#req-note0').getBoundingClientRect(), b = $('#req-note2').getBoundingClientRect();
+    const x = a.right - br.left, y1 = a.top - br.top + a.height / 2, y2 = b.top - br.top + b.height / 2;
+    svg.setAttribute('width', br.width); svg.setAttribute('height', br.height);
+    path.setAttribute('d', `M${x} ${y1} C ${x + 44} ${y1}, ${x + 44} ${y2}, ${x} ${y2}`);
+    svg.classList.toggle('req-ok', this.conf === 'ok');
+    badge.hidden = false; badge.classList.toggle('req-ok', this.conf === 'ok');
+    badge.textContent = this.conf === 'ok' ? '✓ Решён' : '⚠ Конфликт';
+    badge.style.left = (x + 30) + 'px'; badge.style.top = ((y1 + y2) / 2) + 'px';
+  },
+  ui() {
+    const s = this.stage, busy = this.running;
+    const map = { 'req-b1': 1, 'req-b2': 2, 'req-bres': 3, 'req-b3': 4, 'req-b4': 5, 'req-b5': 6 };
+    for (const id in map) {
+      const k = map[id], b = $('#' + id);
+      b.disabled = busy || k !== s + 1;
+      b.classList.toggle('req-done', s >= k);
+      b.classList.toggle('primary', !busy && k === s + 1);
+    }
+    $('#req-auto').disabled = busy || s >= 6;
+    const names = ['3 сырые заметки', 'заметки разобраны', 'найден конфликт', 'конфликт решён', 'stories готовы', 'трассировка построена', 'готово к разработке'];
+    $('#req-status').innerHTML = 'Этап: <b>' + names[s] + '</b>';
+  },
+  resetView(first) {
+    this.stage = 0; this.running = false; this.auto = false; this.conf = null;
+    $$('#req-notes-list .req-note').forEach(n => { n.classList.remove('req-parsed', 'req-conflict', 'req-resolved'); n.querySelector('.req-fields').hidden = true; });
+    $$('#req-quality .req-chk, #req-dor .req-chk').forEach(c => c.classList.remove('on'));
+    $('#req-conflicts').innerHTML = '<div class="req-empty">Конфликты ещё не искались</div>';
+    $('#req-backlog').innerHTML = '<div class="req-empty">User stories появятся после разбора заметок и разрешения конфликта</div>';
+    $('#req-dor-banner').hidden = true; $('#req-modal').hidden = true;
+    this.buildTrace(); this.drawConflict(); this.ui();
+    appendLog('INFO', 'req', 'session started: 3 raw notes received');
+  }
+};
+
+/* =====================================================================
+   СТРАНИЦА: Интеграции — «создать заказ» в REST / gRPC / SOAP / GraphQL
+   ===================================================================== */
+const INT_BODY = {
+  rest: '{"sku": "SKU-77", "qty": 1}',
+  soap: '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ord="http://shop.local/orders"><soap:Header/><soap:Body><ord:CreateOrder><ord:sku>SKU-77</ord:sku><ord:qty>1</ord:qty></ord:CreateOrder></soap:Body></soap:Envelope>',
+  graphql: '{"query":"mutation { createOrder(input: {sku: \\"SKU-77\\", qty: 1}) { order_id status } }"}'
+};
+const bytes = s => new TextEncoder().encode(s).length;
+const INT_T = {
+  rest: {
+    name: 'REST', comp: 'rest', ach: 'int-rest', ms: 120, status: '201 Created', color: 'var(--green)', pkt: 'circle',
+    caption: 'JSON over HTTPS', label: 'POST /orders', svc: 'REST API', size: `тело запроса: ${bytes(INT_BODY.rest)} B · JSON`,
+    reqLog: 'POST /orders', respLog: '201 Created order_id=1042 (120 ms)',
+    tip: 'REST — универсальный выбор для публичных API и простых CRUD. Понятен всем, легко кэшируется, но JSON может быть избыточным',
+    when: 'Публичные API, CRUD-операции, интеграции с внешними партнёрами. Ресурсы и HTTP-методы понятны любому разработчику, ответы кэшируются стандартными средствами.',
+    contractName: 'OpenAPI 3.0',
+    req: `POST /orders HTTP/1.1
+Host: api.shop.local
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOi…
+
+${INT_BODY.rest}`,
+    resp: `HTTP/1.1 201 Created
+Location: /orders/1042
+Content-Type: application/json
+
+{"order_id": 1042, "status": "CREATED"}`,
+    contract: `paths:
+  /orders:
+    post:
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateOrder' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+components:
+  schemas:
+    CreateOrder:
+      type: object
+      required: [sku, qty]
+      properties:
+        sku: { type: string, example: SKU-77 }
+        qty: { type: integer, minimum: 1 }`
+  },
+  grpc: {
+    name: 'gRPC', comp: 'grpc', ach: 'int-grpc', ms: 40, status: 'OK (grpc-status 0)', color: 'var(--blue)', pkt: 'rect', bidir: true,
+    caption: 'protobuf over HTTP/2', label: 'rpc CreateOrder', svc: 'gRPC server', size: 'тело запроса: 10 B · protobuf',
+    reqLog: 'CreateOrder request', respLog: 'response order_id=1042 (protobuf, 40 ms)',
+    tip: 'gRPC — для внутренних высоконагруженных сервисов. Бинарный protobuf компактнее JSON, HTTP/2 даёт мультиплексирование. Минус — сложнее отлаживать и не так дружелюбен к браузеру',
+    when: 'Внутренние вызовы между микросервисами с высокой нагрузкой и строгим контрактом. Бинарный формат и HTTP/2 экономят трафик и задержку, есть стриминг в обе стороны.',
+    contractName: 'order.proto',
+    req: `// order.proto
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest)
+      returns (CreateOrderResponse);
+}
+
+// вызов из клиента
+CreateOrder({ sku: "SKU-77", qty: 1 })`,
+    resp: `CreateOrderResponse {
+  order_id: 1042
+  status: "CREATED"
+}
+// grpc-status: 0 (OK)`,
+    contract: `syntax = "proto3";
+package shop.orders.v1;
+
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse);
+}
+
+message CreateOrderRequest {
+  string sku = 1;
+  int32  qty = 2;
+}
+
+message CreateOrderResponse {
+  int64  order_id = 1;
+  string status   = 2;
+}`
+  },
+  soap: {
+    name: 'SOAP', comp: 'soap', ach: 'int-soap', ms: 340, status: '200 OK', color: 'var(--amber)', pkt: 'env', icon: 'wsdl',
+    caption: 'XML over HTTP', label: 'SOAPAction: CreateOrder', svc: 'SOAP endpoint', size: `тело запроса: ${bytes(INT_BODY.soap)} B · XML`,
+    reqLog: 'SOAPAction CreateOrder', respLog: 'response order_id=1042 (XML, 340 ms)',
+    tip: 'SOAP — для корпоративных систем со строгим контрактом (WSDL) и стандартами безопасности (WS-Security). Тяжелее, но предсказуем в интеграции с legacy',
+    when: 'Корпоративные и государственные системы, legacy с готовым WSDL, требования WS-Security и подписи сообщений. Формат тяжелее, зато контракт строгий и проверяемый по XSD.',
+    contractName: 'OrderService.wsdl',
+    req: `POST /OrderService HTTP/1.1
+Content-Type: text/xml; charset=utf-8
+SOAPAction: "CreateOrder"
+
+<soap:Envelope
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:ord="http://shop.local/orders">
+  <soap:Header/>
+  <soap:Body>
+    <ord:CreateOrder>
+      <ord:sku>SKU-77</ord:sku>
+      <ord:qty>1</ord:qty>
+    </ord:CreateOrder>
+  </soap:Body>
+</soap:Envelope>`,
+    resp: `HTTP/1.1 200 OK
+Content-Type: text/xml; charset=utf-8
+
+<soap:Envelope xmlns:soap="…" xmlns:ord="…">
+  <soap:Body>
+    <ord:CreateOrderResponse>
+      <ord:order_id>1042</ord:order_id>
+      <ord:status>CREATED</ord:status>
+    </ord:CreateOrderResponse>
+  </soap:Body>
+</soap:Envelope>`,
+    contract: `<wsdl:portType name="OrderPortType">
+  <wsdl:operation name="CreateOrder">
+    <wsdl:input  message="tns:CreateOrderRequest"/>
+    <wsdl:output message="tns:CreateOrderResponse"/>
+  </wsdl:operation>
+</wsdl:portType>
+
+<xs:element name="CreateOrder">
+  <xs:complexType><xs:sequence>
+    <xs:element name="sku" type="xs:string"/>
+    <xs:element name="qty" type="xs:positiveInteger"/>
+  </xs:sequence></xs:complexType>
+</xs:element>`
+  },
+  graphql: {
+    name: 'GraphQL', comp: 'graphql', ach: 'int-graphql', ms: 90, status: '200 OK', color: 'var(--int-violet)', pkt: 'diamond', icon: 'graph',
+    caption: 'GraphQL over HTTP', label: 'POST /graphql · mutation', svc: 'GraphQL server', size: `тело запроса: ${bytes(INT_BODY.graphql)} B · JSON`,
+    reqLog: 'mutation createOrder', respLog: 'response order_id=1042 (только запрошенные поля, 90 ms)',
+    tip: 'GraphQL — когда клиенту нужна гибкость: он сам выбирает поля. Хорош для мобильных и агрегации источников. Минус — сложнее кэшировать и контролировать нагрузку',
+    when: 'Мобильные и веб-клиенты, которым нужны разные наборы полей, агрегация нескольких источников за один запрос. Один endpoint, клиент сам выбирает поля ответа.',
+    contractName: 'schema.graphql (SDL)',
+    req: `POST /graphql HTTP/1.1
+Content-Type: application/json
+
+mutation {
+  createOrder(input: { sku: "SKU-77", qty: 1 }) {
+    order_id
+    status
+  }
+}`,
+    resp: `HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "data": {
+    "createOrder": { "order_id": 1042, "status": "CREATED" }
+  }
+}`,
+    contract: `type Mutation {
+  createOrder(input: CreateOrderInput!): Order!
+}
+
+input CreateOrderInput {
+  sku: String!
+  qty: Int!
+}
+
+type Order {
+  order_id: ID!
+  status: OrderStatus!
+  created_at: String
+  items: [OrderItem!]!   # клиент не запросил — не придёт
+}`
+  }
+};
+const INT = {
+  engine: new ScenarioEngine('int'),
+  cur: 'rest', busy: false,
+  init() {
+    $$('#int-switch button').forEach(b => b.onclick = () => dispatch('intSwitch', { tr: b.dataset.t }, this.engine));
+    $('#int-send').onclick = () => this.send();
+    $('#int-table').innerHTML = '<thead><tr><th>Транспорт</th><th>Формат</th><th>Протокол</th><th>Контракт</th><th>Демо-ответ</th><th>Когда</th></tr></thead><tbody>' +
+      [['rest', 'JSON', 'HTTP/1.1', 'OpenAPI', 'публичные API, CRUD'], ['grpc', 'protobuf', 'HTTP/2', '.proto', 'внутренние сервисы'], ['soap', 'XML', 'HTTP', 'WSDL / XSD', 'legacy, WS-Security'], ['graphql', 'JSON', 'HTTP', 'SDL', 'гибкая выборка полей']]
+        .map(([k, f, p, c, w]) => `<tr data-t="${k}"><td>${INT_T[k].name}</td><td>${f}</td><td>${p}</td><td>${c}</td><td>${INT_T[k].ms} ms</td><td>${w}</td></tr>`).join('') + '</tbody>';
+    this.engine.onState = () => this.ui();
+    this.engine.onReplay = () => this.resetView();
+    this.apply('rest');
+    this.ui();
+  },
+  /** Переключатель: fade-out 150 мс → смена содержимого → fade-in 150 мс */
+  switchTo(tr) {
+    if (this.busy || tr === this.cur || !INT_T[tr]) return;
+    this.cur = tr;
+    $$('#int-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === tr)));
+    const blocks = $$('#page-int .int-fade');
+    blocks.forEach(b => b.classList.add('int-out'));
+    setTimeout(() => { this.apply(tr); blocks.forEach(b => b.classList.remove('int-out')); }, REDUCED ? 0 : 150);
+    appendLog('INFO', 'ui', `transport switched to ${INT_T[tr].name}`);
+    this.ui();
+  },
+  apply(tr) {
+    const T = INT_T[tr];
+    $('#int-req').textContent = T.req;
+    $('#int-req-meta').textContent = T.size;
+    $('#int-resp').textContent = '— ответ появится после отправки';
+    $('#int-resp').classList.add('int-wait');
+    $('#int-resp-meta').textContent = '';
+    $('#int-when').textContent = T.when;
+    $('#int-when-box').dataset.tip = T.tip;
+    $('#int-contract').textContent = T.contract;
+    $('#int-contract-meta').textContent = T.contractName;
+    $('#int-svg-meta').textContent = T.caption;
+    $$('#int-table tr[data-t]').forEach(r => r.classList.toggle('int-on', r.dataset.t === tr));
+    this.drawScheme(T);
+  },
+  drawScheme(T) {
+    const y = 140;
+    const icon = T.icon === 'wsdl'
+      ? `<g transform="translate(392 46)"><path class="int-icon" d="M0 4 Q14 -2 28 4 V34 Q14 28 0 34 Z M28 4 Q42 -2 56 4 V34 Q42 28 28 34"/><text class="node-s" x="28" y="50" text-anchor="middle">WSDL</text></g>`
+      : T.icon === 'graph'
+      ? `<g transform="translate(392 40)"><path class="int-icon" d="M8 30 L28 8 L48 30 Z M28 8 L28 30"/><circle class="int-icon" cx="8" cy="30" r="5"/><circle class="int-icon" cx="28" cy="8" r="5"/><circle class="int-icon" cx="48" cy="30" r="5"/><circle class="int-icon" cx="28" cy="30" r="4"/><text class="node-s" x="28" y="54" text-anchor="middle">SDL</text></g>` : '';
+    $('#int-svg').innerHTML = `
+<defs><marker id="int-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/></marker></defs>
+<text class="int-cap" x="260" y="30" text-anchor="middle">${esc(T.caption)}</text>
+<g id="int-n-client" class="node" data-tip="Клиент: сервис оформления заказов"><rect class="node-box" x="30" y="100" width="130" height="80" rx="10"/><text class="node-t" x="95" y="136" text-anchor="middle">Клиент</text><text class="node-s" x="95" y="156" text-anchor="middle">order UI</text></g>
+<g id="int-n-svc" class="node" data-tip="${esc(T.tip)}"><rect class="node-box" x="360" y="100" width="130" height="80" rx="10"/><text class="node-t" x="425" y="136" text-anchor="middle">Order Service</text><text class="node-s" x="425" y="156" text-anchor="middle">${esc(T.svc)}</text></g>
+${icon}
+<path class="int-line" id="int-line" d="M${T.bidir ? 166 : 160} ${y} H356" marker-end="url(#int-arr)"${T.bidir ? ' marker-start="url(#int-arr)"' : ''}/>
+<text class="int-lbl" x="260" y="${y - 12}" text-anchor="middle">${esc(T.label)}</text>
+<text class="int-sz" x="260" y="${y + 24}" text-anchor="middle">${esc(T.size)}</text>
+<text class="int-sz" x="260" y="236" text-anchor="middle">${T.bidir ? 'одно соединение HTTP/2, вызов и ответ в одном потоке' : 'запрос → ответ по той же линии'}</text>
+<g id="int-pkt" visibility="hidden">${this.pktShape(T)}</g>`;
+  },
+  pktShape(T) {
+    const st = `style="fill:${T.color};filter:drop-shadow(0 0 6px ${T.color})"`;
+    if (T.pkt === 'circle') return `<circle r="8" ${st}/>`;
+    if (T.pkt === 'rect') return `<rect x="-11" y="-6" width="22" height="12" rx="2" ${st}/>`;
+    if (T.pkt === 'env') return `<rect x="-11" y="-8" width="22" height="16" rx="2" ${st}/><path d="M-11 -8 L0 1 L11 -8" style="fill:none;stroke:var(--bg);stroke-width:1.5"/>`;
+    return `<path d="M0 -10 L10 0 L0 10 L-10 0 Z" ${st}/>`;
+  },
+  send() {
+    if (this.busy) return;                     // защита от параллельной отправки
+    this.busy = true; this.ui();
+    const T = INT_T[this.cur], c = T.comp;
+    $('#int-resp').textContent = '… ожидание ответа'; $('#int-resp-meta').textContent = '';
+    this.engine.run([
+      { t: 0,   action: 'log', level: 'INFO', comp: c, text: 'request sent' },
+      { t: 0,   action: 'log', level: 'INFO', comp: c, text: T.reqLog },
+      { t: 0,   action: 'intPacket', dir: 'out' },
+      { t: 400, action: 'pulseNode', id: 'int-n-svc' },
+      { t: 400, action: 'log', level: 'INFO', comp: c, text: 'processing' },
+      { t: 700, action: 'intPacket', dir: 'back' },
+      { t: 700, action: 'log', level: 'INFO', comp: c, text: 'response received' },
+      { t: 900, action: 'intSend' }
+    ]);
+  },
+  packet(dir) {
+    const g = $('#int-pkt'), line = $('#int-line');
+    if (!g) return;
+    line.classList.add('int-live'); g.setAttribute('visibility', 'visible');
+    const [a, b] = dir === 'out' ? [172, 344] : [344, 172];
+    return this.engine.animate(dir === 'out' ? 380 : 200, k => {
+      g.setAttribute('transform', `translate(${a + (b - a) * easeInOut(k)} 140)`);
+      if (k >= 1) { g.setAttribute('visibility', 'hidden'); line.classList.remove('int-live'); }
+    });
+  },
+  delivered() {
+    const T = INT_T[this.cur];
+    $('#int-resp').textContent = T.resp; $('#int-resp').classList.remove('int-wait');
+    $('#int-resp-meta').textContent = `${T.status} · ${T.ms} ms`;
+    appendLog('INFO', T.comp, T.respLog);
+    appendLog('SUCCESS', T.comp, T.status);
+    unlock(T.ach);
+    this.busy = false; this.ui();
+  },
+  ui() {
+    $('#int-send').disabled = this.busy;
+    $$('#int-switch button').forEach(b => { b.disabled = this.busy; });
+    const got = Object.values(INT_T).filter(t => ach[t.ach]).map(t => t.name);
+    $('#int-status').innerHTML = `Транспорт: <b>${INT_T[this.cur].name}</b> · отправлено: ${got.length ? got.join(', ') : '—'}`;
+  },
+  resetView() {
+    this.busy = false; this.cur = 'rest';
+    $$('#int-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === 'rest')));
+    $$('#page-int .int-fade').forEach(b => b.classList.remove('int-out'));
+    this.apply('rest'); this.ui();
+  }
+};
+
+/* =====================================================================
+   СТРАНИЦА: Данные / DWH — RAW → ODS → DDS → DATA MART, три метрики DORA
+   Все цифры витрин и дашборда считаются из демо-данных, а не задаются вручную.
+   ===================================================================== */
+const DWH_DATA = (() => {
+  const H = 3600e3, BASE = Date.UTC(2026, 9, 26, 10, 0);            // 26.10.2026 10:00 UTC
+  const EMP = ['a.ivanova', 'd.smirnov', 'm.orlova', 'k.belov', 's.fedorova'].map(e => e + '@devcorp.local');
+  const LT = [['HRP-101', 80.5], ['HRP-102', 34], ['HRP-103', 62], ['HRP-104', 18], ['HRP-105', 104], ['HRP-106', 47], ['HRP-107', 141], ['HRP-108', 26.5],
+    ['CICD-41', 62], ['CICD-42', 96], ['CICD-43', 55], ['CICD-44', 70.5], ['CICD-45', 41], ['CICD-46', 120]];
+  const DEPLOYED = ['HRP-101', 'HRP-102', 'HRP-103', 'HRP-105', 'HRP-106', 'CICD-41', 'CICD-42', 'CICD-44', 'CICD-45'];
+  const COMMITS = [5, 4, 4, 3, 4, 5, 3, 4, 4, 5, 4, 4, 4, 4];
+  const sha = s => (murmur2(s) >>> 0).toString(16).padStart(8, '0').slice(0, 7) + (murmur2(s + 'x') >>> 0).toString(16).slice(0, 3);
+  const issues = LT.map(([key, lt], i) => {
+    const resolved = BASE + i * 11 * H, first = resolved - lt * H;
+    return { key, project: key.split('-')[0], lt, created: first - 20 * H, first, resolved, assignee: EMP[i % 5],
+      status: key === 'CICD-44' ? 'Reopened' : (i % 2 ? 'Closed' : 'Done') };
+  });
+  const prs = [], commits = [];
+  issues.forEach((it, i) => {
+    if (DEPLOYED.includes(it.key)) {
+      const merged = it.resolved - 1 * H;
+      prs.push({ pr_id: 501 + prs.length, issue_key: it.key, created: it.first + it.lt * 0.6 * H, merged, target: 'main', reviewer: EMP[(i + 2) % 5] });
+      it.merged = merged;
+    }
+    if (it.key === 'CICD-44') it.reopened = it.merged + 20 * H;     // переоткрыта через 20 ч после деплоя
+    const end = (it.merged || it.resolved) - 2 * H;
+    for (let j = 0; j < COMMITS[i]; j++) commits.push({ sha: sha(it.key + '#' + j), issue_key: it.key, at: it.first + (end - it.first) * j / COMMITS[i], author: EMP[(i + j) % 5] });
+  });
+  return { H, EMP, issues, prs, commits };
+})();
+const DWH = {
+  engine: new ScenarioEngine('dwh'),
+  stage: 0, running: false, auto: false,
+  /* история прошлых загрузок витрин (предыдущие недели и начало месяца) */
+  HIST_LT: [['2026-10-19', 'HRP', 7, 59, 112], ['2026-10-19', 'CICD', 6, 64, 109]],
+  HIST_DEPLOY: [['2026-10-05', 'HRP', 9], ['2026-10-05', 'CICD', 7], ['2026-10-12', 'HRP', 8], ['2026-10-12', 'CICD', 6], ['2026-10-19', 'HRP', 7], ['2026-10-19', 'CICD', 7]],
+  HIST_CFR: { HRP: [28, 2], CICD: [23, 2] },                         // деплоев и неудачных в октябре до текущей загрузки
+  DQ: [
+    ['issue_key уникален в ODS', d => { const k = d.ods.jira.map(r => r.issue_key); return [new Set(k).size === k.length, `${new Set(k).size} из ${k.length} уникальны`]; }],
+    ['resolved_at ≥ first_commit_at во всех строках', d => { const bad = d.fact.filter(r => r.resolved < r.first).length; return [bad === 0, `${d.fact.length - bad}/${d.fact.length} строк`]; }],
+    ['все employee_email есть в dim_employee', d => { const dim = new Set(d.dimEmp.map(e => e.email)); const all = [...d.ods.jira.map(r => r.assignee_email), ...d.ods.bb.map(r => r.reviewer_email), ...d.ods.git.map(r => r.author_email)]; const miss = all.filter(e => !dim.has(e)).length; return [miss === 0, `${all.length - miss}/${all.length} ссылок`]; }],
+    ['lead_time_hours > 0 в факте', d => { const bad = d.fact.filter(r => !(r.lead_time_hours > 0)).length; return [bad === 0, `${d.fact.length - bad}/${d.fact.length} строк`]; }],
+    ['cfr_percent в диапазоне 0–100', d => { const bad = d.cfr.filter(r => r.cfr < 0 || r.cfr > 100).length; return [bad === 0, d.cfr.map(r => `${r.project_key} ${r.cfr.toFixed(1)}%`).join(', ')]; }]
+  ],
+  init() {
+    $('#dwh-b1').onclick = () => this.run(1); $('#dwh-b2').onclick = () => this.run(2); $('#dwh-b3').onclick = () => this.run(3);
+    $('#dwh-b4').onclick = () => this.run(4); $('#dwh-b5').onclick = () => this.run(5);
+    $('#dwh-auto').onclick = () => { if (this.running || this.stage >= 5) return; this.auto = true; this.run(this.stage + 1); };
+    this.engine.onState = () => this.ui();
+    this.engine.onReplay = () => this.resetView();
+    this.resetView(true);
+  },
+  /* ---- форматирование: время источников в МСК ---- */
+  ts(ms) { const d = new Date(ms + 3 * DWH_DATA.H); return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())} ${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}`; },
+  iso(ms) { return this.ts(ms).replace(' ', 'T') + ':00.000+0300'; },
+  week(ms) { const d = new Date(ms + 3 * DWH_DATA.H); const wd = (d.getUTCDay() + 6) % 7; const m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - wd)); return `${m.getUTCFullYear()}-${pad2(m.getUTCMonth() + 1)}-${pad2(m.getUTCDate())}`; },
+  pct(arr, p) { const s = [...arr].sort((a, b) => a - b); const i = (s.length - 1) * p, lo = Math.floor(i), hi = Math.ceil(i); return s[lo] + (s[hi] - s[lo]) * (i - lo); },   // как percentile_cont в PostgreSQL
+  /* ---- трансформации между слоями ---- */
+  buildOds() {
+    const D = DWH_DATA, norm = s => ({ Done: 'DONE', Closed: 'DONE', Reopened: 'REOPENED' }[s] || s.toUpperCase());
+    const jira = D.issues.map(i => ({ issue_key: i.key, status: norm(i.status), raw_status: i.status, project_key: i.project, created_at: i.created, resolved_at: i.resolved, reopened_at: i.reopened || null, assignee_email: i.assignee }));
+    const bb = D.prs.map(p => ({ pr_id: p.pr_id, issue_key: p.issue_key, created_at: p.created, merged_at: p.merged, target_branch: p.target, reviewer_email: p.reviewer }));
+    const git = D.commits.map(c => ({ commit_sha: c.sha, issue_key: c.issue_key, committed_at: c.at, author_email: c.author }));
+    const dedup = (rows, k) => { const seen = new Set(); return rows.filter(r => { const v = k(r); if (seen.has(v)) return false; seen.add(v); return true; }); };
+    const res = { jira: dedup(jira, r => r.issue_key + '|jira'), bb: dedup(bb, r => r.pr_id), git: dedup(git, r => r.commit_sha) };
+    res.dups = jira.length - res.jira.length + bb.length - res.bb.length + git.length - res.git.length;
+    return res;
+  },
+  buildDds(ods) {
+    const emails = [...new Set([...ods.jira.map(r => r.assignee_email), ...ods.bb.map(r => r.reviewer_email), ...ods.git.map(r => r.author_email)])].sort();
+    const dimEmp = emails.map((email, i) => ({ employee_sk: i + 1, email }));
+    const dimProj = [{ project_sk: 1, project_key: 'HRP', name: 'HR Platform' }, { project_sk: 2, project_key: 'CICD', name: 'CI/CD Platform' }];
+    const dimStatus = [{ status_sk: 1, status: 'DONE' }, { status_sk: 2, status: 'REOPENED' }, { status_sk: 3, status: 'IN_PROGRESS' }];
+    const fact = ods.jira.map((j, i) => {
+      const cs = ods.git.filter(c => c.issue_key === j.issue_key), pr = ods.bb.find(p => p.issue_key === j.issue_key && p.target_branch === 'main');
+      const first = Math.min(...cs.map(c => c.committed_at));
+      const merged = pr ? pr.merged_at : null;
+      const failed = !!(merged && j.reopened_at && j.reopened_at - merged <= 48 * DWH_DATA.H);
+      return { issue_sk: 1001 + i, issue_key: j.issue_key, project_sk: dimProj.find(p => p.project_key === j.project_key).project_sk, project_key: j.project_key,
+        employee_sk: dimEmp.find(e => e.email === j.assignee_email).employee_sk, status_sk: dimStatus.find(x => x.status === j.status).status_sk, created_at: j.created_at, first, resolved: j.resolved_at, reopened: j.reopened_at,
+        lead_time_hours: Math.round((j.resolved_at - first) / DWH_DATA.H * 10) / 10, merged, is_failed_change: failed };
+    });
+    return { dimEmp, dimProj, dimStatus, fact };
+  },
+  buildMarts(dds) {
+    const f = dds.fact, projects = ['HRP', 'CICD'];
+    const cw = this.week(f[0].resolved);
+    const lt = [...this.HIST_LT.map(([w, p, n, med, p90]) => ({ week_start: w, project_key: p, issues_closed: n, med, p90, hist: true })),
+      ...projects.map(p => { const v = f.filter(r => r.project_key === p).map(r => r.lead_time_hours); return { week_start: cw, project_key: p, issues_closed: v.length, med: this.pct(v, .5), p90: this.pct(v, .9) }; })];
+    const dep = [...this.HIST_DEPLOY.map(([w, p, n]) => ({ week_start: w, project_key: p, deployments_count: n, hist: true })),
+      ...projects.map(p => ({ week_start: cw, project_key: p, deployments_count: f.filter(r => r.project_key === p && r.merged).length }))];
+    const cfr = projects.map(p => {
+      const cur = f.filter(r => r.project_key === p && r.merged), failed = this.HIST_CFR[p][1] + cur.filter(r => r.is_failed_change).length, total = this.HIST_CFR[p][0] + cur.length;
+      return { month: '2026-10', project_key: p, failed_deployments: failed, total_deployments: total, cfr: failed / total * 100 };
+    });
+    // дашборд: медиана lead time за текущую неделю, медиана деплоев в неделю за 4 недели, CFR за октябрь
+    const weeks = [...new Set(dep.map(r => r.week_start))].sort();
+    const perWeek = weeks.map(w => dep.filter(r => r.week_start === w).reduce((s, r) => s + r.deployments_count, 0));
+    const tf = cfr.reduce((s, r) => s + r.failed_deployments, 0), tt = cfr.reduce((s, r) => s + r.total_deployments, 0);
+    const dash = { leadMedian: this.pct(f.map(r => r.lead_time_hours), .5), week: cw, deployMedian: this.pct(perWeek, .5), perWeek, weeks, cfr: tf / tt * 100, tf, tt };
+    return { lt, dep, cfr, dash };
+  },
+  /* ---- рендер таблиц ---- */
+  table(name, meta, cols, rows, opts = {}) {
+    const show = rows.slice(0, opts.limit || 3);
+    const body = show.map(r => `<tr class="${r._cls || ''}">${cols.map(([k, fmt, cls]) => { const v = fmt ? fmt(r[k], r) : r[k]; const c = typeof cls === 'function' ? cls(r) : cls; return `<td${c ? ` class="${c}"` : ''}>${esc(v == null ? 'null' : v)}</td>`; }).join('')}</tr>`).join('');
+    const more = rows.length > show.length ? `<div class="dwh-more">… ещё ${rows.length - show.length} строк</div>` : '';
+    return `<div class="dwh-tcard dwh-new"><div class="dwh-th">${esc(name)}<span>${esc(meta)}</span></div><div class="dwh-tw"><table class="dwh-t"><thead><tr>${cols.map(c => `<th>${esc(c[3] || c[0])}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>${more}</div>`;
+  },
+  run(k) {
+    if (this.running || k !== this.stage + 1) return;
+    this.running = true; this.ui();
+    const done = t => ({ t, action: 'call', fn: () => this.stageDone(k) });
+    const S = {
+      1: [{ t: 0, action: 'dwhRaw', src: 'jira' }, { t: 450, action: 'dwhRaw', src: 'bitbucket' }, { t: 900, action: 'dwhRaw', src: 'git' },
+          { t: 1000, action: 'tip', id: 'dwh-c-raw', text: 'RAW — слой как есть. Данные не меняются, чтобы всегда можно было перепроверить источник. Здесь только метаданные загрузки' }, done(1300)],
+      2: [{ t: 0, action: 'dwhOds', phase: 'transform' }, { t: 800, action: 'dwhOds', phase: 'load' }, { t: 900, action: 'ach', id: 'dwh-ods' },
+          { t: 950, action: 'tip', id: 'dwh-c-ods', text: 'ODS — операционный слой. Данные типизированы и очищены, но ещё не связаны между собой. Дедупликация по бизнес-ключу — обязательный шаг' }, done(1200)],
+      3: [{ t: 0, action: 'dwhDds', phase: 'join' }, { t: 600, action: 'dwhDds', phase: 'enrich' }, { t: 1100, action: 'dwhDds', phase: 'load' }, { t: 1200, action: 'ach', id: 'dwh-dds' },
+          { t: 1250, action: 'tip', id: 'dwh-c-dds', text: 'DDS — интегрированный слой. Данные связаны, нормализованы и обогащены вычисляемыми полями. Суррогатные ключи нужны, чтобы история изменений не ломала связи' }, done(1500)],
+      4: [{ t: 0, action: 'dwhMart', m: 0 }, { t: 450, action: 'dwhMart', m: 1 }, { t: 900, action: 'dwhMart', m: 2 }, { t: 1300, action: 'dwhMart', m: 'dash' }, { t: 1400, action: 'ach', id: 'dwh-mart' },
+          { t: 1450, action: 'tip', id: 'dwh-c-mart', text: 'Data Mart — витрина под конкретного потребителя. Одна DDS может питать несколько витрин: lead time, deployment frequency, change failure rate' }, done(1700)],
+      5: [...this.DQ.map((_, i) => ({ t: i * 420, action: 'dwhDq', i })), { t: 2200, action: 'dwhDq', done: true }, { t: 2250, action: 'ach', id: 'dwh-dq' }, done(2300)]
+    };
+    this.engine.run(S[k]);
+  },
+  stageDone(k) {
+    this.stage = k; this.running = false;
+    $$('.dwh-col').forEach(c => c.classList.remove('dwh-active'));
+    this.ui();
+    if (this.auto) { if (k < 5) this.engine.after(500, () => this.run(k + 1)); else this.auto = false; }
+  },
+  active(l) { $$('.dwh-col').forEach(c => c.classList.toggle('dwh-active', c.dataset.l === l)); },
+  /** Точки, бегущие по стрелке между слоями */
+  flow(n) {
+    const a = $('#dwh-a' + n); a.classList.add('dwh-live');
+    const svg = a.querySelector('svg'), dots = [0, 1, 2].map(() => S('circle', { r: 2.6, cy: 20, cx: 2 }, svg));
+    return Promise.all(dots.map((d, i) => this.engine.wait(i * 160).then(() => this.engine.animate(520, k => { d.setAttribute('cx', 2 + 14 * k); if (k >= 1) d.remove(); })))).then(() => a.classList.remove('dwh-live'));
+  },
+  /* ---- шаги ---- */
+  raw(src) {
+    const D = DWH_DATA, batch = { jira: 'jira-2026-11-02', bitbucket: 'bb-2026-11-02', git: 'git-2026-11-02' }[src];
+    const load = Date.UTC(2026, 10, 2, 0, 5 + ['jira', 'bitbucket', 'git'].indexOf(src) * 3);
+    this.active('raw');
+    let rows, name;
+    if (src === 'jira') { name = 'raw.jira_issues'; rows = D.issues.map(i => ({ payload: JSON.stringify({ key: i.key, fields: { status: { name: i.status }, created: this.iso(i.created), resolutiondate: this.iso(i.resolved), project: { key: i.project }, assignee: { emailAddress: i.assignee } } }) })); }
+    if (src === 'bitbucket') { name = 'raw.bitbucket_prs'; rows = D.prs.map(p => ({ payload: JSON.stringify({ id: p.pr_id, title: `${p.issue_key}: …`, created_on: this.iso(p.created), merged_on: this.iso(p.merged), destination: { branch: { name: p.target } }, reviewers: [{ email: p.reviewer }] }) })); }
+    if (src === 'git') { name = 'raw.git_commits'; rows = D.commits.map(c => ({ payload: JSON.stringify({ sha: c.sha, message: `${c.issue_key}: …`, author: { email: c.author, date: this.iso(c.at) } }) })); }
+    rows.forEach(r => { r.load_ts = this.ts(load); r.source = src; r.batch_id = batch; });
+    if (src === 'jira') $('#dwh-raw').innerHTML = '';
+    this.rawRows = (this.rawRows || 0) + rows.length;
+    $('#dwh-raw').insertAdjacentHTML('beforeend', this.table(name, `${rows.length} rows`, [['batch_id'], ['source'], ['load_ts'], ['payload', v => v.length > 60 ? v.slice(0, 60) + '…' : v]], rows, { limit: 2 }));
+    $('#dwh-n-raw').textContent = this.rawRows + ' строк';
+    appendLog('INFO', 'dwh', `raw loaded: ${src} batch=${batch} rows=${rows.length}`);
+  },
+  ods(phase) {
+    if (phase === 'transform') { this.active('ods'); appendLog('INFO', 'dwh', 'ods transform: cast timestamps, normalize status (DONE/REOPENED), dedup by issue_key'); return this.flow(1); }
+    const o = this.ods_ = this.buildOds();
+    const reopenFirst = [...o.jira].sort((a, b) => (b.status === 'REOPENED') - (a.status === 'REOPENED'));
+    $('#dwh-ods').innerHTML =
+      this.table('ods.jira_issues', `${o.jira.length} rows`, [['issue_key'], ['raw_status', null, 'dwh-dim', 'raw'], ['status', null, r => r.status === 'REOPENED' ? 'dwh-bad' : 'dwh-hl'], ['resolved_at', v => this.ts(v)], ['project_key']], reopenFirst) +
+      this.table('ods.bitbucket_prs', `${o.bb.length} rows`, [['pr_id'], ['issue_key'], ['merged_at', v => this.ts(v)], ['target_branch']], o.bb, { limit: 2 }) +
+      this.table('ods.git_commits', `${o.git.length} rows`, [['commit_sha', v => v.slice(0, 7)], ['issue_key'], ['committed_at', v => this.ts(v)]], o.git, { limit: 2 });
+    $('#dwh-n-ods').textContent = (o.jira.length + o.bb.length + o.git.length) + ' строк';
+    appendLog('INFO', 'dwh', `ods loaded: jira=${o.jira.length} bitbucket=${o.bb.length} git=${o.git.length} (${o.dups} dup)`);
+  },
+  dds(phase) {
+    if (phase === 'join') { this.active('dds'); appendLog('INFO', 'dwh', 'dds join: issue_key across jira/bitbucket/git'); return this.flow(2); }
+    const d = this.dds_ = this.dds_ || this.buildDds(this.ods_);
+    if (phase === 'enrich') { const s = d.fact[0]; appendLog('INFO', 'dwh', `dds enrich: lead_time_hours=${s.lead_time_hours}, is_failed_change=${s.is_failed_change} (${s.issue_key})`); return; }
+    const er = `<svg class="dwh-er" viewBox="0 0 252 108" aria-label="Связи справочников и факта"><path d="M41 30 V70 H55"/><path d="M126 30 V62"/><path d="M211 30 V70 H197"/>
+      <rect x="2" y="6" width="78" height="24" rx="4"/><text x="41" y="22" text-anchor="middle">dim_employee</text>
+      <rect x="87" y="6" width="78" height="24" rx="4"/><text x="126" y="22" text-anchor="middle">dim_project</text>
+      <rect x="172" y="6" width="78" height="24" rx="4"/><text x="211" y="22" text-anchor="middle">dim_status</text>
+      <rect class="f" x="55" y="62" width="142" height="36" rx="4"/><text x="126" y="78" text-anchor="middle">fact_issue_lifecycle</text><text x="126" y="91" text-anchor="middle" style="fill:var(--muted)">3 FK → справочники</text></svg>`;
+    const failedFirst = [d.fact[0], ...d.fact.filter(r => r.is_failed_change), ...d.fact.slice(1).filter(r => !r.is_failed_change)];
+    $('#dwh-dds').innerHTML = `<div class="dwh-tcard dwh-new">${er}</div>` +
+      this.table('fact_issue_lifecycle', `${d.fact.length} rows`, [['issue_sk'], ['issue_key'], ['project_sk'], ['employee_sk'], ['status_sk'], ['first_commit_at', (v, r) => this.ts(r.first)], ['resolved_at', (v, r) => this.ts(r.resolved)],
+        ['lead_time_hours', null, 'dwh-hl'], ['deployment_merged_at', (v, r) => r.merged ? this.ts(r.merged) : null], ['is_failed_change', v => String(v), r => r.is_failed_change ? 'dwh-bad' : '']], failedFirst) +
+      this.table('dim_employee', `${d.dimEmp.length} rows`, [['employee_sk'], ['email']], d.dimEmp, { limit: 2 }) +
+      this.table('dim_project · dim_status', `${d.dimProj.length} + ${d.dimStatus.length} rows`, [['project_sk'], ['project_key'], ['name']], d.dimProj, { limit: 2 });
+    $('#dwh-n-dds').textContent = (d.fact.length + d.dimEmp.length + d.dimProj.length + d.dimStatus.length) + ' строк';
+    appendLog('INFO', 'dwh', `dds loaded: fact_issue_lifecycle rows=${d.fact.length}, dims=3`);
+  },
+  mart(m) {
+    const M = this.marts_ = this.marts_ || this.buildMarts(this.dds_);
+    const hl = r => r.hist ? 'dwh-hist' : 'dwh-cur';
+    if (m === 0) {
+      this.active('mart'); $('#dwh-mart').innerHTML = '';
+      this.flow(3);
+      $('#dwh-mart').insertAdjacentHTML('beforeend', this.table('mart.lead_time_by_project_week', 'медиана и p90, ч', [['week_start'], ['project_key'], ['issues_closed'], ['med', v => v.toFixed(1), null, 'lead_time_median_h'], ['med2', (v, r) => r.p90.toFixed(1), null, 'lead_time_p90_h']], M.lt.map(r => Object.assign({ _cls: hl(r) }, r)), { limit: 4 }));
+      appendLog('INFO', 'dwh', 'mart built: lead_time_by_project_week');
+    }
+    if (m === 1) {
+      $('#dwh-mart').insertAdjacentHTML('beforeend', this.table('mart.deployment_frequency_by_project_week', 'деплои в main', [['week_start'], ['project_key'], ['deployments_count']], M.dep.slice(-4).map(r => Object.assign({ _cls: hl(r) }, r)), { limit: 4 }));
+      appendLog('INFO', 'dwh', 'mart built: deployment_frequency_by_project_week');
+    }
+    if (m === 2) {
+      $('#dwh-mart').insertAdjacentHTML('beforeend', this.table('mart.change_failure_rate_by_project_month', 'вкл. прошлые загрузки', [['month'], ['project_key'], ['failed_deployments'], ['total_deployments'], ['cfr', v => v.toFixed(1), null, 'cfr_percent']], M.cfr.map(r => Object.assign({ _cls: 'dwh-cur' }, r))));
+      $('#dwh-n-mart').textContent = '3 витрины';
+      appendLog('INFO', 'dwh', 'mart built: change_failure_rate_by_project_month');
+    }
+    if (m === 'dash') { this.renderCards(M.dash); appendLog('SUCCESS', 'dwh', 'mart loaded: 3 DORA marts, dashboard ready'); }
+  },
+  dq(p) {
+    if (p.done) {
+      const ok = this.DQ.every(([, fn]) => fn(this.dqData())[0]);
+      appendLog(ok ? 'SUCCESS' : 'ERROR', 'dwh', `data quality ${ok ? 'passed' : 'failed'}: ${this.DQ.filter(([, fn]) => fn(this.dqData())[0]).length}/${this.DQ.length} checks`);
+      TIP.auto('dwh-dq', 'DQ-проверки — контракт между слоями. Падение проверки останавливает пайплайн: лучше не показать метрику, чем показать на битых данных');
+      return;
+    }
+    const [ok, note] = this.DQ[p.i][1](this.dqData());
+    const li = $('#dwh-q' + p.i); li.classList.toggle('on', ok); li.querySelector('small').textContent = (ok ? 'пройдено · ' : 'ОШИБКА · ') + note;
+    appendLog(ok ? 'INFO' : 'ERROR', 'dwh', `dq check: ${this.DQ[p.i][0]} → ${ok ? 'ok' : 'failed'} (${note})`);
+  },
+  dqData() { return { ods: this.ods_, fact: this.dds_.fact, dimEmp: this.dds_.dimEmp, cfr: this.marts_.cfr }; },
+  renderCards(d) {
+    const box = $('#dwh-cards');
+    if (!d) {
+      box.innerHTML = ['Lead Time median', 'Deploy Frequency', 'Change Failure Rate'].map(t => `<div class="dwh-card dwh-nodata"><div class="t">${t}</div><b>—</b><div class="w">нет данных</div></div>`).join('');
+      return;
+    }
+    const mx = Math.max(...d.perWeek);
+    box.innerHTML =
+      `<div class="dwh-card"><div class="t">Lead Time median</div><b>${Math.round(d.leadMedian)} h</b><div class="w">неделя с ${d.week} · от первого коммита до resolved</div></div>` +
+      `<div class="dwh-card"><div class="t">Deploy Frequency</div><b>${d.deployMedian} / wk</b><div class="w">медиана за ${d.weeks.length} недели</div><div class="dwh-bars">${d.perWeek.map(v => `<i style="height:${v / mx * 100}%" title="${v}"></i>`).join('')}</div></div>` +
+      `<div class="dwh-card"><div class="t">Change Failure Rate</div><b>${d.cfr.toFixed(1)} %</b><div class="w">октябрь 2026 · ${d.tf} из ${d.tt} деплоев</div></div>`;
+  },
+  ui() {
+    for (let k = 1; k <= 5; k++) { const b = $('#dwh-b' + k); b.disabled = this.running || k !== this.stage + 1; b.classList.toggle('req-done', this.stage >= k); b.classList.toggle('primary', !this.running && k === this.stage + 1); }
+    $('#dwh-auto').disabled = this.running || this.stage >= 5;
+    $('#dwh-status').innerHTML = 'Этап: <b>' + ['источники зарегистрированы', 'RAW загружен', 'ODS очищен', 'DDS связан', 'витрины готовы', 'качество проверено'][this.stage] + '</b>';
+  },
+  resetView(first) {
+    this.stage = 0; this.running = false; this.auto = false; this.rawRows = 0; this.ods_ = this.dds_ = this.marts_ = null;
+    [['raw', 'Данные ещё не загружены'], ['ods', 'Пусто'], ['dds', 'Пусто'], ['mart', 'Пусто']].forEach(([l, t]) => { $('#dwh-' + l).innerHTML = `<div class="dwh-empty">${t}</div>`; });
+    $('#dwh-n-raw').textContent = '0 строк'; $('#dwh-n-ods').textContent = '0 строк'; $('#dwh-n-dds').textContent = '0 строк'; $('#dwh-n-mart').textContent = '0 витрин';
+    $$('.dwh-col').forEach(c => c.classList.remove('dwh-active')); $$('.dwh-arrow').forEach(a => { a.classList.remove('dwh-live'); a.querySelectorAll('circle').forEach(c => c.remove()); });
+    $('#dwh-dq').innerHTML = this.DQ.map(([q], i) => `<li class="req-chk" id="dwh-q${i}"><i></i><span>${esc(q)}<small>не проверено</small></span></li>`).join('');
+    this.renderCards(null); this.ui();
+    appendLog('INFO', 'dwh', 'session started: sources jira, bitbucket, git registered');
+  }
+};
+
+/* =====================================================================
    РОУТЕР
    ===================================================================== */
-const PAGE_OBJ = { rest: REST, bpmn: BPMN, kafka: KAFKA, uml: UML };
-const PAGES = ['profile', 'bpmn', 'kafka', 'rest', 'uml'];
+const PAGE_OBJ = { rest: REST, bpmn: BPMN, kafka: KAFKA, uml: UML, req: REQ, int: INT, dwh: DWH };
+const PAGES = ['profile', 'bpmn', 'kafka', 'rest', 'uml', 'req', 'int', 'dwh'];
 let currentPage = null;
 function route() {
   let h = location.hash.slice(1);
@@ -2582,6 +3702,7 @@ function route() {
 }
 function resetPage(name) {
   if (name === 'uml') { UML.reset(); appendSep('--- reset: page uml ---'); return; }
+  if (name === 'req' || name === 'int' || name === 'dwh') { appendSep(`--- reset: page ${name} ---`); PAGE_OBJ[name].engine.replay(); return; }
   PAGE_OBJ[name].engine.replay();
   appendSep(`--- reset: page ${name} · выше — история предыдущего запуска ---`);
 }
@@ -2612,8 +3733,8 @@ function init() {
   logPanel.scrollTop = logPanel.scrollHeight;
   if (!logHistory.length) appendLog('INFO', 'system', 'session started: выберите квест во вкладках');
   TIP.init();
-  REST.init(); BPMN.init(); KAFKA.init(); UML.init();
-  ['rest', 'bpmn', 'kafka', 'uml'].forEach(bindEngineUI);
+  REST.init(); BPMN.init(); KAFKA.init(); UML.init(); REQ.init(); INT.init(); DWH.init();
+  ['rest', 'bpmn', 'kafka', 'uml', 'req', 'int', 'dwh'].forEach(bindEngineUI);
   $('#log-clear').onclick = () => { logHistory.length = 0; logPanel.textContent = ''; $('#log-count').textContent = 0; persistLog(); };
   $('#debug-toggle').onclick = () => { DEBUG = !DEBUG; store.set('localStorage', 'sa.debug', DEBUG); applyDebug(); appendLog('INFO', 'ui', `debug tooltips ${DEBUG ? 'ON' : 'OFF'}`); };
   $('#page-reset').onclick = () => { if (currentPage !== 'profile') resetPage(currentPage); };
