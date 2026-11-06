@@ -196,7 +196,8 @@ pre.req{font:12px/1.55 var(--f-mono);background:var(--term);border:1px solid var
 .row.dupd .row-bg{fill:color-mix(in srgb,var(--red) 18%,#0a111d);stroke:var(--red)}
 .row.hit .row-bg{fill:color-mix(in srgb,var(--cyan) 18%,#0a111d);stroke:var(--cyan)}
 .row text{font:12px var(--f-mono)}
-.svg-stage .t-ok{fill:var(--green)} .svg-stage .t-bad{fill:var(--red)}
+.svg-stage .t-ok{fill:var(--green)} .svg-stage .t-bad{fill:var(--red)} .svg-stage .t-warn{fill:var(--amber)}
+.req .c{color:var(--dim)}
 .svg-stage .t-empty{fill:var(--dim);font:12px var(--f-mono)}
 
 /* ===== BPMN ===== */
@@ -241,6 +242,7 @@ pre.req{font:12px/1.55 var(--f-mono);background:var(--term);border:1px solid var
 .tok-trail{fill:var(--cyan)}
 .tok-env rect,.tok-env path{fill:var(--amber);stroke:var(--bg);stroke-width:1}
 .bp-modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--panel);border:1px solid var(--cyan);border-radius:12px;padding:16px 18px;box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 4px color-mix(in srgb,var(--cyan) 14%,transparent);z-index:7;width:min(380px,92%);display:flex;flex-direction:column;gap:12px}
+.bp-modal.bp-corner{left:12px;right:auto;top:12px;transform:none}
 .bp-modal h4{margin:0;font-family:var(--f-display);font-size:15px;font-weight:600}
 .bp-modal p{margin:0;color:var(--muted);font-size:13px}
 .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;color:var(--muted);font-size:13px}
@@ -522,6 +524,7 @@ body[data-page="dwh"]{--page:var(--green)}
 .req-goalbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);background:color-mix(in srgb,var(--amber) 7%,var(--panel));border-radius:10px;padding:10px 14px;margin-bottom:12px}
 .req-goalbar .k{font:700 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
 .req-goalbar b{font-weight:600}
+.req-goalbar .req-metric{margin-left:auto;font:12px var(--f-mono);color:var(--muted)}
 .req-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:1000px){.req-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
 .req-col{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -837,7 +840,7 @@ body[data-page="dwh"]{--page:var(--green)}
       <div class="btnrow" id="bp-modal-b"></div>
     </div>
     <div class="stage-scroll" id="bp-stage">
-      <svg class="svg-stage" id="bp-svg" viewBox="0 0 2010 730" role="img" aria-label="BPMN-схема процесса «Оформление и оплата заказа»"></svg>
+      <svg class="svg-stage" id="bp-svg" viewBox="0 0 2010 786" role="img" aria-label="BPMN-схема процесса «Оформление и оплата заказа»"></svg>
     </div>
   </div>
   <div class="legend">
@@ -855,6 +858,7 @@ body[data-page="dwh"]{--page:var(--green)}
     </div></details>
     <details class="more"><summary>Как читать схему</summary><div class="body">
       <p>Pool «Процесс обработки заказа» — наш процесс с дорожками «Клиент» и «Система заказов». Pool «Платёжная система» — внешний участник: с ним процесс общается только сообщениями (Message Flow), а не потоками управления.</p>
+      <p>Решение «повторить или отказаться» принимает клиент, а не шлюз. Поэтому после отказа стоит событийный шлюз: процесс ждёт, какое из условных событий наступит. На ожидании ответа платёжной системы висит таймер 60 с, на ожидании оплаты по счёту — таймер 24 ч, а уведомление о зачислении приходит Message Flow из свёрнутого пула «Банк клиента». Любая отмена снимает резерв товара и уведомляет клиента.</p>
       <p>Граничный таймер на задаче «Ожидать подтверждение оплаты» прерывающий: если он сработал, ожидание отменяется, и процесс не может одновременно продолжить успешную ветку. Синхронизирующий AND ждёт обе параллельные ветки и только потом пропускает токен к «Заказ завершён».</p>
     </div></details>
   </div>
@@ -895,11 +899,12 @@ body[data-page="dwh"]{--page:var(--green)}
       <p class="zone-h">Producer</p>
       <div class="kf-node" id="kf-hr"><span class="ico">HR</span><span><b>HR System</b><br><span class="dim" style="font-size:12px">кадровые запросы</span></span></div>
       <div class="kf-keyline">Key: <b>request_id</b>
-        <button type="button" class="info" data-tip-always data-tip-click data-tip-kind="info" data-tip="Почему request_id, а не employee_id? Один запрос на командировку может включать нескольких сотрудников. request_id объединяет события в рамках одной бизнес-сущности и позволяет направлять их в одну партицию, сохраняя порядок обработки.&#10;&#10;TR-2026-001042 →&#10;  EMP-00128 — Иван Петров&#10;  EMP-00135 — Алексей Сидоров" aria-label="Почему ключ — request_id">i</button>
+        <button type="button" class="info" data-tip-always data-tip-click data-tip-kind="info" data-tip="Почему request_id, а не employee_id? Один запрос может включать нескольких сотрудников, а события одного запроса (подача, согласование, отмена) должны обрабатываться по порядку — поэтому они идут в одну партицию по request_id.&#10;&#10;TR-2026-001042 → EMP-00128, EMP-00135&#10;&#10;В событии только табельные номера: ФИО и другие персональные данные не передаются, UI берёт их из справочника." aria-label="Почему ключ — request_id">i</button>
       </div>
       <button class="btn primary" type="button" id="kf-send">Отправить запрос</button>
       <button class="btn" type="button" id="kf-batch">Отправить 10 запросов</button>
       <button class="btn danger" type="button" id="kf-poison">Отправить некорректный запрос</button>
+      <button class="btn" type="button" id="kf-transient" data-tip="Временная ошибка: повтор с паузой имеет смысл">Запрос при сбое БД</button>
       <div class="kf-node" id="kf-partitioner" data-tip="Partitioner выбирает партицию по ключу сообщения. Один и тот же request_id всегда попадает в одну партицию"><span class="ico">#</span><span><b>Partitioner</b><br><span class="kf-part-calc" id="kf-pcalc">ожидает сообщение</span></span></div>
     </div>
 
@@ -976,8 +981,9 @@ body[data-page="dwh"]{--page:var(--green)}
       <p>Если сообщение уже обработано, но offset не закоммичен, после переназначения оно будет обработано повторно. Это семантика at-least-once, поэтому обработчик должен быть идемпотентным: повторная обработка того же request_id не должна создавать вторую командировку.</p>
     </div></details>
     <details class="more"><summary>Retry и DLQ</summary><div class="body">
-      <p>Некорректное сообщение (нет employee_id, неверная дата, end_date раньше start_date) нельзя обработать сколько ни повторяй. После трёх неудачных попыток consumer публикует его в <code>hr.business-trip.requests.dlq</code> с причиной ошибки и коммитит offset, чтобы не блокировать партицию.</p>
-      <p>DLQ — архитектурный паттерн, а не встроенная функция Kafka: retry, публикация в DLQ и replay реализуются на уровне приложения. Replay публикует исправленное сообщение обратно в основной топик.</p>
+      <p>Ошибки бывают временные и невосстановимые. Временную (таймаут БД, недоступный сервис) имеет смысл повторить с паузой: кнопка «Запрос при сбое БД» показывает, как первая попытка падает, а повтор через 600 мс проходит.</p>
+      <p>Ошибку валидации (нет initiator_id, end_date раньше start_date) повтор не исправит. Такое сообщение сразу уходит в <code>hr.business-trip.requests.dlq</code> с причиной, а consumer коммитит offset, чтобы не блокировать партицию.</p>
+      <p>DLQ — архитектурный паттерн, а не встроенная функция Kafka: retry, публикация в DLQ и разбор очереди реализуются на уровне приложения.</p>
     </div></details>
     <details class="more"><summary>Особенности Consumer Group</summary><div class="body">
       <p>Каждую партицию в группе читает ровно один consumer. Здесь используется range-стратегия назначения: при 2 потребителях первый получает P0 и P1, второй — P2.</p>
@@ -997,7 +1003,7 @@ body[data-page="dwh"]{--page:var(--green)}
     <div>
       <p class="eyebrow">Квест 3 · API / REST</p>
       <h2>Идемпотентность POST /orders</h2>
-      <p class="lede">Клиент отправил заказ, ответ потерялся, клиент повторил запрос. Заголовок Idempotency-Key решает, появится ли в базе второй заказ.</p>
+      <p class="lede">Клиент отправил заказ, ответ потерялся, клиент повторил запрос. Заголовок Idempotency-Key и таблица ключей решают, появится ли в базе второй заказ — даже если запросы пришли одновременно.</p>
     </div>
     <div class="tools">
       <span class="seg-l">скорость</span>
@@ -1014,14 +1020,17 @@ body[data-page="dwh"]{--page:var(--green)}
       <div class="field"><label for="rest-key">Idempotency-Key</label>
         <div class="inrow"><input type="text" id="rest-key" value="abc-123" spellcheck="false" autocomplete="off"><button class="btn ghost" type="button" id="rest-newkey">новый</button></div></div>
       <button class="switch" type="button" role="switch" id="rest-idem" aria-checked="true" data-tip="Без ключа — классическая ошибка: каждый повтор создаёт новый заказ"><span class="track"></span><span>Идемпотентность</span><span class="sw-v" id="rest-idem-v">ON</span></button>
-      <div class="btnrow"><button class="btn primary" type="button" id="rest-post">POST /orders</button><button class="btn" type="button" id="rest-double">Двойной клик</button></div>
+      <div class="field"><label for="rest-qty">Тело запроса</label><select id="rest-qty"><option value="1">SKU-77, qty: 1</option><option value="2">SKU-77, qty: 2</option></select></div>
+      <div class="btnrow"><button class="btn primary" type="button" id="rest-post">POST /orders</button><button class="btn" type="button" id="rest-double" title="Два запроса почти одновременно">Двойной клик</button></div>
       <div><div class="lbl" style="margin-bottom:6px">Запрос</div><pre class="req" id="rest-req"></pre></div>
       <div class="resp" id="rest-resp" aria-live="polite"><div class="resp-top"><span class="lbl">Ответ</span><span class="code" id="rest-code">—</span></div><pre id="rest-body">запрос ещё не отправлен</pre></div>
       <div class="chips">
         <span class="lbl">Сценарии</span>
-        <button class="chip" type="button" id="rest-s1"><span class="n">1</span><span>Первый запрос<small>NOT FOUND → INSERT → 201 Created</small></span></button>
-        <button class="chip" type="button" id="rest-s2"><span class="n">2</span><span>Повтор с тем же ключом<small>FOUND → cache HIT → 200 OK, дубль не создан</small></span></button>
-        <button class="chip" type="button" id="rest-s3"><span class="n">3</span><span>Без ключа, два клика<small>две строки в БД → DUPLICATE ORDER</small></span></button>
+        <button class="chip" type="button" id="rest-s1"><span class="n">1</span><span>Первый запрос<small>ключа нет → IN_PROGRESS → INSERT → 201 Created</small></span></button>
+        <button class="chip" type="button" id="rest-s2"><span class="n">2</span><span>Повтор с тем же ключом<small>HIT → тот же 201 (Idempotent-Replayed), БД не трогаем</small></span></button>
+        <button class="chip" type="button" id="rest-s3"><span class="n">3</span><span>Двойной клик с ключом<small>второй запрос, пока первый в работе → 409 Conflict</small></span></button>
+        <button class="chip" type="button" id="rest-s4"><span class="n">4</span><span>Тот же ключ, другое тело<small>hash тела не совпал → 422</small></span></button>
+        <button class="chip" type="button" id="rest-s5"><span class="n">5</span><span>Без ключа, два клика<small>две строки в БД → DUPLICATE ORDER</small></span></button>
       </div>
     </div>
     <div class="stage-scroll" id="rest-stage"><div class="stage-inner">
@@ -1034,13 +1043,13 @@ body[data-page="dwh"]{--page:var(--green)}
         <text class="wire-l" x="207" y="184" text-anchor="middle">HTTPS</text>
         <text class="wire-l" x="442" y="186" text-anchor="middle">route</text>
         <text class="wire-l" x="676" y="150">SQL</text>
-        <text class="wire-l" x="676" y="300">GET/SET</text>
+        <text class="wire-l" x="676" y="300">lookup/save</text>
         <text class="wire-l" x="330" y="366" text-anchor="middle">HTTP response</text>
         <g id="rest-n-client" class="node" data-tip="Клиент: мобильное приложение магазина"><rect class="node-box" x="30" y="180" width="130" height="80" rx="10"/><text class="node-t" x="95" y="215" text-anchor="middle">Клиент</text><text class="node-s" x="95" y="236" text-anchor="middle">mobile app</text></g>
         <g id="rest-n-gateway" class="node" data-tip="API Gateway: аутентификация и маршрутизация"><rect class="node-box" x="255" y="185" width="150" height="70" rx="10"/><text class="node-t" x="330" y="216" text-anchor="middle">API Gateway</text><text class="node-s" x="330" y="236" text-anchor="middle">auth · routing</text></g>
         <g id="rest-n-service" class="node" data-tip="Проверка: был ли такой запрос"><rect class="node-box" x="480" y="180" width="160" height="80" rx="10"/><text class="node-t" x="560" y="215" text-anchor="middle">Order Service</text><text class="node-s" x="560" y="236" text-anchor="middle">POST /orders</text></g>
         <g id="rest-n-db" class="node" data-tip="Таблица orders: каждая строка — реальный заказ"><rect class="node-box" x="730" y="24" width="210" height="210" rx="10"/><text class="node-t" x="744" y="50">PostgreSQL</text><text class="node-s" x="926" y="50" text-anchor="end">orders</text><text class="node-s" x="746" y="82">order_id</text><text class="node-s" x="808" y="82">status</text><text class="node-s" x="884" y="82">key</text><text class="t-empty" id="rest-db-empty" x="835" y="150" text-anchor="middle">пусто</text><g id="rest-db-rows"></g></g>
-        <g id="rest-n-cache" class="node" data-tip="Возврат сохранённого ответа — дубль не создаётся"><rect class="node-box" x="730" y="262" width="210" height="150" rx="10"/><text class="node-t" x="744" y="288">Cache</text><text class="node-s" x="926" y="288" text-anchor="end">idempotency · 24h</text><text class="t-empty" id="rest-cache-empty" x="835" y="350" text-anchor="middle">пусто</text><g id="rest-cache-rows"></g></g>
+        <g id="rest-n-store" class="node" data-tip="Таблица idempotency_keys: ключ, hash тела, статус и сохранённый ответ. UNIQUE(key) не даёт двум запросам создать заказ одновременно"><rect class="node-box" x="730" y="262" width="210" height="150" rx="10"/><text class="node-t" x="744" y="288">Idempotency</text><text class="node-s" x="926" y="288" text-anchor="end">UNIQUE · 24h</text><text class="t-empty" id="rest-store-empty" x="835" y="350" text-anchor="middle">пусто</text><g id="rest-store-rows"></g></g>
         <g class="pkt-layer"></g>
       </svg>
     </div></div>
@@ -1099,7 +1108,7 @@ body[data-page="dwh"]{--page:var(--green)}
     <button class="btn ghost" type="button" id="req-auto">▶ Пройти всё</button>
     <span class="req-status" id="req-status"></span>
   </div>
-  <div class="req-goalbar"><span class="k">Бизнес-цель</span><b id="req-goal"></b></div>
+  <div class="req-goalbar"><span class="k">Бизнес-цель</span><b id="req-goal"></b><span class="req-metric">Метрика: медиана SUBMITTED → APPROVED ≤ 1 рабочего дня (сейчас ≈ 3)</span></div>
   <div class="req-grid">
     <div class="req-col">
       <div class="panel">
@@ -1141,10 +1150,10 @@ body[data-page="dwh"]{--page:var(--green)}
   </div>
   <div class="req-modal-back" id="req-modal" hidden>
     <div class="req-modal" role="dialog" aria-labelledby="req-modal-h">
-      <h4 id="req-modal-h">Разрешить конфликт: скорость ↔ безопасность</h4>
-      <p>HR хочет быстрее, безопасность требует обязательного подтверждения руководителя. Как совместить оба требования с бизнес-целью «1 день»?</p>
-      <button class="req-opt" type="button" id="req-opt-par"><b>Параллельное согласование</b><span>Руководитель и безопасность получают заявку одновременно, SLA каждого — 4 часа. Подтверждение руководителя остаётся обязательным.</span></button>
-      <button class="req-opt" type="button" id="req-opt-seq"><b>Последовательное согласование с таймаутом</b><span>Сначала руководитель (до 24 ч), затем безопасность (до 24 ч). По таймауту заявка эскалируется.</span><span class="req-why" id="req-seq-why" hidden>Отклонено: в худшем случае 48 часов только на согласование — цель «1 день» недостижима.</span></button>
+      <h4 id="req-modal-h">K-1: скорость ↔ безопасность</h4>
+      <p>HR хочет быстрее. Безопасность требует обязательного подтверждения руководителя, а это ещё один этап. Как сохранить подтверждение и уложиться в цель «1 день»?</p>
+      <button class="req-opt" type="button" id="req-opt-par"><b>Подтверждение руководителя в один клик, SLA 4 ч</b><span>Руководитель согласует прямо из уведомления. Нет ответа 4 часа — заявка уходит заместителю. Решение сохраняется с автором и временем: служба безопасности видит журнал.</span></button>
+      <button class="req-opt" type="button" id="req-opt-seq"><b>Последовательно: руководитель, затем HR, таймаут 24 ч на каждом</b><span>Каждый этап ждёт до суток, по таймауту заявка эскалируется.</span><span class="req-why" id="req-seq-why" hidden>Отклонено: до 48 часов только на согласование — цель «1 день» недостижима.</span></button>
       <div class="btnrow"><button class="btn ghost" type="button" id="req-modal-close">Закрыть</button></div>
     </div>
   </div>
@@ -1217,7 +1226,7 @@ body[data-page="dwh"]{--page:var(--green)}
     <div>
       <p class="eyebrow">Квест 6 · Данные / DWH</p>
       <h2>От сырых данных до DORA-метрик</h2>
-      <p class="lede">Данные Jira, Bitbucket и Git проходят слои RAW → ODS → DDS → DATA MART. На выходе — три DORA-метрики для дашборда в Superset и проверки качества между слоями.</p>
+      <p class="lede">Данные Jira, Git и Bitbucket (pull requests и деплои Bitbucket Pipelines в production) проходят слои RAW → ODS → DDS → DATA MART. На выходе — три DORA-метрики, посчитанные по определению DORA, и проверки качества между слоями.</p>
     </div>
     <div class="tools">
       <span class="seg-l">скорость</span>
@@ -1260,8 +1269,8 @@ body[data-page="dwh"]{--page:var(--green)}
   </div>
   <div class="applied">
     <h3>Где применял</h3>
-    <p>Система аналитики процессов разработки. Пример сгенерирован.</p>
-    <p class="note">Учебная визуализация принципов DWH на примере DORA-метрик: данные вымышленные, реальный проект описан в профиле.</p>
+    <p>Система аналитики процессов разработки на данных Jira, Bitbucket и Git. Требования к ~20 метрикам эффективности и данным для их расчёта, структура DWH от источников до витрин, маппинг между слоями и правила преобразования. SQL в PostgreSQL, визуализация в Apache Superset, конвейер на Apache Airflow, S3 и MinIO. Вёл продукт от идеи до MVP.</p>
+    <p class="note">Данные на странице сгенерированы: это учебная визуализация принципов DWH на примере DORA-метрик, а не выгрузка из реального проекта.</p>
   </div>
 </section>
     </main>
@@ -1365,7 +1374,7 @@ const ACH = {
   ],
   req: [
     { id: 'req-collect',  name: 'Собрал требования', desc: 'разобраны три сырые заметки' },
-    { id: 'req-conflict', name: 'Разрешил конфликт', desc: 'скорость ↔ безопасность: параллельное согласование' },
+    { id: 'req-conflict', name: 'Разрешил конфликт', desc: 'скорость ↔ безопасность: подтверждение в один клик, SLA 4 ч' },
     { id: 'req-dor',      name: 'DoR пройден',       desc: 'три user stories готовы к разработке' }
   ],
   int: [
@@ -1606,9 +1615,9 @@ function dispatch(action, p, engine) {
     case 'pulseNode':    pulse(document.getElementById(p.id)); return;
     case 'flyPacket':    flyAlongPath(engine, p.path, p); return;
     case 'addDbRow':     REST.addDbRow(p); return;
-    case 'addCacheEntry':REST.addCacheEntry(p); return;
+    case 'storePut':     REST.storePut(p); return;
     case 'dbHit':        REST.flashRow('db', p.id); return;
-    case 'cacheHit':     REST.flashRow('cache', p.key); return;
+    case 'storeHit':     REST.flashRow('store', p.key); return;
     case 'markDup':      REST.markDup(p.ids); return;
     case 'showResponse': REST.showResponse(p); return;
     case 'restDone':     REST.jobDone(); return;
@@ -1627,6 +1636,9 @@ function dispatch(action, p, engine) {
     case 'attempt':      BPMN.attempt(); return;
     case 'waitPayment':  BPMN.waitPayment(); return;
     case 'timerFire':    BPMN.timerFire(); return;
+    case 'armTimer2':    BPMN.armTimer2(); return;
+    case 'disarmTimer2': BPMN.disarmTimer2(); return;
+    case 'timer2Fire':   BPMN.timer2Fire(); return;
     case 'paidBy':       BPMN.paidBy = p.via; return;
     case 'complete':     BPMN.complete(p.outcome); return;
     // ---- Требования ----
@@ -1656,21 +1668,30 @@ function dispatch(action, p, engine) {
 const REST = {
   engine: new ScenarioEngine('rest'),
   st: null, jobs: [], running: false,
-  fresh() { return { db: [], cache: new Map(), nextId: 1042, offRows: [] }; },
+  /* store — единственный источник правды об идемпотентности: таблица idempotency_keys с UNIQUE(key) */
+  fresh() { return { db: [], store: new Map(), nextId: 1042, offRows: [] }; },
   init() {
     this.st = this.fresh();
-    this.key = $('#rest-key'); this.sw = $('#rest-idem');
+    this.key = $('#rest-key'); this.sw = $('#rest-idem'); this.qtyEl = $('#rest-qty');
     $('#rest-post').onclick = () => this.post();
-    $('#rest-double').onclick = () => { this.post(); this.post(); };
+    $('#rest-double').onclick = () => this.double();
     this.sw.onclick = () => this.setIdem(!this.idem());
     this.key.oninput = () => this.renderReq();
+    this.qtyEl.onchange = () => this.renderReq();
     $('#rest-newkey').onclick = () => { this.key.value = this.newKey(); this.renderReq(); };
-    $('#rest-s1').onclick = () => { if (!this.idem()) this.setIdem(true); if (this.st.cache.has(this.curKey())) { this.key.value = this.newKey(); this.renderReq(); } this.post(); };
-    $('#rest-s2').onclick = () => { if (!this.idem()) this.setIdem(true); if (!this.st.cache.has(this.curKey())) this.post(); this.post(); };
-    $('#rest-s3').onclick = () => { if (this.idem()) this.setIdem(false); this.post(); this.post(); };
+    $('#rest-s1').onclick = () => { this.ensure(true, 1); if (this.st.store.has(this.curKey())) { this.key.value = this.newKey(); this.renderReq(); } this.post(); };
+    $('#rest-s2').onclick = () => { this.ensure(true); if (!this.st.store.has(this.curKey())) this.post(); this.post(); };
+    $('#rest-s3').onclick = () => { this.ensure(true); this.key.value = this.newKey(); this.renderReq(); this.double(); };
+    $('#rest-s4').onclick = () => {
+      this.ensure(true);
+      if (!this.st.store.has(this.curKey())) this.post();
+      this.qtyEl.value = this.qty() === 1 ? '2' : '1'; this.renderReq(); this.post();
+    };
+    $('#rest-s5').onclick = () => { this.ensure(false); this.post(); this.post(); };
     this.engine.onReplay = () => this.resetView();
     this.render(); this.renderReq();
   },
+  ensure(on, qty) { if (this.idem() !== on) this.setIdem(on); if (qty) { this.qtyEl.value = String(qty); this.renderReq(); } },
   idem() { return this.sw.getAttribute('aria-checked') === 'true'; },
   setIdem(on) {
     this.sw.setAttribute('aria-checked', String(on)); $('#rest-idem-v').textContent = on ? 'ON' : 'OFF';
@@ -1678,72 +1699,128 @@ const REST = {
     appendLog(on ? 'INFO' : 'WARN', 'client', on ? 'idempotency ON: Idempotency-Key передаётся в заголовке' : 'idempotency OFF: запросы уходят без ключа');
   },
   curKey() { return this.key.value.trim() || 'abc-123'; },
-  newKey() { let n = 124; while (this.st.cache.has('abc-' + n)) n++; return 'abc-' + n; },
-  post() { this.jobs.push(() => this.build()); if (!this.running) this.next(); },
+  qty() { return +this.qtyEl.value || 1; },
+  body(q) { return `{"sku": "SKU-77", "qty": ${q}}`; },
+  hash(q) { return (murmur2(this.body(q)) >>> 0).toString(16).padStart(8, '0').slice(0, 6); },
+  newKey() { let n = 124; while (this.st.store.has('abc-' + n)) n++; return 'abc-' + n; },
+  /** Снимок параметров берётся в момент клика, а шаги строятся при запуске — по актуальному состоянию хранилища */
+  snap() { return { idem: this.idem(), key: this.curKey(), qty: this.qty() }; },
+  post() { const s = this.snap(); this.jobs.push(() => this.build(s)); if (!this.running) this.next(); },
+  /** Двойной клик: второй запрос уходит, пока первый ещё выполняется */
+  double() {
+    const s = this.snap();
+    if (s.idem && !this.st.store.has(s.key)) { this.jobs.push(() => this.stepsParallel(s.key, this.st.nextId++, s.qty)); if (!this.running) this.next(); }
+    else { this.post(); this.post(); }
+  },
   next() {
     const job = this.jobs.shift(); if (!job) { this.running = false; return; }
     this.running = true;
     const steps = job();
-    const end = steps.reduce((m, s) => Math.max(m, s.t), 0);
+    const end = steps.reduce((m, x) => Math.max(m, x.t), 0);
     this.engine.run([...steps, { t: end + 150, action: 'restDone' }]);
   },
   jobDone() { this.running = false; this.next(); },
-  build() {
-    if (!this.idem()) return this.stepsNoKey(this.st.nextId++);
-    const k = this.curKey();
-    return this.st.cache.has(k) ? this.stepsRepeat(k, this.st.cache.get(k).id) : this.stepsFirst(k, this.st.nextId++);
+  build(s) {
+    if (!s.idem) return this.stepsNoKey(this.st.nextId++, s.qty);
+    const e = this.st.store.get(s.key), h = this.hash(s.qty);
+    if (!e) return this.stepsFirst(s.key, this.st.nextId++, s.qty);
+    if (e.hash !== h) return this.stepsMismatch(s.key, e, h);
+    if (e.status === 'IN_PROGRESS') return this.stepsBusy(s.key);
+    return this.stepsReplay(s.key, e);
   },
-  stepsFirst(key, id) {
+  /* общий путь запроса до сервиса */
+  hop(c, label, color, t0 = 0) {
     return [
-      { t: 0,    action: 'log', level: 'INFO', comp: 'client', text: `POST /orders Idempotency-Key: ${key}` },
-      { t: 0,    action: 'pulseNode', id: 'rest-n-client' },
-      { t: 0,    action: 'flyPacket', path: 'rest-p-cg', dur: 400, label: 'POST' },
-      { t: 400,  action: 'pulseNode', id: 'rest-n-gateway' },
-      { t: 400,  action: 'log', level: 'INFO', comp: 'gateway', text: 'auth ok → route /orders → order-service' },
-      { t: 400,  action: 'flyPacket', path: 'rest-p-gs', dur: 300 },
-      { t: 700,  action: 'pulseNode', id: 'rest-n-service' },
-      { t: 700,  action: 'tip', id: 'rest-n-service', text: 'Проверка: был ли такой запрос' },
-      { t: 700,  action: 'log', level: 'INFO', comp: 'order-service', text: `db lookup idempotency_key=${key}` },
-      { t: 700,  action: 'flyPacket', path: 'rest-p-sd', dur: 200, label: 'SELECT' },
-      { t: 900,  action: 'pulseNode', id: 'rest-n-db' },
-      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: 'lookup → NOT FOUND' },
-      { t: 900,  action: 'addDbRow', id, status: 'CREATED', key },
-      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `INSERT orders order_id=${id} status=CREATED` },
-      { t: 1000, action: 'flyPacket', path: 'rest-p-sc', dur: 100 },
-      { t: 1000, action: 'addCacheEntry', key, id },
-      { t: 1000, action: 'log', level: 'INFO', comp: 'cache', text: `SET ${key} → 201 order_id=${id} ttl=24h` },
-      { t: 1100, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '201', color: 'var(--green)' },
-      { t: 1300, action: 'pulseNode', id: 'rest-n-client' },
-      { t: 1300, action: 'showResponse', kind: 'ok', code: '201 Created', body: `{\n  "order_id": ${id},\n  "status": "CREATED"\n}` },
-      { t: 1300, action: 'log', level: 'SUCCESS', comp: 'client', text: `← 201 Created order_id=${id}` }
+      { t: t0,       action: 'pulseNode', id: 'rest-n-client' },
+      { t: t0,       action: 'flyPacket', path: 'rest-p-cg', dur: 400, label, color },
+      { t: t0 + 400, action: 'pulseNode', id: 'rest-n-gateway' },
+      { t: t0 + 400, action: 'flyPacket', path: 'rest-p-gs', dur: 300, color },
+      { t: t0 + 700, action: 'pulseNode', id: 'rest-n-service' },
+      { t: t0 + 700, action: 'flyPacket', path: 'rest-p-sc', dur: 150, label: 'lookup', color }
     ];
   },
-  stepsRepeat(key, id) {
+  /* Сценарий 1: ключа нет → резерв ключа IN_PROGRESS → INSERT заказа → сохранить ответ → 201 */
+  stepsFirst(key, id, qty, o = {}) {
+    const t = o.t0 || 0, who = o.who || 'client', h = this.hash(qty);
+    const steps = [
+      { t,          action: 'log', level: 'INFO', comp: who, text: `POST /orders Idempotency-Key: ${key} (hash тела ${h})` },
+      ...this.hop(who, 'POST', 'var(--cyan)', t),
+      { t: t + 700, action: 'log', level: 'INFO', comp: 'order-service', text: `idempotency lookup key=${key}` },
+      { t: t + 850, action: 'pulseNode', id: 'rest-n-store' },
+      { t: t + 850, action: 'storePut', key, status: 'IN_PROGRESS', hash: h },
+      { t: t + 850, action: 'log', level: 'INFO', comp: 'idempotency', text: `MISS → INSERT key=${key} status=IN_PROGRESS (UNIQUE защищает от гонки)` },
+      { t: t + 850, action: 'tip', id: 'rest-n-store', text: 'Ключ резервируется до создания заказа: параллельный запрос с тем же ключом получит 409' },
+      { t: t + 900, action: 'flyPacket', path: 'rest-p-sd', dur: 150, label: 'INSERT' },
+      { t: t + 1050, action: 'pulseNode', id: 'rest-n-db' },
+      { t: t + 1050, action: 'addDbRow', id, status: 'CREATED', key },
+      { t: t + 1050, action: 'log', level: 'INFO', comp: 'db', text: `INSERT orders order_id=${id} qty=${qty} status=CREATED` },
+      { t: t + 1100, action: 'flyPacket', path: 'rest-p-sc', dur: 100, label: 'save' },
+      { t: t + 1200, action: 'storePut', key, status: 'COMPLETED', hash: h, id },
+      { t: t + 1200, action: 'log', level: 'INFO', comp: 'idempotency', text: `UPDATE key=${key} → COMPLETED, сохранён ответ 201 order_id=${id}` },
+      { t: t + 1250, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '201', color: 'var(--green)' }
+    ];
+    if (!o.silent) steps.push(
+      { t: t + 1450, action: 'pulseNode', id: 'rest-n-client' },
+      { t: t + 1450, action: 'showResponse', kind: 'ok', code: '201 Created', body: `Location: /orders/${id}\n{\n  "order_id": ${id},\n  "status": "CREATED"\n}` },
+      { t: t + 1450, action: 'log', level: 'SUCCESS', comp: who, text: `← 201 Created order_id=${id}` });
+    return steps;
+  },
+  /* Сценарий 2: повтор с тем же ключом и тем же телом → сохранённый ответ 201, в БД не ходим */
+  stepsReplay(key, e) {
     return [
-      { t: 0,    action: 'log', level: 'INFO', comp: 'client', text: `POST /orders Idempotency-Key: ${key} (retry)` },
-      { t: 0,    action: 'pulseNode', id: 'rest-n-client' },
-      { t: 0,    action: 'flyPacket', path: 'rest-p-cg', dur: 400, label: 'POST' },
-      { t: 400,  action: 'pulseNode', id: 'rest-n-gateway' },
-      { t: 400,  action: 'flyPacket', path: 'rest-p-gs', dur: 300 },
-      { t: 700,  action: 'pulseNode', id: 'rest-n-service' },
-      { t: 700,  action: 'log', level: 'INFO', comp: 'order-service', text: `db lookup idempotency_key=${key}` },
-      { t: 700,  action: 'flyPacket', path: 'rest-p-sd', dur: 200, label: 'SELECT' },
-      { t: 900,  action: 'pulseNode', id: 'rest-n-db' },
-      { t: 900,  action: 'dbHit', id },
-      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `lookup → FOUND order_id=${id}, INSERT пропущен` },
-      { t: 1000, action: 'flyPacket', path: 'rest-p-sc', dur: 100 },
-      { t: 1000, action: 'pulseNode', id: 'rest-n-cache' },
-      { t: 1000, action: 'cacheHit', key },
-      { t: 1000, action: 'tip', id: 'rest-n-cache', text: 'Возврат сохранённого ответа — дубль не создаётся' },
-      { t: 1000, action: 'log', level: 'INFO', comp: 'cache', text: `HIT ${key} → stored response 201 order_id=${id}` },
-      { t: 1100, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '200', color: 'var(--cyan)' },
-      { t: 1300, action: 'pulseNode', id: 'rest-n-client' },
-      { t: 1300, action: 'showResponse', kind: 'replay', code: '200 OK', body: `Idempotent-Replayed: true\n{\n  "order_id": ${id},\n  "status": "CREATED"\n}\n# duplicate prevented` },
-      { t: 1300, action: 'log', level: 'SUCCESS', comp: 'client', text: `← 200 OK order_id=${id} (duplicate prevented)` },
-      { t: 1400, action: 'ach', id: 'rest-dup' }
+      { t: 0,    action: 'log', level: 'INFO', comp: 'client', text: `POST /orders Idempotency-Key: ${key} (повтор, hash тела ${e.hash})` },
+      ...this.hop('client', 'POST', 'var(--cyan)'),
+      { t: 700,  action: 'log', level: 'INFO', comp: 'order-service', text: `idempotency lookup key=${key}` },
+      { t: 850,  action: 'pulseNode', id: 'rest-n-store' },
+      { t: 850,  action: 'storeHit', key },
+      { t: 850,  action: 'log', level: 'INFO', comp: 'idempotency', text: `HIT key=${key}: COMPLETED, hash совпал → вернуть сохранённый ответ, БД не трогаем` },
+      { t: 850,  action: 'tip', id: 'rest-n-store', text: 'Возврат сохранённого ответа — дубль не создаётся' },
+      { t: 1050, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '201', color: 'var(--cyan)' },
+      { t: 1250, action: 'pulseNode', id: 'rest-n-client' },
+      { t: 1250, action: 'showResponse', kind: 'replay', code: '201 Created', body: `Idempotent-Replayed: true\nLocation: /orders/${e.id}\n{\n  "order_id": ${e.id},\n  "status": "CREATED"\n}\n# тот же ответ, что и в первый раз; второй заказ не создан` },
+      { t: 1250, action: 'log', level: 'SUCCESS', comp: 'client', text: `← 201 Created (Idempotent-Replayed) order_id=${e.id}, дубль не создан` },
+      { t: 1350, action: 'ach', id: 'rest-dup' }
     ];
   },
-  stepsNoKey(id) {
+  /* Тот же ключ, другое тело → 422: ключ нельзя переиспользовать для другого запроса */
+  stepsMismatch(key, e, h) {
+    return [
+      { t: 0,    action: 'log', level: 'INFO', comp: 'client', text: `POST /orders Idempotency-Key: ${key} (hash тела ${h})` },
+      ...this.hop('client', 'POST', 'var(--amber)'),
+      { t: 850,  action: 'pulseNode', id: 'rest-n-store' },
+      { t: 850,  action: 'storeHit', key },
+      { t: 850,  action: 'log', level: 'WARN', comp: 'idempotency', text: `key=${key} уже использован с другим телом (hash ${e.hash} ≠ ${h}) → 422` },
+      { t: 1050, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '422', color: 'var(--red)' },
+      { t: 1250, action: 'showResponse', kind: 'bad', code: '422 Unprocessable Entity', body: `{\n  "error": "idempotency_key_reused",\n  "detail": "Ключ ${key} уже использован для другого запроса"\n}` },
+      { t: 1250, action: 'log', level: 'WARN', comp: 'client', text: '← 422 idempotency_key_reused: нужен новый ключ для нового заказа' }
+    ];
+  },
+  /* Ключ в обработке → 409 Conflict */
+  stepsBusy(key, o = {}) {
+    const t = o.t0 || 0, who = o.who || 'client';
+    const steps = [
+      { t,          action: 'log', level: 'INFO', comp: who, text: `POST /orders Idempotency-Key: ${key} (второй клик)` },
+      ...this.hop(who, 'POST', 'var(--amber)', t),
+      { t: t + 850, action: 'pulseNode', id: 'rest-n-store' },
+      { t: t + 850, action: 'storeHit', key },
+      { t: t + 850, action: 'log', level: 'WARN', comp: 'idempotency', text: `key=${key} в статусе IN_PROGRESS → 409 Conflict, второй заказ не создаётся` },
+      { t: t + 1050, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '409', color: 'var(--amber)' }
+    ];
+    if (!o.silent) steps.push({ t: t + 1250, action: 'showResponse', kind: 'warn', code: '409 Conflict', body: '{\n  "error": "request_in_progress"\n}' });
+    return steps;
+  },
+  /* Сценарий 3: двойной клик с ключом — запросы идут параллельно, второй получает 409 */
+  stepsParallel(key, id, qty) {
+    return [
+      ...this.stepsFirst(key, id, qty, { who: 'client#1', silent: true }),
+      ...this.stepsBusy(key, { t0: 150, who: 'client#2', silent: true }),
+      { t: 1450, action: 'pulseNode', id: 'rest-n-client' },
+      { t: 1450, action: 'showResponse', kind: 'ok', code: '201 + 409', body: `запрос 1: 201 Created, order_id=${id}\nзапрос 2: 409 Conflict — ключ ${key} ещё в обработке.\nКлиент повторит позже и получит сохранённый 201.` },
+      { t: 1450, action: 'log', level: 'SUCCESS', comp: 'client', text: `двойной клик: создан один заказ ${id}, второй запрос отклонён 409` }
+    ];
+  },
+  /* Сценарий 5: без ключа — каждый клик создаёт новую строку */
+  stepsNoKey(id, qty) {
     const prev = this.st.offRows[this.st.offRows.length - 1];
     this.st.offRows.push(id);
     const steps = [
@@ -1754,11 +1831,11 @@ const REST = {
       { t: 400,  action: 'flyPacket', path: 'rest-p-gs', dur: 300, color: 'var(--amber)' },
       { t: 700,  action: 'pulseNode', id: 'rest-n-service' },
       { t: 700,  action: 'tip', id: 'rest-idem', text: 'Без ключа — классическая ошибка' },
-      { t: 700,  action: 'log', level: 'WARN', comp: 'order-service', text: 'no Idempotency-Key → проверка дублей пропущена' },
+      { t: 700,  action: 'log', level: 'WARN', comp: 'order-service', text: 'no Idempotency-Key → проверка повторов невозможна' },
       { t: 700,  action: 'flyPacket', path: 'rest-p-sd', dur: 200, label: 'INSERT', color: 'var(--amber)' },
       { t: 900,  action: 'pulseNode', id: 'rest-n-db' },
       { t: 900,  action: 'addDbRow', id, status: 'CREATED', key: '—' },
-      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `INSERT orders order_id=${id} status=CREATED` },
+      { t: 900,  action: 'log', level: 'INFO', comp: 'db', text: `INSERT orders order_id=${id} qty=${qty} status=CREATED` },
       { t: 1100, action: 'flyPacket', path: 'rest-p-resp', dur: 200, label: '201', color: 'var(--amber)' },
       { t: 1300, action: 'pulseNode', id: 'rest-n-client' }
     ];
@@ -1771,10 +1848,10 @@ const REST = {
     return steps;
   },
   addDbRow(p) { this.st.db.push({ id: p.id, status: p.status, key: p.key, fx: 'new' }); this.render(); this._unfx(); },
-  addCacheEntry(p) { this.st.cache.set(p.key, { id: p.id, fx: 'new' }); this.render(); this._unfx(); },
+  storePut(p) { const e = this.st.store.get(p.key) || {}; Object.assign(e, { status: p.status, hash: p.hash, fx: 'new' }); if (p.id) e.id = p.id; this.st.store.set(p.key, e); this.render(); this._unfx(); },
   flashRow(kind, k) {
     if (kind === 'db') { const r = this.st.db.find(x => x.id === k); if (r && r.fx !== 'dupd') r.fx = 'hit'; }
-    else { const c = this.st.cache.get(k); if (c) c.fx = 'hit'; }
+    else { const c = this.st.store.get(k); if (c) c.fx = 'hit'; }
     this.render(); this._unfx(900);
   },
   markDup(ids) {
@@ -1783,13 +1860,14 @@ const REST = {
   },
   _unfx(ms = 1200) {
     clearTimeout(this._fxT);
-    this._fxT = setTimeout(() => { this.st.db.forEach(r => { if (r.fx === 'new' || r.fx === 'hit') r.fx = ''; }); this.st.cache.forEach(c => { c.fx = ''; }); this.render(); }, ms);
+    this._fxT = setTimeout(() => { this.st.db.forEach(r => { if (r.fx === 'new' || r.fx === 'hit') r.fx = ''; }); this.st.store.forEach(c => { c.fx = ''; }); this.render(); }, ms);
   },
   showResponse(p) { $('#rest-resp').className = 'resp ' + (p.kind || ''); $('#rest-code').textContent = p.code; $('#rest-body').textContent = p.body; },
   renderReq() {
-    const on = this.idem(), k = this.curKey();
+    const on = this.idem(), k = this.curKey(), q = this.qty();
     $('#rest-req').innerHTML = `<span class="h">POST</span> /orders HTTP/1.1\nHost: api.shop.local\nContent-Type: application/json\n` +
-      (on ? `<span class="h">Idempotency-Key:</span> ${esc(k)}` : `<span class="bad"># Idempotency-Key не передан</span>`) + `\n\n{"sku": "SKU-77", "qty": 1}`;
+      (on ? `<span class="h">Idempotency-Key:</span> ${esc(k)}` : `<span class="bad"># Idempotency-Key не передан</span>`) + `\n\n${esc(this.body(q))}` +
+      (on ? `\n\n<span class="c"># hash тела: ${this.hash(q)}</span>` : '');
   },
   render() {
     const trunc = s => s.length > 8 ? s.slice(0, 7) + '…' : s;
@@ -1803,21 +1881,22 @@ const REST = {
       S('text', { x: 808, y: y + 15, class: (r.fx === 'dup' || r.fx === 'dupd') ? 't-bad' : 't-ok' }, rg).textContent = r.status;
       S('text', { x: 884, y: y + 15, class: 't-dim' }, rg).textContent = trunc(r.key);
     });
-    const c = $('#rest-cache-rows'); c.textContent = '';
-    const entries = Array.from(this.st.cache.entries()).slice(-4);
-    $('#rest-cache-empty').setAttribute('visibility', entries.length ? 'hidden' : 'visible');
+    const c = $('#rest-store-rows'); c.textContent = '';
+    const entries = Array.from(this.st.store.entries()).slice(-4);
+    $('#rest-store-empty').setAttribute('visibility', entries.length ? 'hidden' : 'visible');
     entries.forEach(([k, v], i) => {
       const y = 304 + i * 26, rg = S('g', { class: 'row ' + (v.fx || '') }, c);
       S('rect', { x: 738, y, width: 194, height: 22, rx: 4, class: 'row-bg' }, rg);
       S('text', { x: 746, y: y + 15 }, rg).textContent = trunc(k);
-      S('text', { x: 924, y: y + 15, 'text-anchor': 'end', class: 't-ok' }, rg).textContent = `201 · #${v.id}`;
+      S('text', { x: 812, y: y + 15, class: 't-dim' }, rg).textContent = v.hash.slice(0, 4);
+      S('text', { x: 924, y: y + 15, 'text-anchor': 'end', class: v.status === 'COMPLETED' ? 't-ok' : 't-warn' }, rg).textContent = v.status === 'COMPLETED' ? `201 · #${v.id}` : 'IN_PROGRESS';
     });
   },
   resetView() {
     this.jobs = []; this.running = false;
     $$('#rest-svg .pkt-layer > *').forEach(n => n.remove());
     $$('#rest-svg .wire.live').forEach(n => n.classList.remove('live'));
-    this.st = this.fresh(); this.key.value = 'abc-123';
+    this.st = this.fresh(); this.key.value = 'abc-123'; this.qtyEl.value = '1';
     this.sw.setAttribute('aria-checked', 'true'); $('#rest-idem-v').textContent = 'ON';
     this.key.disabled = false; $('#rest-newkey').disabled = false;
     this.showResponse({ kind: '', code: '—', body: 'запрос ещё не отправлен' });
@@ -1830,12 +1909,12 @@ const REST = {
    ===================================================================== */
 const BPMN = {
   engine: new ScenarioEngine('bpmn'),
-  W: 2010, H: 730, z: 0.86, phase: 'idle', attempts: 0, MAX_ATTEMPTS: 3, paidBy: null,
+  W: 2010, H: 786, OY: 56, WAIT_MS: 6000, z: 0.86, phase: 'idle', attempts: 0, MAX_ATTEMPTS: 3, paidBy: null,
   tokens: {}, joinCount: 0,
   build() {
     const svg = $('#bp-svg');
     const env = (cx, cy, fill) => `<rect class="env${fill ? ' fill' : ''}" x="${cx - 8}" y="${cy - 5.5}" width="16" height="11" rx="1"/><path class="env${fill ? ' fill' : ''}" d="M${cx - 8} ${cy - 5.5} L${cx} ${cy + 1} L${cx + 8} ${cy - 5.5}"/>`;
-    const task = (id, cx, cy, l1, l2, opt = {}) => `<g id="bp-${id}" class="bn task"${opt.tip ? ` data-tip="${opt.tip}"` : ''}><rect class="shape" x="${cx - 58}" y="${cy - 28}" width="116" height="56" rx="10"/>${opt.receive ? env(cx - 44, cy - 16, false) : ''}${(opt.lines || [l1, l2]).map((t, i, arr) => `<text x="${cx}" y="${cy + 5 - (arr.length - 1) * (arr.length > 2 ? 8 : 8) + i * (arr.length > 2 ? 14 : 16)}">${t}</text>`).join('')}</g>`;
+    const task = (id, cx, cy, l1, l2, opt = {}) => { const w = opt.w || 116; return `<g id="bp-${id}" class="bn task"${opt.tip ? ` data-tip="${opt.tip}"` : ''}><rect class="shape" x="${cx - w / 2}" y="${cy - 28}" width="${w}" height="56" rx="10"/>${opt.receive ? env(cx - w / 2 + 14, cy - 16, false) : ''}${opt.user ? `<g class="usr"><circle class="ring" cx="${cx - w / 2 + 13}" cy="${cy - 19}" r="4"/><path class="ring" d="M${cx - w / 2 + 6} ${cy - 9} Q${cx - w / 2 + 13} ${cy - 17} ${cx - w / 2 + 20} ${cy - 9}"/></g>` : ''}${(opt.lines || [l1, l2]).map((t, i, arr) => `<text x="${cx}" y="${cy + 5 - (arr.length - 1) * 8 + i * (arr.length > 2 ? 14 : 16)}">${t}</text>`).join('')}</g>`; };
     const gw = (id, cx, cy, type, tip) => `<g id="bp-${id}" class="bn gw" data-tip="${tip}"><polygon class="shape" points="${cx},${cy - 28} ${cx + 28},${cy} ${cx},${cy + 28} ${cx - 28},${cy}"/>` +
       (type === 'xor' ? `<path class="mark" d="M${cx - 9} ${cy - 9} L${cx + 9} ${cy + 9} M${cx + 9} ${cy - 9} L${cx - 9} ${cy + 9}"/>` : `<path class="mark" d="M${cx} ${cy - 12} V${cy + 12} M${cx - 12} ${cy} H${cx + 12}"/>`) + `</g>`;
     const ev = (id, cx, cy, kind, tip) => {
@@ -1846,13 +1925,17 @@ const BPMN = {
       const cls = kind === 'start' || kind === 'msgStart' ? 'start' : (kind === 'end' || kind === 'msgEnd') ? 'end' : '';
       return `<g id="bp-${id}" class="bn ev ${cls}"${tip ? ` data-tip="${tip}"` : ''}><circle class="shape" cx="${cx}" cy="${cy}" r="18"/>${inner}</g>`;
     };
+    const evgw = (id, cx, cy, tip) => `<g id="bp-${id}" class="bn gw" data-tip="${tip}"><polygon class="shape" points="${cx},${cy - 28} ${cx + 28},${cy} ${cx},${cy + 28} ${cx - 28},${cy}"/><circle class="ring" cx="${cx}" cy="${cy}" r="12"/><circle class="ring" cx="${cx}" cy="${cy}" r="9.5"/><path class="ring" d="M${cx} ${cy - 6} L${cx + 6} ${cy - 2} L${cx + 4} ${cy + 5} L${cx - 4} ${cy + 5} L${cx - 6} ${cy - 2} Z"/></g>`;
+    const cond = (id, cx, cy, tip) => `<g id="bp-${id}" class="bn ev" data-tip="${tip}"><circle class="shape" cx="${cx}" cy="${cy}" r="13"/><circle class="ring" cx="${cx}" cy="${cy}" r="10.5"/><rect class="ring" x="${cx - 5}" y="${cy - 6}" width="10" height="12"/><path class="ring" d="M${cx - 3} ${cy - 3} H${cx + 3} M${cx - 3} ${cy} H${cx + 3} M${cx - 3} ${cy + 3} H${cx + 3}"/></g>`;
+    const btimer = (id, cx, cy, tip) => `<g id="bp-${id}" class="bn ev timer" data-tip="${tip}"><circle class="shape" cx="${cx}" cy="${cy}" r="14"/><circle class="ring" cx="${cx}" cy="${cy}" r="11"/><circle class="clock" cx="${cx}" cy="${cy}" r="7"/><path class="clock" d="M${cx} ${cy - 5} V${cy} L${cx + 3} ${cy + 3}"/></g>`;
+    const berr = (id, cx, cy, tip) => `<g id="bp-${id}" class="bn ev" data-tip="${tip}"><circle class="shape" cx="${cx}" cy="${cy}" r="14"/><circle class="ring" cx="${cx}" cy="${cy}" r="11"/><path class="ring" d="M${cx - 6} ${cy + 6} L${cx - 2} ${cy - 5} L${cx + 2} ${cy + 1} L${cx + 6} ${cy - 7}"/></g>`;
     const flow = (id, d) => `<path id="bp-${id}" class="flow" d="${d}"/>`;
     const lab = (x, y, t, anchor = 'start', cls = 'bp-l') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${t}</text>`;
     const SEQ_TIP = 'Сплошная стрелка показывает порядок выполнения элементов внутри одного процесса';
     const MSG_TIP = 'Пунктирная стрелка показывает обмен сообщениями между независимыми участниками процесса';
     const XOR_TIP = 'Эксклюзивный шлюз XOR: выбирается ровно одна исходящая ветка в зависимости от условия';
     const AND_TIP = 'Параллельный шлюз AND: запускает несколько веток одновременно. Синхронизирующий AND ожидает завершения всех веток';
-    const TIMER_TIP = 'Граничное таймерное событие: если подтверждение оплаты не поступило за установленный срок, ожидание прерывается и запускается отмена заказа';
+    const TIMER_TIP = 'Граничное таймерное событие 24 ч: если уведомление о зачислении не пришло, ожидание прерывается и запускается отмена заказа';
     svg.innerHTML = `
 <defs>
   <marker id="bp-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/></marker>
@@ -1860,6 +1943,10 @@ const BPMN = {
   <marker id="bp-circ" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3.6" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.4"/></marker>
   <filter id="bp-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
+<rect class="pool" x="0" y="0" width="2010" height="40"/>
+<rect class="pool-h" x="0" y="0" width="30" height="40"/>
+<text class="pool-t" x="44" y="25">Банк клиента</text><text class="lane-t" x="150" y="25">свёрнутый пул (black box): присылает уведомление о зачислении оплаты по счёту</text>
+<g transform="translate(0 56)">
 <rect class="pool" x="0" y="0" width="2010" height="540"/>
 <rect class="pool-h" x="0" y="0" width="30" height="540"/>
 <rect class="lane-h" x="30" y="0" width="36" height="110"/>
@@ -1877,49 +1964,55 @@ const BPMN = {
 ${flow('f0', 'M128 55 H162')}${flow('f1', 'M220 83 V252')}${flow('f2', 'M278 280 H302')}${flow('f3', 'M418 280 H442')}${flow('f4', 'M558 280 H592')}
 ${flow('f_card', 'M620 308 V480 H662')}${flow('f_inv', 'M620 252 V170 H662')}
 ${flow('f_i2', 'M778 170 H802')}${flow('f_i3', 'M918 170 H942')}${flow('f_conf', 'M1058 170 H1140')}${flow('f_inv_merge', 'M1256 170 H1360 V252')}
-${flow('f_timeout', 'M1042 214 V252')}${flow('f_c2', 'M972 280 H838')}
-${flow('f_preq_catch', 'M778 480 H962')}${flow('f_catch_ok', 'M998 480 H1052')}${flow('f_ok', 'M1108 480 H1172')}${flow('f_card_merge', 'M1288 480 H1360 V308')}
-${flow('f_rej', 'M1080 452 V380 H1010')}${flow('f_rg', 'M894 380 H848')}${flow('f_retry', 'M792 380 H720 V452')}${flow('f_cancel1', 'M820 352 V298')}
+${flow('f_timeout', 'M1042 214 V252')}${flow('f_c2', 'M1088 280 H1132')}
+${flow('f_preq_catch', 'M778 480 H925')}${flow('f_catch_ok', 'M1035 480 H1052')}${flow('f_res_to', 'M995 438 V408')}${flow('f_ok', 'M1108 480 H1172')}${flow('f_card_merge', 'M1288 480 H1360 V308')}
+${flow('f_rej', 'M1080 452 V380 H1010')}${flow('f_rg', 'M894 380 H848')}${flow('f_rg2a', 'M792 380 H769')}${flow('f_retry', 'M743 380 H720 V452')}${flow('f_rgc', 'M820 352 V335')}${flow('f_cancel1', 'M820 309 V280 H972')}${flow('f_nostock', 'M530 322 V368')}
 ${flow('f_m1', 'M1388 280 H1422')}${flow('f_m2', 'M1538 280 H1572')}${flow('f_s1', 'M1600 252 V170 H1672')}${flow('f_s2', 'M1600 308 V390 H1672')}
 ${flow('f_j1', 'M1788 170 H1860 V252')}${flow('f_j2', 'M1788 390 H1860 V308')}${flow('f_end', 'M1888 280 H1932')}
 ${flow('f_p2a', 'M738 640 H792')}${flow('f_p2b', 'M908 640 H962')}
 </g>
 <g class="mflow" data-tip="${MSG_TIP}"><path class="hit" d="M720 508 V622"/><path id="bp-mf1" class="flow msg" d="M720 512 V618"/></g>
-<g class="mflow" data-tip="${MSG_TIP}"><path class="hit" d="M980 622 V498"/><path id="bp-mf2" class="flow msg" d="M980 618 V502"/></g>
+<g class="mflow" data-tip="${MSG_TIP}"><path class="hit" d="M980 622 V508"/><path id="bp-mf2" class="flow msg" d="M980 618 V512"/></g>
+<g class="mflow" data-tip="${MSG_TIP}"><path class="hit" d="M1000 -16 V142"/><path id="bp-mf3" class="flow msg" d="M1000 -14 V138"/></g>
+<text class="bp-l" x="1010" y="-2">уведомление о зачислении</text>
 <text class="bp-l" x="730" y="565">платёжный запрос</text>
 <text class="bp-l" x="990" y="565">результат авторизации</text>
 
-${ev('E0', 110, 55, 'start', 'Стартовое событие: тонкий круг')}${lab(110, 95, 'Заказ оформлен', 'middle')}
+${ev('E0', 110, 55, 'start', 'Стартовое событие: клиент начал оформление заказа')}${lab(110, 90, 'Клиент начал', 'middle')}${lab(110, 103, 'оформление', 'middle')}
 ${task('T_order', 220, 55, 'Оформить', 'заказ')}
 ${task('T_recv', 220, 280, 'Получить', 'заказ')}
 ${task('T_valid', 360, 280, 'Валидация', 'заказа')}
-${task('T_stock', 500, 280, 'Проверить', 'наличие товара')}
+${task('T_stock', 500, 280, 'Зарезервировать', 'товар')}
+${berr('B_nostock', 530, 308, 'Граничное событие-ошибка: товара нет — резерв не удался, заказ отклоняется')}
+${ev('E_nostock', 530, 386, 'end', 'Конечное событие: заказ отклонён, товара нет в наличии')}${lab(530, 424, 'Нет в наличии:', 'middle')}${lab(530, 438, 'заказ отклонён', 'middle')}
 ${gw('G_pay', 620, 280, 'xor', XOR_TIP)}${lab(604, 238, 'Способ оплаты?', 'end')}
 ${lab(628, 222, 'По счёту', 'start', 'bp-cond')}${lab(628, 400, 'Карта', 'start', 'bp-cond')}
 
 ${task('T_invgen', 720, 170, 'Сформировать', 'счёт')}
 ${task('T_invsend', 860, 170, 'Отправить счёт', 'клиенту')}
-${task('T_wait', 1000, 170, '', '', { lines: ['Ожидать', 'подтверждение', 'оплаты'], receive: true, tip: 'Receive Task: процесс ждёт сообщение о подтверждении оплаты' })}
+${task('T_wait', 1000, 170, '', '', { lines: ['Ожидать', 'подтверждение', 'оплаты'], receive: true, tip: 'Receive Task: процесс ждёт сообщение банка о зачислении оплаты' })}
 <g id="bp-TM" class="bn ev timer" data-tip="${TIMER_TIP}"><circle class="shape" cx="1042" cy="198" r="16"/><circle class="ring" cx="1042" cy="198" r="12.5"/><circle class="clock" cx="1042" cy="198" r="8"/><path class="clock" d="M1042 192 V198 L1046 201"/></g>
 <circle id="bp-ring" cx="1042" cy="198" r="21" style="fill:none;stroke:var(--amber);stroke-width:3;opacity:0" transform="rotate(-90 1042 198)"/>
-<text class="bp-count" id="bp-count" x="1000" y="130" text-anchor="middle" visibility="hidden"></text>
+<text class="bp-count" id="bp-count" x="988" y="130" text-anchor="end" visibility="hidden"></text>
 <text class="bp-cond" x="1099" y="188" text-anchor="middle" style="font-size:9.5px">Подтверждение</text><text class="bp-cond" x="1099" y="200" text-anchor="middle" style="font-size:9.5px">получено</text>
 ${lab(1052, 240, 'Срок истёк', 'start', 'bp-cond')}
-${task('T_cancel', 1030, 280, 'Отменить', 'заказ')}
-${ev('E_cancel', 820, 280, 'end', 'Конечное событие «Заказ отменён»: отменённый заказ не попадает в успешную ветку')}${lab(820, 248, 'Заказ отменён', 'middle')}
+${task('T_cancel', 1030, 280, '', '', { lines: ['Отменить заказ,', 'снять резерв,', 'уведомить клиента'], tip: 'Компенсация: отмена заказа освобождает резерв товара и сообщает клиенту' })}
+${ev('E_cancel', 1150, 280, 'end', 'Конечное событие «Заказ отменён»: отменённый заказ не попадает в успешную ветку')}${lab(1150, 320, 'Заказ отменён', 'middle')}
 ${task('T_invpaid', 1198, 170, 'Зафиксировать', 'оплату по счёту')}
 
 ${task('T_preq', 720, 480, 'Создать', 'платёжный запрос')}
-${ev('E_catch', 980, 480, 'catch', 'Промежуточное событие-сообщение: процесс ждёт ответ платёжной системы')}${lab(980, 436, 'Получить', 'middle')}${lab(980, 450, 'результат', 'middle')}
+${task('T_res', 980, 480, 'Получить', 'результат', { w: 110, receive: true, tip: 'Receive Task: процесс ждёт ответ платёжной системы' })}
+${btimer('TM2', 995, 452, 'Граничный таймер 60 с: если платёжная система не ответила, ожидание прерывается и обрабатывается как отказ')}${lab(1013, 444, '60 с', 'start', 'bp-cond')}
 ${gw('G_ok', 1080, 480, 'xor', XOR_TIP)}${lab(1080, 528, 'Платёж успешен?', 'middle')}
 ${lab(1114, 470, 'Успешно', 'start', 'bp-cond')}${lab(1088, 425, 'Отклонён', 'start', 'bp-cond')}
 ${task('T_cardpaid', 1230, 480, 'Зафиксировать', 'успешную оплату')}
-${task('T_reject', 952, 380, 'Обработать', 'отказ платежа')}
-${gw('G_retry', 820, 380, 'xor', XOR_TIP)}${lab(820, 426, 'Повторить оплату?', 'middle')}
-${lab(756, 372, 'Повторить', 'middle', 'bp-cond')}${lab(828, 334, 'Отменить', 'start', 'bp-cond')}
+${task('T_reject', 952, 380, '', '', { lines: ['Сообщить клиенту', 'об отказе', 'или таймауте'] })}
+${evgw('G_retry', 820, 380, 'Событийный шлюз: процесс не решает сам, а ждёт, какое событие наступит первым — клиент повторил оплату или отказался')}${lab(820, 426, 'Решение клиента', 'middle')}
+${cond('C_retry', 756, 380, 'Условное событие: клиент нажал «Повторить оплату»')}${lab(756, 362, 'повтор', 'middle', 'bp-cond')}
+${cond('C_cancel', 820, 322, 'Условное событие: клиент отказался от оплаты')}${lab(804, 326, 'отказ', 'end', 'bp-cond')}
 
 ${gw('G_merge', 1360, 280, 'xor', 'Сливающий XOR: продолжает процесс, как только пришла любая из веток оплаты')}
-${task('T_paid', 1480, 280, 'Обновить статус', 'заказа: PAID')}
+${task('T_paid', 1480, 280, 'Обновить статус', 'заказа', { tip: 'Карта → PAYMENT_AUTHORIZED (списание после отгрузки), счёт → PAID' })}
 ${gw('G_split', 1600, 280, 'and', AND_TIP)}
 ${task('T_notify', 1730, 170, 'Уведомить', 'клиента')}
 ${task('T_crm', 1730, 390, 'Записать данные', 'в CRM')}
@@ -1929,7 +2022,8 @@ ${ev('E_done', 1950, 280, 'end', 'Конечное событие: круг с �
 ${ev('E_p2start', 720, 640, 'msgStart', 'Стартовое событие-сообщение внешнего пула')}${lab(720, 684, 'Запрос получен', 'middle')}
 ${task('T_auth', 850, 640, 'Авторизация', 'платежа')}
 ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщение: ответ отправлен в процесс заказа')}${lab(980, 684, 'Ответ отправлен', 'middle')}
-<g id="bp-tokens"></g>`;
+<g id="bp-tokens"></g>
+</g>`;
     const tg = $('#bp-tokens');
     for (const id of ['main', 'a', 'b', 'p2']) {
       const g = S('g', { visibility: 'hidden' }, tg);
@@ -2005,7 +2099,7 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
     });
   },
   follow(x, y) {
-    const c = this.stage, px = x * this.z, py = y * this.z;
+    const c = this.stage, px = x * this.z, py = (y + this.OY) * this.z;
     if (px < c.scrollLeft + 60 || px > c.scrollLeft + c.clientWidth - 60) c.scrollLeft = px - c.clientWidth / 2;
     if (py < c.scrollTop + 40 || py > c.scrollTop + c.clientHeight - 40) c.scrollTop = py - c.clientHeight / 2;
   },
@@ -2029,7 +2123,8 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
     $('#bp-status').innerHTML = 'Состояние: <b>' + esc(text || { idle: 'не запущен', running: 'выполняется', pay: 'ждёт выбора способа оплаты', result: 'ждёт результат авторизации', retry: 'платёж отклонён', waiting: 'ожидание оплаты по счёту', done: 'завершён' }[ph]) + '</b>';
     $('.tab[data-tab="bpmn"]').classList.toggle('running', ph !== 'idle' && ph !== 'done');
   },
-  modal(title, text, buttons) {
+  modal(title, text, buttons, corner) {
+    $('#bp-modal').classList.toggle('bp-corner', !!corner);
     $('#bp-modal-h').textContent = title; $('#bp-modal-p').textContent = text;
     const box = $('#bp-modal-b'); box.innerHTML = '';
     buttons.forEach(([label, cls, fn, dis]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + cls; b.textContent = label; b.disabled = !!dis; b.onclick = fn; box.appendChild(b); });
@@ -2045,19 +2140,19 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
         ['Оплатить картой', 'primary', () => this.go('card')], ['Оплатить по счёту', 'primary', () => this.go('invoice')]]);
     } else if (kind === 'result') {
       this.setPhase('result');
-      this.modal('Результат авторизации', `Платёжная система ответила на запрос (попытка ${this.attempts} из ${this.MAX_ATTEMPTS}). Какой результат пришёл?`, [
-        ['Платёж успешен', 'ok', () => this.go('ok')], ['Платёж отклонён', 'danger', () => this.go('decline')]]);
+      this.modal('Ответ платёжной системы', `Попытка ${this.attempts} из ${this.MAX_ATTEMPTS}. Процесс ждёт ответ, на задаче стоит граничный таймер 60 с. Что произошло?`, [
+        ['Платёж успешен', 'ok', () => this.go('ok')], ['Платёж отклонён', 'danger', () => this.go('decline')], ['Ответа нет 60 с', 'ghost', () => this.go('noresp')]]);
     } else if (kind === 'retry') {
       this.setPhase('retry');
       const left = this.MAX_ATTEMPTS - this.attempts;
-      this.modal('Платёж отклонён', left > 0 ? `Осталось попыток: ${left}. Повторить оплату или отменить заказ?` : `Лимит попыток исчерпан (${this.MAX_ATTEMPTS} из ${this.MAX_ATTEMPTS}). Заказ можно только отменить.`, [
-        ['Повторить оплату', 'primary', () => this.decide('retry'), left <= 0], ['Отменить заказ', 'danger', () => this.decide('cancel')]]);
+      this.modal('Решение клиента', left > 0 ? `Клиенту сообщили о неудаче. Событийный шлюз ждёт его действие. Осталось попыток: ${left}.` : `Лимит попыток исчерпан (${this.MAX_ATTEMPTS} из ${this.MAX_ATTEMPTS}). Клиент может только отказаться.`, [
+        ['Клиент повторяет оплату', 'primary', () => this.decide('retry'), left <= 0], ['Клиент отказывается', 'danger', () => this.decide('cancel')]]);
       if (left <= 0) appendLog('WARN', 'process', 'retry limit reached');
     }
   },
   go(branch) {
     this.closeModal(); this.setPhase('running');
-    const seq = { card: this.seqCard(), invoice: this.seqInvoice(), ok: this.seqOk(), decline: this.seqDecline() }[branch];
+    const seq = { card: this.seqCard(), invoice: this.seqInvoice(), ok: this.seqOk(), decline: this.seqDecline(), noresp: this.seqNoResponse() }[branch];
     runSequence(this.engine, seq);
   },
   decide(what) {
@@ -2071,22 +2166,28 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
     $('#bp-TM').classList.add('armed');
     const ring = $('#bp-ring'), cnt = $('#bp-count'), C = 2 * Math.PI * 21;
     ring.style.opacity = 1; ring.style.strokeDasharray = C; cnt.setAttribute('visibility', 'visible');
-    this.engine.animate(2000, k => {
+    this.engine.animate(this.WAIT_MS, k => {
       ring.style.strokeDashoffset = C * k;
-      cnt.textContent = `⏱ ${((1 - k) * 2).toFixed(1).replace('.', ',')} с · ускорено: 24 ч = 2 с`;
+      cnt.textContent = `⏱ ${((1 - k) * this.WAIT_MS / 1000).toFixed(1).replace('.', ',')} с · ускорено: 24 ч = ${this.WAIT_MS / 1000} с`;
     }, 'timer');
-    this.engine.after(2000, () => runSequence(this.engine, this.seqTimeout()), 'timer');
+    this.engine.after(this.WAIT_MS, () => { this.closeModal(); runSequence(this.engine, this.seqTimeout()); }, 'timer');
+    this.modal('Ожидание оплаты по счёту', 'Банк пришлёт уведомление о зачислении. Если его не будет 24 часа, сработает граничный таймер и заказ отменится.', [
+      ['Пришло уведомление о зачислении', 'ok', () => this.confirm()], ['Ждать таймер', 'ghost', () => this.closeModal()]], true);
   },
   hideCountdown() { $('#bp-ring').style.opacity = 0; $('#bp-count').setAttribute('visibility', 'hidden'); $('#bp-TM').classList.remove('armed'); },
   confirm() {
     if (this.phase !== 'waiting') return;
+    this.closeModal();
     this.engine.cancel('timer'); this.hideCountdown();
     this.setPhase('running');
     runSequence(this.engine, this.seqConfirm());
   },
   timerFire() { this.hideCountdown(); $('#bp-TM').classList.add('fired'); },
+  armTimer2() { $('#bp-TM2').classList.add('armed'); },
+  disarmTimer2() { $('#bp-TM2').classList.remove('armed'); },
+  timer2Fire() { const t = $('#bp-TM2'); t.classList.remove('armed'); t.classList.add('fired'); },
   complete(outcome) {
-    this.setPhase('done', { paid: 'заказ завершён', cancelled: 'заказ отменён', timeout: 'заказ отменён по таймеру' }[outcome]);
+    this.setPhase('done', { paid: this.paidBy === 'card' ? 'заказ завершён, оплата авторизована' : 'заказ завершён, оплачен', cancelled: 'заказ отменён клиентом', timeout: 'заказ отменён по таймеру' }[outcome]);
     if (outcome === 'paid') { unlock('bp-knot'); unlock(this.paidBy === 'card' ? 'bp-card' : 'bp-invoice'); }
     if (outcome === 'timeout') unlock('bp-timeout');
   },
@@ -2104,12 +2205,12 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
     const { T, L } = this;
     return [
       { action: 'place', node: 'E0' }, { action: 'enter', id: 'E0' },
-      L('INFO', 'process', 'order received'), { action: 'ach', id: 'bp-first' },
+      L('INFO', 'process', 'checkout started by customer'), { action: 'ach', id: 'bp-first' },
       { t: 250, action: 'leave', id: 'E0' }, { action: 'move', path: 'f0' },
       ...T.call(this, 'T_order', 300), { action: 'move', path: 'f1' },
       ...T.call(this, 'T_recv', 300), { action: 'move', path: 'f2' },
       ...T.call(this, 'T_valid', 350, L('INFO', 'process', 'validation completed')), { action: 'move', path: 'f3' },
-      ...T.call(this, 'T_stock', 350, L('INFO', 'inventory', 'stock available: SKU-77 × 1')), { action: 'move', path: 'f4' },
+      ...T.call(this, 'T_stock', 350, L('INFO', 'inventory', 'stock reserved: SKU-77 × 1 (резерв снимается при отмене)')), { action: 'move', path: 'f4' },
       { action: 'enter', id: 'G_pay' }, L('INFO', 'process', 'token entered gateway XOR'),
       { action: 'choose', kind: 'pay' }
     ];
@@ -2119,15 +2220,13 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
     return [
       { action: 'enter', id: 'T_preq' }, { action: 'attempt' }, { t: 300, action: 'leave', id: 'T_preq' },
       { action: 'par', branches: [
-        [{ action: 'move', path: 'f_preq_catch' }, { action: 'enter', id: 'E_catch' }],
+        [{ action: 'move', path: 'f_preq_catch' }, { action: 'enter', id: 'T_res' }, { action: 'armTimer2' }],
         [{ action: 'msg', path: 'mf1' }, { action: 'place', tok: 'p2', node: 'E_p2start' }, { action: 'enter', id: 'E_p2start' },
          { t: 150, action: 'leave', id: 'E_p2start' }, { action: 'move', tok: 'p2', path: 'f_p2a' },
          { action: 'enter', id: 'T_auth' }, L('INFO', 'payment-system', 'authorization processing'), { t: 500, action: 'leave', id: 'T_auth' },
          { action: 'move', tok: 'p2', path: 'f_p2b' }, { action: 'enter', id: 'E_p2end' }, { t: 150, action: 'hideTok', tok: 'p2' }, { action: 'leave', id: 'E_p2end' }]
       ] },
-      { action: 'msg', path: 'mf2' }, L('INFO', 'payment', 'authorization response received'),
-      { action: 'leave', id: 'E_catch' }, { action: 'move', path: 'f_catch_ok' },
-      { action: 'enter', id: 'G_ok' }, L('INFO', 'process', 'token entered gateway XOR «Платёж успешен?»'),
+      L('INFO', 'process', 'waiting for payment system response (boundary timer 60 s)'),
       { action: 'choose', kind: 'result' }
     ];
   },
@@ -2137,7 +2236,7 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
   seqOk() {
     const L = this.L;
     return [
-      L('INFO', 'payment', 'payment authorized'), { action: 'leave', id: 'G_ok' }, { action: 'move', path: 'f_ok' },
+      ...this.seqResponse(), L('INFO', 'payment', 'payment authorized'), { action: 'leave', id: 'G_ok' }, { action: 'move', path: 'f_ok' },
       ...this.T('T_cardpaid', 400, L('INFO', 'process', 'payment recorded: authorized (capture — отдельный шаг, вне демо)')),
       { action: 'paidBy', via: 'card' }, { action: 'move', path: 'f_card_merge' }, ...this.seqCommon()
     ];
@@ -2145,20 +2244,46 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
   seqDecline() {
     const L = this.L;
     return [
-      L('WARN', 'payment', 'authorization declined'), { action: 'leave', id: 'G_ok' }, { action: 'move', path: 'f_rej' },
+      ...this.seqResponse(), L('WARN', 'payment', 'authorization declined'), { action: 'leave', id: 'G_ok' }, { action: 'move', path: 'f_rej' },
       { action: 'enter', id: 'T_reject' }, { action: 'call', fn: () => appendLog('ERROR', 'process', `payment declined: insufficient funds (attempt ${this.attempts}/${this.MAX_ATTEMPTS})`) },
+      ...this.seqAskClient()
+    ];
+  },
+  /** Ответ платёжной системы пришёл до таймера: таймер снимается, токен идёт к XOR */
+  seqResponse() {
+    const L = this.L;
+    return [
+      { action: 'disarmTimer2' }, { action: 'msg', path: 'mf2' }, L('INFO', 'payment', 'authorization response received, timer cancelled'),
+      { action: 'leave', id: 'T_res' }, { action: 'move', path: 'f_catch_ok' },
+      { action: 'enter', id: 'G_ok' }, L('INFO', 'process', 'XOR «Платёж успешен?» routes on response code')
+    ];
+  },
+  /** Платёжная система молчит 60 с: прерывающий таймер ведёт в обработку отказа */
+  seqNoResponse() {
+    const L = this.L;
+    return [
+      { action: 'timer2Fire' }, L('WARN', 'payment', 'no response in 60 s: boundary timer fired'),
+      { action: 'cancelMark', ids: ['T_res'] }, { action: 'hideTok', tok: 'p2' }, { action: 'place', x: 995, y: 452 }, { action: 'move', path: 'f_res_to' },
+      { action: 'enter', id: 'T_reject' }, { action: 'call', fn: () => appendLog('ERROR', 'process', `payment timeout (attempt ${this.attempts}/${this.MAX_ATTEMPTS})`) },
+      ...this.seqAskClient()
+    ];
+  },
+  /** Решение принимает клиент: процесс ждёт событие на событийном шлюзе */
+  seqAskClient() {
+    return [
+      this.L('INFO', 'notification', 'customer notified: payment failed, choose retry or cancel'),
       { t: 400, action: 'leave', id: 'T_reject' }, { action: 'move', path: 'f_rg' },
       { action: 'enter', id: 'G_retry' }, { action: 'choose', kind: 'retry' }
     ];
   },
   seqRetry() {
-    return [this.L('INFO', 'process', 'payment retry requested'), { action: 'leave', id: 'G_retry' }, { action: 'move', path: 'f_retry' }, ...this.seqRequest()];
+    return [this.L('INFO', 'process', 'event: customer chose retry'), { action: 'leave', id: 'G_retry' }, { action: 'move', path: 'f_rg2a' },
+      { action: 'enter', id: 'C_retry' }, { t: 200, action: 'leave', id: 'C_retry' }, { action: 'move', path: 'f_retry' }, ...this.seqRequest()];
   },
   seqCancelCard() {
     return [
-      this.L('INFO', 'process', 'order cancellation requested'), { action: 'cancelMark', ids: ['T_reject', 'G_retry'], flows: ['f_rej', 'f_rg'] },
-      { action: 'move', path: 'f_cancel1' }, { action: 'enter', id: 'E_cancel' }, { t: 200, action: 'cancelMark', ids: ['E_cancel'], flows: ['f_cancel1'] },
-      this.L('INFO', 'process', 'order cancelled'), { action: 'complete', outcome: 'cancelled' }
+      this.L('INFO', 'process', 'event: customer declined payment'), { action: 'leave', id: 'G_retry' }, { action: 'move', path: 'f_rgc' },
+      { action: 'enter', id: 'C_cancel' }, { t: 200, action: 'leave', id: 'C_cancel' }, { action: 'move', path: 'f_cancel1' }, ...this.seqCancelTail('cancelled', ['f_rgc', 'f_cancel1'])
     ];
   },
   seqInvoice() {
@@ -2174,6 +2299,7 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
   seqConfirm() {
     const L = this.L;
     return [
+      { action: 'msg', path: 'mf3' }, L('INFO', 'bank', 'payment received notification'),
       L('INFO', 'process', 'payment confirmation received, boundary timer cancelled'), { action: 'leave', id: 'T_wait' }, { action: 'move', path: 'f_conf' },
       ...this.T('T_invpaid', 400, L('INFO', 'process', 'invoice payment recorded')),
       { action: 'paidBy', via: 'invoice' }, { action: 'move', path: 'f_inv_merge' }, ...this.seqCommon()
@@ -2184,17 +2310,26 @@ ${ev('E_p2end', 980, 640, 'msgEnd', 'Конечное событие-сообщ�
     return [
       { action: 'timerFire' }, L('WARN', 'process', 'payment timeout'), L('WARN', 'process', 'escalation triggered'),
       { action: 'cancelMark', ids: ['T_wait'] }, { action: 'place', x: 1042, y: 198 },
-      { action: 'move', path: 'f_timeout' }, { action: 'enter', id: 'T_cancel' }, L('INFO', 'process', 'task "Cancel order" started'),
-      { t: 400, action: 'cancelMark', ids: ['T_cancel'], flows: ['f_timeout'] }, { action: 'move', path: 'f_c2' },
+      { action: 'move', path: 'f_timeout' }, ...this.seqCancelTail('timeout', ['f_timeout'])
+    ];
+  },
+  /** Компенсация при любой отмене: снять резерв, уведомить клиента, завершить */
+  seqCancelTail(outcome, flows) {
+    const L = this.L;
+    return [
+      { action: 'enter', id: 'T_cancel' }, L('INFO', 'process', 'order cancelled'), L('INFO', 'inventory', 'stock reservation released: SKU-77 × 1'),
+      L('INFO', 'notification', 'customer notified: order cancelled'),
+      { t: 400, action: 'cancelMark', ids: ['T_cancel'], flows }, { action: 'move', path: 'f_c2' },
       { action: 'enter', id: 'E_cancel' }, { t: 200, action: 'cancelMark', ids: ['E_cancel'], flows: ['f_c2'] },
-      L('INFO', 'process', 'order cancelled'), { action: 'complete', outcome: 'timeout' }
+      { action: 'complete', outcome }
     ];
   },
   seqCommon() {
     const L = this.L;
     return [
       { action: 'enter', id: 'G_merge' }, { t: 200, action: 'leave', id: 'G_merge' }, { action: 'move', path: 'f_m1' },
-      ...this.T('T_paid', 350, L('INFO', 'process', 'order status changed to PAID')), { action: 'move', path: 'f_m2' },
+      { action: 'enter', id: 'T_paid' }, { action: 'call', fn: () => appendLog('INFO', 'process', this.paidBy === 'card' ? 'order status changed to PAYMENT_AUTHORIZED (capture — после отгрузки)' : 'order status changed to PAID') },
+      { t: 350, action: 'leave', id: 'T_paid' }, { action: 'move', path: 'f_m2' },
       { action: 'enter', id: 'G_split' }, { action: 'call', fn: () => TIP.auto('bp-G_split') }, { t: 250, action: 'split' }, { action: 'leave', id: 'G_split' },
       { action: 'par', branches: [
         [{ action: 'move', tok: 'a', path: 'f_s1', k: 1.15 }, ...this.T('T_notify', 300, L('INFO', 'notification', 'customer notified')), { action: 'move', tok: 'a', path: 'f_j1', k: 1.15 }, { action: 'join', tok: 'a' }],
@@ -2247,6 +2382,8 @@ const EMPLOYEES = [['EMP-00128', 'Иван Петров'], ['EMP-00135', 'Але
 const CITIES = ['Казань', 'Екатеринбург', 'Новосибирск', 'Самара', 'Нижний Новгород', 'Санкт-Петербург', 'Пермь', 'Уфа', 'Тольятти', 'Краснодар'];
 const isoDate = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 const isoNow = () => { const d = new Date(); return `${isoDate(d)}T${hhmmss(d)}`; };
+/** Время с часовым поясом: без смещения метка времени в событии неоднозначна */
+const isoNowTz = () => { const d = new Date(), o = -d.getTimezoneOffset(), sg = o >= 0 ? '+' : '-'; return `${isoDate(d)}T${hhmmss(d)}${sg}${pad2(Math.floor(Math.abs(o) / 60))}:${pad2(Math.abs(o) % 60)}`; };
 const rid = n => 'TR-2026-' + String(n).padStart(6, '0');
 
 const KAFKA = {
@@ -2257,6 +2394,7 @@ const KAFKA = {
     $('#kf-send').onclick = () => this.sendForm();
     $('#kf-batch').onclick = () => this.batch();
     $('#kf-poison').onclick = () => this.poison();
+    $('#kf-transient').onclick = () => this.transient();
     $('#kf-stop').onclick = () => this.stopConsumer(2);
     $('#kf-restore').onclick = () => this.restoreConsumer(2);
     $$('#kf-scale button').forEach(b => b.onclick = () => this.scale(+b.dataset.n));
@@ -2275,7 +2413,7 @@ const KAFKA = {
     this.consumers = [0, 1, 2].map(i => this.mkCons(i));
     this.group = 'STABLE'; this.gen = 1;
     this.rangeAssign();
-    this.dlq = []; this.failed = 0; this.nextSingle = 1042; this.sel = null; this.batchBusy = false; this.lastCalc = null;
+    this.dlq = []; this.retries = 0; this.dups = 0; this.nextSingle = 1042; this.sel = null; this.batchBusy = false; this.lastCalc = null;
     $('#kf-journal').innerHTML = '';
     $('#kf-pcalc').textContent = 'ожидает сообщение';
     $('#kf-calc-detail').textContent = 'Отправьте сообщение, и здесь появится расчёт для его ключа.';
@@ -2301,12 +2439,15 @@ const KAFKA = {
     while (tb.childElementCount > 400) tb.firstElementChild.remove();
     const w = $('#kf-journal-wrap'); w.scrollTop = w.scrollHeight;
   },
+  /** Контракт события v2: только табельные номера (ФИО подставляет UI из справочника), плановая сумма для бюджета, время с поясом */
   genPayload(n, i, opts = {}) {
-    const e = EMPLOYEES[i % 10], parts = [{ employee_id: e[0], employee_name: e[1] }];
-    if (i % 3 === 0) { const e2 = EMPLOYEES[(i + 1) % 10]; parts.push({ employee_id: e2[0], employee_name: e2[1] }); }
+    const e = EMPLOYEES[i % 10], parts = [{ employee_id: e[0] }];
+    if (i % 3 === 0) parts.push({ employee_id: EMPLOYEES[(i + 1) % 10][0] });
     const s = new Date(2026, 10, 16 + (i % 9)), en = new Date(2026, 10, 19 + (i % 9));
-    return { request_id: rid(n), employee_id: e[0], employee_name: e[1], participants: parts, destination: CITIES[(i + (opts.cityShift || 0)) % 10],
-      start_date: isoDate(s), end_date: isoDate(en), status: 'CREATED', created_at: isoNow() };
+    const amount = parts.length * (4 * 2500 + 3 * 4500 + 9000);      // суточные 4 дня + 3 ночи + проезд
+    return { event_id: 'evt-' + (murmur2(rid(n) + ':' + i) >>> 0).toString(16).padStart(8, '0'), event_type: 'TripRequestSubmitted', schema_version: 2,
+      request_id: rid(n), initiator_id: e[0], participants: parts, destination: CITIES[(i + (opts.cityShift || 0)) % 10],
+      start_date: isoDate(s), end_date: isoDate(en), estimated_cost: { amount, currency: 'RUB' }, status: 'SUBMITTED', created_at: isoNowTz() };
   },
   sendForm() {
     const pl = this.genPayload(this.nextSingle, 0);
@@ -2331,7 +2472,7 @@ const KAFKA = {
   },
   append(payload, part, opts) {
     const msg = { id: payload.request_id, key: payload.request_id, part, off: this.parts[part].length, payload, status: 'pending', attempts: 0, consumer: null,
-      poison: !!opts.poison, reason: opts.reason || null, replayed: !!opts.replayed, timesProcessed: 0 };
+      poison: !!opts.poison, transient: !!opts.transient, reason: opts.reason || null, replayed: !!opts.replayed, timesProcessed: 0 };
     this.parts[part].push(msg);
     this.stage('topic');
     this.journal(msg, null, opts.replayed ? 'Message received (replay из DLQ)' : 'Message received', `end offset → ${msg.off + 1}`, 'dim');
@@ -2359,10 +2500,18 @@ const KAFKA = {
     }
   },
   poison() {
-    const pl = { request_id: rid(1201 + this.dlqSeq()), employee_id: null, employee_name: 'Иван Петров', participants: [{ employee_id: null, employee_name: 'Иван Петров' }],
-      destination: 'Казань', start_date: '2026-11-14', end_date: '2026-11-10', status: 'CREATED', created_at: isoNow() };
-    appendLog('WARN', 'producer', `send ${pl.request_id}: некорректный запрос (нет employee_id, end_date < start_date)`);
-    this.produce(pl, { poison: true, reason: 'employee_id отсутствует; end_date 2026-11-10 раньше start_date 2026-11-14', quiet: true });
+    const n = 1201 + this.dlqSeq();
+    const pl = { event_id: 'evt-' + (murmur2(rid(n)) >>> 0).toString(16).padStart(8, '0'), event_type: 'TripRequestSubmitted', schema_version: 2, request_id: rid(n),
+      initiator_id: null, participants: [{ employee_id: null }], destination: 'Казань', start_date: '2026-11-14', end_date: '2026-11-10',
+      estimated_cost: { amount: 0, currency: 'RUB' }, status: 'SUBMITTED', created_at: isoNowTz() };
+    appendLog('WARN', 'producer', `send ${pl.request_id}: некорректный запрос (нет initiator_id, end_date < start_date)`);
+    this.produce(pl, { poison: true, reason: 'initiator_id отсутствует; end_date 2026-11-10 раньше start_date 2026-11-14', quiet: true });
+  },
+  /** Валидный запрос, но у consumer'а временно недоступна БД: первая попытка падает, повтор проходит */
+  transient() {
+    const pl = this.genPayload(this.nextSingle++, 4);
+    appendLog('INFO', 'producer', `send ${pl.request_id} (у обработчика сейчас таймаут БД — временный сбой)`);
+    this.produce(pl, { transient: true, quiet: true });
   },
   dlqSeq() { this._ps = (this._ps || 0) + 1; return this._ps - 1; },
   pump(c) {
@@ -2378,6 +2527,7 @@ const KAFKA = {
     this.stage('consumer');
     this.journal(msg, msg.consumer, 'Processing started', msg.attempts > 1 ? `попытка ${msg.attempts}/${this.MAX_ATTEMPTS}` : '', 'dim');
     if (dup) {
+      this.dups++;
       appendLog('WARN', msg.consumer, `${msg.id} обрабатывается повторно: offset не был закоммичен (at-least-once) — нужен идемпотентный обработчик`);
       this.journal(msg, msg.consumer, 'Duplicate delivery', 'at-least-once: нужна идемпотентность', 'warn');
     }
@@ -2386,22 +2536,27 @@ const KAFKA = {
   },
   finish(c, msg) {
     if (msg.poison) {
-      this.failed++;
-      this.journal(msg, msg.consumer, 'Processing failed', `${msg.reason} (попытка ${msg.attempts}/${this.MAX_ATTEMPTS})`, 'bad');
-      appendLog('ERROR', msg.consumer, `${msg.id}: validation failed, attempt ${msg.attempts}/${this.MAX_ATTEMPTS}`);
-      if (msg.attempts < this.MAX_ATTEMPTS) {
-        msg.status = 'retrying'; this.render();
-        this.journal(msg, msg.consumer, `Retry ${msg.attempts + 1}/${this.MAX_ATTEMPTS} scheduled`, `backoff ${this.RETRY_MS} мс`, 'warn');
-        this.engine.after(this.RETRY_MS, () => this.process(c, msg), 'c' + c.id);
-      } else {
-        msg.status = 'dlq';
-        this.dlq.push({ msg, reason: msg.reason, attempts: msg.attempts, at: hhmmss() });
-        this.journal(msg, msg.consumer, 'Moved to DLQ', 'hr.business-trip.requests.dlq', 'bad');
-        appendLog('WARN', 'dlq', `${msg.id} moved to hr.business-trip.requests.dlq after ${msg.attempts} attempts`);
-        TIP.auto('kf-dlq', 'DLQ — архитектурный паттерн, а не встроенная функция Kafka. Retry, публикация в DLQ и replay реализуются на уровне приложения');
-        this.render();
-        this.engine.after(this.COMMIT_MS, () => this.commit(c, msg), 'c' + c.id);
-      }
+      // ошибка валидации невосстановима: повтор ничего не изменит, сообщение сразу уходит в DLQ
+      this.journal(msg, msg.consumer, 'Processing failed', `${msg.reason} · non-retryable`, 'bad');
+      appendLog('ERROR', msg.consumer, `${msg.id}: validation failed (non-retryable) → DLQ без повторов`);
+      msg.status = 'dlq';
+      this.dlq.push({ msg, reason: msg.reason, attempts: msg.attempts, at: hhmmss() });
+      this.journal(msg, msg.consumer, 'Moved to DLQ', 'hr.business-trip.requests.dlq', 'bad');
+      appendLog('WARN', 'dlq', `${msg.id} moved to hr.business-trip.requests.dlq (reason: validation)`);
+      TIP.auto('kf-dlq', 'DLQ — архитектурный паттерн, а не встроенная функция Kafka. Retry, публикация в DLQ и разбор очереди реализуются на уровне приложения');
+      this.render();
+      this.engine.after(this.COMMIT_MS, () => this.commit(c, msg), 'c' + c.id);
+      return;
+    }
+    if (msg.transient && msg.attempts < 2) {
+      // временная ошибка: повтор с паузой (backoff) имеет смысл
+      this.retries++;
+      msg.status = 'retrying';
+      this.journal(msg, msg.consumer, 'Processing failed', 'timeout БД · retryable', 'warn');
+      this.journal(msg, msg.consumer, `Retry ${msg.attempts + 1}/${this.MAX_ATTEMPTS} scheduled`, `backoff ${this.RETRY_MS} мс`, 'warn');
+      appendLog('WARN', msg.consumer, `${msg.id}: DB timeout (retryable), retry ${msg.attempts + 1}/${this.MAX_ATTEMPTS} через ${this.RETRY_MS} мс`);
+      this.render();
+      this.engine.after(this.RETRY_MS, () => this.process(c, msg), 'c' + c.id);
       return;
     }
     msg.status = 'processed'; msg.timesProcessed++;
@@ -2517,12 +2672,12 @@ const KAFKA = {
     const all = this.parts.flat();
     const processed = all.filter(m => m.status === 'processed').length;
     const lagSum = [0, 1, 2].reduce((s, p) => s + this.lag(p), 0);
-    const st = [['Total Messages', all.length, ''], ['Processed', processed, 'ok'], ['Pending', lagSum, lagSum ? 'warn' : ''], ['Failed', this.failed, this.failed ? 'bad' : ''], ['DLQ', this.dlq.length, this.dlq.length ? 'bad' : ''], ['Consumer Lag', lagSum, lagSum ? 'warn' : ''],
+    const st = [['Всего сообщений', all.length, ''], ['Обработано', processed, 'ok'], ['Ожидают (lag)', lagSum, lagSum ? 'warn' : ''], ['Повторов (попыток)', this.retries, this.retries ? 'warn' : ''], ['В DLQ', this.dlq.length, this.dlq.length ? 'bad' : ''], ['Повторных доставок', this.dups, this.dups ? 'warn' : ''],
       ['P0', this.parts[0].length, ''], ['P1', this.parts[1].length, ''], ['P2', this.parts[2].length, '']];
     $('#kf-mon').innerHTML = st.map(([n, v, c]) => `<div class="kf-stat ${c}"><b>${v}</b><span>${n}</span></div>`).join('');
     if (this.sel) {
       const m = this.parts[this.sel.p][this.sel.o];
-      if (m) $('#kf-detail').innerHTML = `<dl class="kv2"><dt>Key</dt><dd>${esc(m.key)}</dd><dt>Partition</dt><dd>P${m.part}</dd><dt>Offset</dt><dd>${m.off}</dd><dt>Статус</dt><dd>${m.status}${m.replayed ? ' (replay из DLQ)' : ''}</dd><dt>Consumer</dt><dd>${m.consumer || '—'}</dd><dt>Попыток</dt><dd>${m.attempts}</dd><dt>Участники</dt><dd>${m.payload.participants.map(x => esc((x.employee_id || 'employee_id: null') + ' — ' + x.employee_name)).join('<br>')}</dd>${m.reason ? `<dt>Ошибка</dt><dd style="color:var(--red)">${esc(m.reason)}</dd>` : ''}</dl><pre>${esc(JSON.stringify(m.payload, null, 2))}</pre>`;
+      if (m) $('#kf-detail').innerHTML = `<dl class="kv2"><dt>Key</dt><dd>${esc(m.key)}</dd><dt>Partition</dt><dd>P${m.part}</dd><dt>Offset</dt><dd>${m.off}</dd><dt>Статус</dt><dd>${m.status}${m.replayed ? ' (replay из DLQ)' : ''}</dd><dt>Consumer</dt><dd>${m.consumer || '—'}</dd><dt>Попыток</dt><dd>${m.attempts}</dd><dt>Участники</dt><dd>${m.payload.participants.map(x => esc(x.employee_id ? `${x.employee_id} — ${(EMPLOYEES.find(e => e[0] === x.employee_id) || [, '?'])[1]}` : 'employee_id: null')).join('<br>')}<br><span class="dim">ФИО — из справочника сотрудников, в событии их нет</span></dd><dt>Сумма</dt><dd>${m.payload.estimated_cost ? m.payload.estimated_cost.amount.toLocaleString('ru-RU') + ' ' + m.payload.estimated_cost.currency : '—'}</dd>${m.reason ? `<dt>Ошибка</dt><dd style="color:var(--red)">${esc(m.reason)}</dd>` : ''}</dl><pre>${esc(JSON.stringify(m.payload, null, 2))}</pre>`;
     }
   }
 };
@@ -2562,12 +2717,13 @@ const LOGIN_FLOW = () => [
   ] },
   ret('idp', 'browser', '302 → /callback?code&state'),
   call('browser', 'bff', 'GET /callback?code&state'),
+  self_('bff', 'сверить state с сохранённым в сессии'),
   { frag: 'alt', branches: [
     { cond: '[state matches]', when: c => c.state === 'match', items: [
       call('bff', 'idp', 'POST /token (code + code_verifier)'),
       self_('idp', 'проверить code_verifier'),
       ret('idp', 'bff', 'id_token, access_token, refresh_token'),
-      self_('bff', 'проверить подпись id_token, создать сессию'),
+      self_('bff', 'проверить подпись, iss, aud, exp и nonce id_token; создать сессию'),
       ret('bff', 'browser', '302 / + Set-Cookie: session (HttpOnly)'),
       asyn('browser', 'user', 'показывает личный кабинет')
     ] },
@@ -2982,16 +3138,19 @@ const REQ = {
     ['Затронутые роли определены', 'для кого и на кого влияет']
   ],
   STORIES: [
-    { id: 'US-1', role: 'сотрудник', want: 'отправить заявку на командировку за 2 минуты', so: 'не тратить время на переписку с HR', ac: ['обязательные поля проверяются до отправки', 'заявка сохраняется в статусе DRAFT'], from: '#1 HR', sp: 3, short: 'Заявка за 2 минуты' },
-    { id: 'US-2', role: 'финансовый контролёр', want: 'видеть все командировки в бюджетном отчёте', so: 'планировать расходы без ручного сбора', ac: ['каждая заявка с суммой попадает в отчёт', 'отчёт выгружается в CSV'], from: '#2 Финансы', sp: 5, short: 'Командировки в отчёте' },
-    { id: 'US-3', role: 'руководитель', want: 'подтверждать командировку одним кликом', so: 'согласование не задерживало оформление', ac: ['в заявке есть кнопки «Согласовать» и «Отклонить»', 'решение сохраняется с timestamp'], from: '#3 Безопасность + решение конфликта', sp: 3, short: 'Согласование одним кликом' }
+    { id: 'US-1', role: 'сотрудник', want: 'отправить заявку на командировку за 2 минуты', so: 'не тратить время на переписку с HR',
+      ac: ['обязательные поля и даты проверяются до отправки', 'после отправки заявка получает статус SUBMITTED и уходит руководителю', 'медианное время заполнения ≤ 2 мин на UX-тесте с 5 сотрудниками'], from: '#1 HR', sp: 3, short: 'Заявка за 2 минуты' },
+    { id: 'US-2', role: 'финансовый контролёр', want: 'видеть все командировки в бюджетном отчёте', so: 'планировать расходы без ручного сбора',
+      ac: ['в заявке есть плановая сумма: суточные, проезд, проживание', 'согласованные заявки попадают в отчёт по статье бюджета подразделения', 'отчёт выгружается в CSV'], from: '#2 Финансы', sp: 5, short: 'Командировки в отчёте' },
+    { id: 'US-3', role: 'руководитель', want: 'согласовать командировку одним кликом из уведомления', so: 'обязательное согласование не задерживало оформление',
+      ac: ['в уведомлении есть кнопки «Согласовать» и «Отклонить»', 'без ответа за 4 ч заявка эскалируется заместителю', 'решение сохраняется с автором и временем — журнал для службы безопасности'], from: '#3 Безопасность + решение K-1', sp: 3, short: 'Согласование в 1 клик' }
   ],
   DOR: [
-    ['Понятная бизнес-ценность', 'каждая story ведёт к цели «1 день»'],
-    ['Есть критерии приёмки', 'по 2 AC на story'],
-    ['Нет открытых конфликтов', 'скорость ↔ безопасность решён'],
-    ['Есть оценка сложности', '3 + 5 + 3 story points'],
-    ['Зависимости выявлены', 'US-3 → уведомления, US-2 → бюджетный отчёт']
+    ['Понятная бизнес-ценность', 'цель измерима: медиана SUBMITTED → APPROVED'],
+    ['Есть критерии приёмки', 'по 3 проверяемых AC на story'],
+    ['Нет открытых конфликтов', 'K-1 решён, решение вошло в US-3'],
+    ['Есть оценка сложности', '3 + 5 + 3 SP — оценка команды на refinement'],
+    ['Зависимости выявлены', 'US-3 → сервис уведомлений, US-2 → справочник статей бюджета']
   ],
   stage: 0, running: false, auto: false, conf: null,
   init() {
@@ -3015,19 +3174,22 @@ const REQ = {
     this.engine.onReplay = () => this.resetView();
     this.resetView(true);
   },
-  /* Трассировка: бизнес-цель слева, три story справа */
+  /* Трассировка: источник → user story → бизнес-цель */
   buildTrace() {
     const svg = $('#req-trace-svg');
-    const goalLines = this.wrapGoal(this.GOAL);
-    let html = `<g class="req-tnode goal" data-tip="Бизнес-цель — корень трассировки"><rect x="8" y="70" width="210" height="90" rx="10"/><text class="k" x="22" y="94">ЦЕЛЬ G-1</text>${goalLines.map((l, i) => `<text x="22" y="${114 + i * 16}">${esc(l)}</text>`).join('')}</g>`;
+    const src = [['#1 HR', 'быстрее'], ['#2 Финансы', 'видеть в бюджете'], ['#3 Безопасность', '+ решение K-1']];
+    let html = '';
     this.STORIES.forEach((s, i) => {
-      const y = 14 + i * 74;
-      html += `<path class="req-tline" id="req-tl${i}" d="M218 115 C 300 115, 320 ${y + 27}, 404 ${y + 27}"/>`;
-      html += `<g class="req-tnode off" id="req-tn${i}"><rect x="404" y="${y}" width="226" height="54" rx="8"/><text class="k" x="418" y="${y + 22}">${s.id}</text><text x="418" y="${y + 41}" id="req-tt${i}">—</text></g>`;
+      const y = 14 + i * 74, cy = y + 27;
+      html += `<path class="req-tline" id="req-tla${i}" d="M160 ${cy} H236"/><path class="req-tline" id="req-tl${i}" d="M420 ${cy} C 462 ${cy}, 456 125, 496 125"/>`;
+      html += `<g class="req-tnode off" id="req-ts${i}"><rect x="8" y="${y}" width="152" height="54" rx="8"/><text class="k" x="20" y="${y + 22}">${src[i][0]}</text><text x="20" y="${y + 41}">${src[i][1]}</text></g>`;
+      html += `<g class="req-tnode off" id="req-tn${i}"><rect x="236" y="${y}" width="184" height="54" rx="8"/><text class="k" x="250" y="${y + 22}">${s.id}</text><text x="250" y="${y + 41}" id="req-tt${i}">—</text></g>`;
     });
+    const gl = this.wrapGoal(this.GOAL, 15);
+    html += `<g class="req-tnode goal" data-tip="Бизнес-цель — корень трассировки"><rect x="496" y="56" width="136" height="138" rx="10"/><text class="k" x="508" y="78">ЦЕЛЬ G-1</text>${gl.map((l, i) => `<text x="508" y="${100 + i * 16}">${esc(l)}</text>`).join('')}</g>`;
     svg.innerHTML = html;
   },
-  wrapGoal(t) { const w = t.split(' '), out = []; let cur = ''; for (const x of w) { if ((cur + ' ' + x).trim().length > 24) { out.push(cur); cur = x; } else cur = (cur + ' ' + x).trim(); } if (cur) out.push(cur); return out; },
+  wrapGoal(t, n = 24) { const w = t.split(' '), out = []; let cur = ''; for (const x of w) { if ((cur + ' ' + x).trim().length > n) { out.push(cur); cur = x; } else cur = (cur + ' ' + x).trim(); } if (cur) out.push(cur); return out; },
   /* ---- сценарии (массивы шагов для ScenarioEngine) ---- */
   steps(k) {
     const done = (t, n) => ({ t, action: 'call', fn: () => this.stageDone(n) });
@@ -3069,12 +3231,13 @@ const REQ = {
     dl.hidden = false; dl.classList.remove('req-open'); void dl.offsetWidth; dl.classList.add('req-open');
     card.classList.add('req-parsed');
     [[0, 1], [2], [3]][i].forEach(q => $('#req-q' + q).classList.add('on'));
+    $('#req-ts' + i).classList.replace('off', 'on');
     appendLog('INFO', 'req', `note #${n.id} parsed: source=${n.key}, affected=${n.affected}`);
   },
   conflict() {
     this.conf = 'open';
     $('#req-note0').classList.add('req-conflict'); $('#req-note2').classList.add('req-conflict');
-    $('#req-conflicts').innerHTML = `<div class="req-conf-item" id="req-conf-item"><b>⚠ #1 HR ↔ #3 Безопасность</b>«быстрее согласовывать» против «дополнительное обязательное согласование руководителя»</div>`;
+    $('#req-conflicts').innerHTML = `<div class="req-conf-item" id="req-conf-item"><b>⚠ K-1 · #1 HR ↔ #3 Безопасность</b>«быстрее согласовывать» против «обязательное подтверждение руководителя» — это ещё один этап согласования</div>`;
     this.drawConflict();
     appendLog('WARN', 'req', 'conflict detected: speed vs security');
     TIP.auto('req-conf-badge');
@@ -3083,9 +3246,9 @@ const REQ = {
     this.conf = 'ok';
     $('#req-note0').classList.replace('req-conflict', 'req-resolved'); $('#req-note2').classList.replace('req-conflict', 'req-resolved');
     const it = $('#req-conf-item'); it.classList.add('req-ok');
-    it.innerHTML = `<b>✓ #1 HR ↔ #3 Безопасность</b>«быстрее» против «дополнительное согласование»<div class="res">Решение: параллельное согласование руководителем и безопасностью, SLA 4 ч каждый</div>`;
+    it.innerHTML = `<b>✓ K-1 · #1 HR ↔ #3 Безопасность</b>«быстрее» против «обязательное подтверждение руководителя»<div class="res">Решение: подтверждение руководителя остаётся обязательным, но в один клик из уведомления, SLA 4 ч, затем эскалация заместителю. Решение пишется в журнал для службы безопасности. Вошло в US-3.</div>`;
     this.drawConflict();
-    appendLog('INFO', 'req', `conflict resolved: ${opt} approval`);
+    appendLog('INFO', 'req', 'conflict K-1 resolved: one-click manager approval, SLA 4h + escalation, audit log');
   },
   story(i) {
     const s = this.STORIES[i], box = $('#req-backlog');
@@ -3095,10 +3258,10 @@ const REQ = {
     appendLog('INFO', 'req', `${s.id} created: ${s.role} — ${s.want} (${s.ac.length} AC)`);
   },
   trace() {
-    const lines = [0, 1, 2].map(i => $('#req-tl' + i));
+    const lines = [0, 1, 2].flatMap(i => [$('#req-tla' + i), $('#req-tl' + i)]);
     lines.forEach(l => { const L = l.getTotalLength(); l.style.opacity = 1; l.style.strokeDasharray = L; l.style.strokeDashoffset = L; });
-    const p = Promise.all(lines.map((l, i) => this.engine.wait(i * 300).then(() => this.engine.animate(700, k => { l.style.strokeDashoffset = l.getTotalLength() * (1 - easeInOut(k)); }))));
-    p.then(() => { appendLog('INFO', 'req', 'traceability built: goal → 3 stories'); TIP.auto('req-trace-svg', 'Если требование ни к чему не привязано — возможно, оно лишнее'); });
+    const p = Promise.all(lines.map((l, i) => this.engine.wait(Math.floor(i / 2) * 260 + (i % 2) * 420).then(() => this.engine.animate(520, k => { l.style.strokeDashoffset = l.getTotalLength() * (1 - easeInOut(k)); }))));
+    p.then(() => { appendLog('INFO', 'req', 'traceability built: 3 sources → 3 stories → goal G-1'); TIP.auto('req-trace-svg', 'Если требование ни к чему не привязано — возможно, оно лишнее'); });
     return p;
   },
   dor(p) {
@@ -3151,15 +3314,18 @@ const REQ = {
    ===================================================================== */
 const INT_BODY = {
   rest: '{"sku": "SKU-77", "qty": 1}',
-  soap: '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ord="http://shop.local/orders"><soap:Header/><soap:Body><ord:CreateOrder><ord:sku>SKU-77</ord:sku><ord:qty>1</ord:qty></ord:CreateOrder></soap:Body></soap:Envelope>',
+  soap: '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ord="http://shop.local/orders" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soap:Header><wsse:Security><wsse:BinarySecurityToken>MIIC…</wsse:BinarySecurityToken></wsse:Security><ord:IdempotencyKey>ord-7f3a-03</ord:IdempotencyKey></soap:Header><soap:Body><ord:CreateOrder><ord:sku>SKU-77</ord:sku><ord:qty>1</ord:qty></ord:CreateOrder></soap:Body></soap:Envelope>',
   graphql: '{"query":"mutation { createOrder(input: {sku: \\"SKU-77\\", qty: 1}) { order_id status } }"}'
 };
 const bytes = s => new TextEncoder().encode(s).length;
+/* У каждого транспорта свой ключ идемпотентности: повторная отправка возвращает тот же заказ */
 const INT_T = {
   rest: {
-    name: 'REST', comp: 'rest', ach: 'int-rest', ms: 120, status: '201 Created', color: 'var(--green)', pkt: 'circle',
+    name: 'REST', comp: 'rest', ach: 'int-rest', ms: 120, status: '201 Created', color: 'var(--green)', pkt: 'circle', id: 1042,
+    key: 'ord-7f3a-01', keyName: 'Idempotency-Key', idem: 'заголовок Idempotency-Key',
     caption: 'JSON over HTTPS', label: 'POST /orders', svc: 'REST API', size: `тело запроса: ${bytes(INT_BODY.rest)} B · JSON`,
-    reqLog: 'POST /orders', respLog: '201 Created order_id=1042 (120 ms)',
+    reqLog: 'POST /orders Idempotency-Key: ord-7f3a-01', respLog: '201 Created order_id=1042 (120 ms)',
+    replayNote: '\n# повтор с тем же Idempotency-Key: заголовок Idempotent-Replayed: true,\n# тот же order_id, новый заказ не создан',
     tip: 'REST — универсальный выбор для публичных API и простых CRUD. Понятен всем, легко кэшируется, но JSON может быть избыточным',
     when: 'Публичные API, CRUD-операции, интеграции с внешними партнёрами. Ресурсы и HTTP-методы понятны любому разработчику, ответы кэшируются стандартными средствами.',
     contractName: 'OpenAPI 3.0',
@@ -3167,6 +3333,7 @@ const INT_T = {
 Host: api.shop.local
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOi…
+Idempotency-Key: ord-7f3a-01
 
 ${INT_BODY.rest}`,
     resp: `HTTP/1.1 201 Created
@@ -3178,17 +3345,17 @@ Content-Type: application/json
   /orders:
     post:
       operationId: createOrder
+      parameters:
+        - { in: header, name: Idempotency-Key, required: true, schema: { type: string } }
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/CreateOrder' }
       responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Order' }
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Order' } } } }
+        '409': { description: Запрос с этим ключом ещё выполняется }
+        '422': { description: Ключ использован с другим телом }
 components:
   schemas:
     CreateOrder:
@@ -3196,32 +3363,38 @@ components:
       required: [sku, qty]
       properties:
         sku: { type: string, example: SKU-77 }
-        qty: { type: integer, minimum: 1 }`
+        qty: { type: integer, minimum: 1 }
+    Order:
+      type: object
+      properties:
+        order_id: { type: integer, format: int64 }
+        status:   { type: string, enum: [CREATED, PAID, CANCELLED] }`
   },
   grpc: {
-    name: 'gRPC', comp: 'grpc', ach: 'int-grpc', ms: 40, status: 'OK (grpc-status 0)', color: 'var(--blue)', pkt: 'rect', bidir: true,
+    name: 'gRPC', comp: 'grpc', ach: 'int-grpc', ms: 40, status: 'OK (grpc-status 0)', color: 'var(--blue)', pkt: 'rect', bidir: true, id: 1043,
+    key: 'ord-7f3a-02', keyName: 'idempotency-key', idem: 'metadata idempotency-key',
     caption: 'protobuf over HTTP/2', label: 'rpc CreateOrder', svc: 'gRPC server', size: 'тело запроса: 10 B · protobuf',
-    reqLog: 'CreateOrder request', respLog: 'response order_id=1042 (protobuf, 40 ms)',
+    reqLog: 'CreateOrder request, metadata idempotency-key: ord-7f3a-02', respLog: 'response order_id=1043 (protobuf, 40 ms)',
+    replayNote: '\n// повтор с тем же idempotency-key: тот же order_id, новый заказ не создан',
     tip: 'gRPC — для внутренних высоконагруженных сервисов. Бинарный protobuf компактнее JSON, HTTP/2 даёт мультиплексирование. Минус — сложнее отлаживать и не так дружелюбен к браузеру',
     when: 'Внутренние вызовы между микросервисами с высокой нагрузкой и строгим контрактом. Бинарный формат и HTTP/2 экономят трафик и задержку, есть стриминг в обе стороны.',
     contractName: 'order.proto',
-    req: `// order.proto
-service OrderService {
-  rpc CreateOrder (CreateOrderRequest)
-      returns (CreateOrderResponse);
-}
+    req: `// metadata (аналог HTTP-заголовков)
+authorization: Bearer eyJhbGciOi…
+idempotency-key: ord-7f3a-02
 
 // вызов из клиента
-CreateOrder({ sku: "SKU-77", qty: 1 })`,
+OrderService.CreateOrder({ sku: "SKU-77", qty: 1 })`,
     resp: `CreateOrderResponse {
-  order_id: 1042
-  status: "CREATED"
+  order_id: 1043
+  status: CREATED
 }
 // grpc-status: 0 (OK)`,
     contract: `syntax = "proto3";
 package shop.orders.v1;
 
 service OrderService {
+  // ключ идемпотентности передаётся в metadata "idempotency-key"
   rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse);
 }
 
@@ -3230,15 +3403,19 @@ message CreateOrderRequest {
   int32  qty = 2;
 }
 
+enum OrderStatus { ORDER_STATUS_UNSPECIFIED = 0; CREATED = 1; PAID = 2; CANCELLED = 3; }
+
 message CreateOrderResponse {
-  int64  order_id = 1;
-  string status   = 2;
+  int64       order_id = 1;
+  OrderStatus status   = 2;
 }`
   },
   soap: {
-    name: 'SOAP', comp: 'soap', ach: 'int-soap', ms: 340, status: '200 OK', color: 'var(--amber)', pkt: 'env', icon: 'wsdl',
+    name: 'SOAP', comp: 'soap', ach: 'int-soap', ms: 340, status: '200 OK', color: 'var(--amber)', pkt: 'env', icon: 'wsdl', id: 1044,
+    key: 'ord-7f3a-03', keyName: 'IdempotencyKey', idem: 'элемент SOAP Header',
     caption: 'XML over HTTP', label: 'SOAPAction: CreateOrder', svc: 'SOAP endpoint', size: `тело запроса: ${bytes(INT_BODY.soap)} B · XML`,
-    reqLog: 'SOAPAction CreateOrder', respLog: 'response order_id=1042 (XML, 340 ms)',
+    reqLog: 'SOAPAction CreateOrder, WS-Security + IdempotencyKey ord-7f3a-03', respLog: 'response order_id=1044 (XML, 340 ms)',
+    replayNote: '\n<!-- повтор с тем же IdempotencyKey: тот же order_id, новый заказ не создан -->',
     tip: 'SOAP — для корпоративных систем со строгим контрактом (WSDL) и стандартами безопасности (WS-Security). Тяжелее, но предсказуем в интеграции с legacy',
     when: 'Корпоративные и государственные системы, legacy с готовым WSDL, требования WS-Security и подписи сообщений. Формат тяжелее, зато контракт строгий и проверяемый по XSD.',
     contractName: 'OrderService.wsdl',
@@ -3248,8 +3425,14 @@ SOAPAction: "CreateOrder"
 
 <soap:Envelope
   xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-  xmlns:ord="http://shop.local/orders">
-  <soap:Header/>
+  xmlns:ord="http://shop.local/orders"
+  xmlns:wsse="…wssecurity-secext-1.0.xsd">
+  <soap:Header>
+    <wsse:Security>
+      <wsse:BinarySecurityToken>MIIC…</wsse:BinarySecurityToken>
+    </wsse:Security>
+    <ord:IdempotencyKey>ord-7f3a-03</ord:IdempotencyKey>
+  </soap:Header>
   <soap:Body>
     <ord:CreateOrder>
       <ord:sku>SKU-77</ord:sku>
@@ -3263,7 +3446,7 @@ Content-Type: text/xml; charset=utf-8
 <soap:Envelope xmlns:soap="…" xmlns:ord="…">
   <soap:Body>
     <ord:CreateOrderResponse>
-      <ord:order_id>1042</ord:order_id>
+      <ord:order_id>1044</ord:order_id>
       <ord:status>CREATED</ord:status>
     </ord:CreateOrderResponse>
   </soap:Body>
@@ -3272,25 +3455,37 @@ Content-Type: text/xml; charset=utf-8
   <wsdl:operation name="CreateOrder">
     <wsdl:input  message="tns:CreateOrderRequest"/>
     <wsdl:output message="tns:CreateOrderResponse"/>
+    <wsdl:fault  name="Fault" message="tns:OrderFault"/>
   </wsdl:operation>
 </wsdl:portType>
 
+<xs:element name="IdempotencyKey" type="xs:string"/>  <!-- в soap:Header -->
 <xs:element name="CreateOrder">
   <xs:complexType><xs:sequence>
     <xs:element name="sku" type="xs:string"/>
     <xs:element name="qty" type="xs:positiveInteger"/>
   </xs:sequence></xs:complexType>
+</xs:element>
+<xs:element name="CreateOrderResponse">
+  <xs:complexType><xs:sequence>
+    <xs:element name="order_id" type="xs:long"/>
+    <xs:element name="status"   type="tns:OrderStatus"/>
+  </xs:sequence></xs:complexType>
 </xs:element>`
   },
   graphql: {
-    name: 'GraphQL', comp: 'graphql', ach: 'int-graphql', ms: 90, status: '200 OK', color: 'var(--int-violet)', pkt: 'diamond', icon: 'graph',
+    name: 'GraphQL', comp: 'graphql', ach: 'int-graphql', ms: 90, status: '200 OK', color: 'var(--int-violet)', pkt: 'diamond', icon: 'graph', id: 1045,
+    key: 'ord-7f3a-04', keyName: 'Idempotency-Key', idem: 'заголовок Idempotency-Key',
     caption: 'GraphQL over HTTP', label: 'POST /graphql · mutation', svc: 'GraphQL server', size: `тело запроса: ${bytes(INT_BODY.graphql)} B · JSON`,
-    reqLog: 'mutation createOrder', respLog: 'response order_id=1042 (только запрошенные поля, 90 ms)',
-    tip: 'GraphQL — когда клиенту нужна гибкость: он сам выбирает поля. Хорош для мобильных и агрегации источников. Минус — сложнее кэшировать и контролировать нагрузку',
-    when: 'Мобильные и веб-клиенты, которым нужны разные наборы полей, агрегация нескольких источников за один запрос. Один endpoint, клиент сам выбирает поля ответа.',
+    reqLog: 'mutation createOrder, Idempotency-Key: ord-7f3a-04', respLog: 'response order_id="1045" (только запрошенные поля, 90 ms)',
+    replayNote: '\n# повтор с тем же Idempotency-Key: тот же order_id, новый заказ не создан',
+    tip: 'GraphQL — когда клиенту нужна гибкость: он сам выбирает поля. Хорош для мобильных и агрегации источников. Минус — сложнее кэшировать и контролировать нагрузку; ошибки приходят с HTTP 200 в массиве errors',
+    when: 'Мобильные и веб-клиенты, которым нужны разные наборы полей, агрегация нескольких источников за один запрос. Один endpoint, клиент сам выбирает поля ответа. Ошибки бизнес-логики приходят с HTTP 200 в массиве errors — мониторинг по коду ответа их не увидит.',
     contractName: 'schema.graphql (SDL)',
     req: `POST /graphql HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOi…
+Idempotency-Key: ord-7f3a-04
 
 mutation {
   createOrder(input: { sku: "SKU-77", qty: 1 }) {
@@ -3303,9 +3498,12 @@ Content-Type: application/json
 
 {
   "data": {
-    "createOrder": { "order_id": 1042, "status": "CREATED" }
+    "createOrder": { "order_id": "1045", "status": "CREATED" }
   }
-}`,
+}
+# ID в GraphQL сериализуется строкой.
+# Ошибка пришла бы тоже с HTTP 200:
+# { "data": null, "errors": [{ "message": "…", "extensions": { "code": "OUT_OF_STOCK" } }] }`,
     contract: `type Mutation {
   createOrder(input: CreateOrderInput!): Order!
 }
@@ -3318,20 +3516,24 @@ input CreateOrderInput {
 type Order {
   order_id: ID!
   status: OrderStatus!
-  created_at: String
-  items: [OrderItem!]!   # клиент не запросил — не придёт
-}`
+  sku: String!
+  qty: Int!
+  created_at: String!
+}
+
+enum OrderStatus { CREATED PAID CANCELLED }
+# клиент запросил только order_id и status — остальные поля не придут`
   }
 };
 const INT = {
   engine: new ScenarioEngine('int'),
-  cur: 'rest', busy: false,
+  cur: 'rest', busy: false, created: {},
   init() {
     $$('#int-switch button').forEach(b => b.onclick = () => dispatch('intSwitch', { tr: b.dataset.t }, this.engine));
     $('#int-send').onclick = () => this.send();
-    $('#int-table').innerHTML = '<thead><tr><th>Транспорт</th><th>Формат</th><th>Протокол</th><th>Контракт</th><th>Демо-ответ</th><th>Когда</th></tr></thead><tbody>' +
-      [['rest', 'JSON', 'HTTP/1.1', 'OpenAPI', 'публичные API, CRUD'], ['grpc', 'protobuf', 'HTTP/2', '.proto', 'внутренние сервисы'], ['soap', 'XML', 'HTTP', 'WSDL / XSD', 'legacy, WS-Security'], ['graphql', 'JSON', 'HTTP', 'SDL', 'гибкая выборка полей']]
-        .map(([k, f, p, c, w]) => `<tr data-t="${k}"><td>${INT_T[k].name}</td><td>${f}</td><td>${p}</td><td>${c}</td><td>${INT_T[k].ms} ms</td><td>${w}</td></tr>`).join('') + '</tbody>';
+    $('#int-table').innerHTML = '<thead><tr><th>Транспорт</th><th>Формат</th><th>Протокол</th><th>Контракт</th><th>Авторизация</th><th>Ключ идемпотентности</th><th>Демо-ответ</th><th>Когда</th></tr></thead><tbody>' +
+      [['rest', 'JSON', 'HTTP/1.1', 'OpenAPI', 'Bearer', 'публичные API, CRUD'], ['grpc', 'protobuf', 'HTTP/2', '.proto', 'Bearer в metadata', 'внутренние сервисы'], ['soap', 'XML', 'HTTP', 'WSDL / XSD', 'WS-Security', 'legacy, подпись сообщений'], ['graphql', 'JSON', 'HTTP', 'SDL', 'Bearer', 'гибкая выборка полей']]
+        .map(([k, f, p, c, au, w]) => `<tr data-t="${k}"><td>${INT_T[k].name}</td><td>${f}</td><td>${p}</td><td>${c}</td><td>${au}</td><td>${INT_T[k].idem}</td><td>${INT_T[k].ms} ms</td><td>${w}</td></tr>`).join('') + '</tbody>';
     this.engine.onState = () => this.ui();
     this.engine.onReplay = () => this.resetView();
     this.apply('rest');
@@ -3415,11 +3617,12 @@ ${icon}
     });
   },
   delivered() {
-    const T = INT_T[this.cur];
-    $('#int-resp').textContent = T.resp; $('#int-resp').classList.remove('int-wait');
-    $('#int-resp-meta').textContent = `${T.status} · ${T.ms} ms`;
-    appendLog('INFO', T.comp, T.respLog);
-    appendLog('SUCCESS', T.comp, T.status);
+    const T = INT_T[this.cur], again = !!this.created[this.cur];
+    this.created[this.cur] = true;
+    $('#int-resp').textContent = T.resp + (again ? T.replayNote : ''); $('#int-resp').classList.remove('int-wait');
+    $('#int-resp-meta').textContent = `${T.status}${again ? ' · повтор' : ''} · ${T.ms} ms`;
+    appendLog('INFO', T.comp, again ? `${T.keyName}=${T.key}: повтор, возвращён сохранённый ответ order_id=${T.id}, новый заказ не создан` : T.respLog);
+    appendLog('SUCCESS', T.comp, T.status + (again ? ' (replayed)' : ''));
     unlock(T.ach);
     this.busy = false; this.ui();
   },
@@ -3430,7 +3633,7 @@ ${icon}
     $('#int-status').innerHTML = `Транспорт: <b>${INT_T[this.cur].name}</b> · отправлено: ${got.length ? got.join(', ') : '—'}`;
   },
   resetView() {
-    this.busy = false; this.cur = 'rest';
+    this.busy = false; this.cur = 'rest'; this.created = {};
     $$('#int-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === 'rest')));
     $$('#page-int .int-fade').forEach(b => b.classList.remove('int-out'));
     this.apply('rest'); this.ui();
@@ -3454,31 +3657,33 @@ const DWH_DATA = (() => {
     return { key, project: key.split('-')[0], lt, created: first - 20 * H, first, resolved, assignee: EMP[i % 5],
       status: key === 'CICD-44' ? 'Reopened' : (i % 2 ? 'Closed' : 'Done') };
   });
-  const prs = [], commits = [];
+  const prs = [], commits = [], deploys = [];
   issues.forEach((it, i) => {
     if (DEPLOYED.includes(it.key)) {
-      const merged = it.resolved - 1 * H;
-      prs.push({ pr_id: 501 + prs.length, issue_key: it.key, created: it.first + it.lt * 0.6 * H, merged, target: 'main', reviewer: EMP[(i + 2) % 5] });
+      // для задеплоенных задач resolved = момент выкладки: Jira переводит задачу в Done по событию деплоя
+      const merged = it.resolved - 1 * H, pr = 501 + prs.length;
+      prs.push({ pr_id: pr, issue_key: it.key, created: it.first + it.lt * 0.6 * H, merged, target: 'main', reviewer: EMP[(i + 2) % 5] });
+      deploys.push({ deploy_id: 'dep-' + (7001 + deploys.length), pr_id: pr, env: 'production', deployed: it.resolved, result: it.key === 'CICD-44' ? 'ROLLED_BACK' : 'SUCCESSFUL' });
       it.merged = merged;
     }
     if (it.key === 'CICD-44') it.reopened = it.merged + 20 * H;     // переоткрыта через 20 ч после деплоя
     const end = (it.merged || it.resolved) - 2 * H;
     for (let j = 0; j < COMMITS[i]; j++) commits.push({ sha: sha(it.key + '#' + j), issue_key: it.key, at: it.first + (end - it.first) * j / COMMITS[i], author: EMP[(i + j) % 5] });
   });
-  return { H, EMP, issues, prs, commits };
+  return { H, EMP, issues, prs, commits, deploys };
 })();
 const DWH = {
   engine: new ScenarioEngine('dwh'),
   stage: 0, running: false, auto: false,
   /* история прошлых загрузок витрин (предыдущие недели и начало месяца) */
-  HIST_LT: [['2026-10-19', 'HRP', 7, 59, 112], ['2026-10-19', 'CICD', 6, 64, 109]],
+  HIST_LT: [['2026-10-19', 'HRP', 4, 59, 112], ['2026-10-19', 'CICD', 3, 64, 109]],
   HIST_DEPLOY: [['2026-10-05', 'HRP', 9], ['2026-10-05', 'CICD', 7], ['2026-10-12', 'HRP', 8], ['2026-10-12', 'CICD', 6], ['2026-10-19', 'HRP', 7], ['2026-10-19', 'CICD', 7]],
   HIST_CFR: { HRP: [28, 2], CICD: [23, 2] },                         // деплоев и неудачных в октябре до текущей загрузки
   DQ: [
     ['issue_key уникален в ODS', d => { const k = d.ods.jira.map(r => r.issue_key); return [new Set(k).size === k.length, `${new Set(k).size} из ${k.length} уникальны`]; }],
-    ['resolved_at ≥ first_commit_at во всех строках', d => { const bad = d.fact.filter(r => r.resolved < r.first).length; return [bad === 0, `${d.fact.length - bad}/${d.fact.length} строк`]; }],
+    ['deployed_at ≥ first_commit_at у задеплоенных', d => { const dep = d.fact.filter(r => r.deployed); const bad = dep.filter(r => r.deployed < r.first).length; return [bad === 0, `${dep.length - bad}/${dep.length} изменений`]; }],
     ['все employee_email есть в dim_employee', d => { const dim = new Set(d.dimEmp.map(e => e.email)); const all = [...d.ods.jira.map(r => r.assignee_email), ...d.ods.bb.map(r => r.reviewer_email), ...d.ods.git.map(r => r.author_email)]; const miss = all.filter(e => !dim.has(e)).length; return [miss === 0, `${all.length - miss}/${all.length} ссылок`]; }],
-    ['lead_time_hours > 0 в факте', d => { const bad = d.fact.filter(r => !(r.lead_time_hours > 0)).length; return [bad === 0, `${d.fact.length - bad}/${d.fact.length} строк`]; }],
+    ['lead_time_hours > 0 у всех задеплоенных', d => { const dep = d.fact.filter(r => r.deployed); const bad = dep.filter(r => !(r.lead_time_hours > 0)).length; return [bad === 0, `${dep.length - bad}/${dep.length} изменений · ${d.fact.length - dep.length} без деплоя = null`]; }],
     ['cfr_percent в диапазоне 0–100', d => { const bad = d.cfr.filter(r => r.cfr < 0 || r.cfr > 100).length; return [bad === 0, d.cfr.map(r => `${r.project_key} ${r.cfr.toFixed(1)}%`).join(', ')]; }]
   ],
   init() {
@@ -3500,9 +3705,10 @@ const DWH = {
     const jira = D.issues.map(i => ({ issue_key: i.key, status: norm(i.status), raw_status: i.status, project_key: i.project, created_at: i.created, resolved_at: i.resolved, reopened_at: i.reopened || null, assignee_email: i.assignee }));
     const bb = D.prs.map(p => ({ pr_id: p.pr_id, issue_key: p.issue_key, created_at: p.created, merged_at: p.merged, target_branch: p.target, reviewer_email: p.reviewer }));
     const git = D.commits.map(c => ({ commit_sha: c.sha, issue_key: c.issue_key, committed_at: c.at, author_email: c.author }));
+    const dep = D.deploys.map(d => ({ deploy_id: d.deploy_id, pr_id: d.pr_id, environment: d.env, deployed_at: d.deployed, result: d.result }));
     const dedup = (rows, k) => { const seen = new Set(); return rows.filter(r => { const v = k(r); if (seen.has(v)) return false; seen.add(v); return true; }); };
-    const res = { jira: dedup(jira, r => r.issue_key + '|jira'), bb: dedup(bb, r => r.pr_id), git: dedup(git, r => r.commit_sha) };
-    res.dups = jira.length - res.jira.length + bb.length - res.bb.length + git.length - res.git.length;
+    const res = { jira: dedup(jira, r => r.issue_key + '|jira'), bb: dedup(bb, r => r.pr_id), git: dedup(git, r => r.commit_sha), dep: dedup(dep, r => r.deploy_id) };
+    res.dups = jira.length - res.jira.length + bb.length - res.bb.length + git.length - res.git.length + dep.length - res.dep.length;
     return res;
   },
   buildDds(ods) {
@@ -3513,30 +3719,31 @@ const DWH = {
     const fact = ods.jira.map((j, i) => {
       const cs = ods.git.filter(c => c.issue_key === j.issue_key), pr = ods.bb.find(p => p.issue_key === j.issue_key && p.target_branch === 'main');
       const first = Math.min(...cs.map(c => c.committed_at));
-      const merged = pr ? pr.merged_at : null;
-      const failed = !!(merged && j.reopened_at && j.reopened_at - merged <= 48 * DWH_DATA.H);
+      const dp = pr ? ods.dep.find(d => d.pr_id === pr.pr_id && d.environment === 'production') : null;
+      const deployed = dp ? dp.deployed_at : null;
+      const failed = !!(dp && dp.result === 'ROLLED_BACK');            // откат в production = неудачное изменение
       return { issue_sk: 1001 + i, issue_key: j.issue_key, project_sk: dimProj.find(p => p.project_key === j.project_key).project_sk, project_key: j.project_key,
         employee_sk: dimEmp.find(e => e.email === j.assignee_email).employee_sk, status_sk: dimStatus.find(x => x.status === j.status).status_sk, created_at: j.created_at, first, resolved: j.resolved_at, reopened: j.reopened_at,
-        lead_time_hours: Math.round((j.resolved_at - first) / DWH_DATA.H * 10) / 10, merged, is_failed_change: failed };
+        deployed, lead_time_hours: deployed ? Math.round((deployed - first) / DWH_DATA.H * 10) / 10 : null, is_failed_change: failed };
     });
     return { dimEmp, dimProj, dimStatus, fact };
   },
   buildMarts(dds) {
-    const f = dds.fact, projects = ['HRP', 'CICD'];
-    const cw = this.week(f[0].resolved);
-    const lt = [...this.HIST_LT.map(([w, p, n, med, p90]) => ({ week_start: w, project_key: p, issues_closed: n, med, p90, hist: true })),
-      ...projects.map(p => { const v = f.filter(r => r.project_key === p).map(r => r.lead_time_hours); return { week_start: cw, project_key: p, issues_closed: v.length, med: this.pct(v, .5), p90: this.pct(v, .9) }; })];
+    const f = dds.fact, fd = f.filter(r => r.deployed), projects = ['HRP', 'CICD'];
+    const cw = this.week(fd[0].deployed);
+    const lt = [...this.HIST_LT.map(([w, p, n, med, p90]) => ({ week_start: w, project_key: p, changes_deployed: n, med, p90, hist: true })),
+      ...projects.map(p => { const v = fd.filter(r => r.project_key === p).map(r => r.lead_time_hours); return { week_start: cw, project_key: p, changes_deployed: v.length, med: this.pct(v, .5), p90: this.pct(v, .9) }; })];
     const dep = [...this.HIST_DEPLOY.map(([w, p, n]) => ({ week_start: w, project_key: p, deployments_count: n, hist: true })),
-      ...projects.map(p => ({ week_start: cw, project_key: p, deployments_count: f.filter(r => r.project_key === p && r.merged).length }))];
+      ...projects.map(p => ({ week_start: cw, project_key: p, deployments_count: fd.filter(r => r.project_key === p).length }))];
     const cfr = projects.map(p => {
-      const cur = f.filter(r => r.project_key === p && r.merged), failed = this.HIST_CFR[p][1] + cur.filter(r => r.is_failed_change).length, total = this.HIST_CFR[p][0] + cur.length;
+      const cur = fd.filter(r => r.project_key === p), failed = this.HIST_CFR[p][1] + cur.filter(r => r.is_failed_change).length, total = this.HIST_CFR[p][0] + cur.length;
       return { month: '2026-10', project_key: p, failed_deployments: failed, total_deployments: total, cfr: failed / total * 100 };
     });
     // дашборд: медиана lead time за текущую неделю, медиана деплоев в неделю за 4 недели, CFR за октябрь
     const weeks = [...new Set(dep.map(r => r.week_start))].sort();
     const perWeek = weeks.map(w => dep.filter(r => r.week_start === w).reduce((s, r) => s + r.deployments_count, 0));
     const tf = cfr.reduce((s, r) => s + r.failed_deployments, 0), tt = cfr.reduce((s, r) => s + r.total_deployments, 0);
-    const dash = { leadMedian: this.pct(f.map(r => r.lead_time_hours), .5), week: cw, deployMedian: this.pct(perWeek, .5), perWeek, weeks, cfr: tf / tt * 100, tf, tt };
+    const dash = { leadMedian: this.pct(fd.map(r => r.lead_time_hours), .5), leadN: fd.length, week: cw, deployMedian: this.pct(perWeek, .5), perWeek, weeks, cfr: tf / tt * 100, tf, tt };
     return { lt, dep, cfr, dash };
   },
   /* ---- рендер таблиц ---- */
@@ -3552,7 +3759,8 @@ const DWH = {
     const done = t => ({ t, action: 'call', fn: () => this.stageDone(k) });
     const S = {
       1: [{ t: 0, action: 'dwhRaw', src: 'jira' }, { t: 450, action: 'dwhRaw', src: 'bitbucket' }, { t: 900, action: 'dwhRaw', src: 'git' },
-          { t: 1000, action: 'tip', id: 'dwh-c-raw', text: 'RAW — слой как есть. Данные не меняются, чтобы всегда можно было перепроверить источник. Здесь только метаданные загрузки' }, done(1300)],
+          { t: 1350, action: 'dwhRaw', src: 'deploy' },
+          { t: 1450, action: 'tip', id: 'dwh-c-raw', text: 'RAW — слой как есть. Данные не меняются, чтобы всегда можно было перепроверить источник. Здесь только метаданные загрузки' }, done(1750)],
       2: [{ t: 0, action: 'dwhOds', phase: 'transform' }, { t: 800, action: 'dwhOds', phase: 'load' }, { t: 900, action: 'ach', id: 'dwh-ods' },
           { t: 950, action: 'tip', id: 'dwh-c-ods', text: 'ODS — операционный слой. Данные типизированы и очищены, но ещё не связаны между собой. Дедупликация по бизнес-ключу — обязательный шаг' }, done(1200)],
       3: [{ t: 0, action: 'dwhDds', phase: 'join' }, { t: 600, action: 'dwhDds', phase: 'enrich' }, { t: 1100, action: 'dwhDds', phase: 'load' }, { t: 1200, action: 'ach', id: 'dwh-dds' },
@@ -3578,19 +3786,20 @@ const DWH = {
   },
   /* ---- шаги ---- */
   raw(src) {
-    const D = DWH_DATA, batch = { jira: 'jira-2026-11-02', bitbucket: 'bb-2026-11-02', git: 'git-2026-11-02' }[src];
-    const load = Date.UTC(2026, 10, 2, 0, 5 + ['jira', 'bitbucket', 'git'].indexOf(src) * 3);
+    const D = DWH_DATA, batch = { jira: 'jira-2026-11-02', bitbucket: 'bb-2026-11-02', git: 'git-2026-11-02', deploy: 'bbdep-2026-11-02' }[src];
+    const load = Date.UTC(2026, 10, 2, 0, 5 + ['jira', 'bitbucket', 'git', 'deploy'].indexOf(src) * 3);
     this.active('raw');
     let rows, name;
     if (src === 'jira') { name = 'raw.jira_issues'; rows = D.issues.map(i => ({ payload: JSON.stringify({ key: i.key, fields: { status: { name: i.status }, created: this.iso(i.created), resolutiondate: this.iso(i.resolved), project: { key: i.project }, assignee: { emailAddress: i.assignee } } }) })); }
     if (src === 'bitbucket') { name = 'raw.bitbucket_prs'; rows = D.prs.map(p => ({ payload: JSON.stringify({ id: p.pr_id, title: `${p.issue_key}: …`, created_on: this.iso(p.created), merged_on: this.iso(p.merged), destination: { branch: { name: p.target } }, reviewers: [{ email: p.reviewer }] }) })); }
     if (src === 'git') { name = 'raw.git_commits'; rows = D.commits.map(c => ({ payload: JSON.stringify({ sha: c.sha, message: `${c.issue_key}: …`, author: { email: c.author, date: this.iso(c.at) } }) })); }
+    if (src === 'deploy') { name = 'raw.bitbucket_deployments'; rows = D.deploys.map(d => ({ payload: JSON.stringify({ uuid: d.deploy_id, environment: { name: d.env }, state: { name: d.result }, release: { pull_request_id: d.pr_id }, completed_on: this.iso(d.deployed) }) })); }
     rows.forEach(r => { r.load_ts = this.ts(load); r.source = src; r.batch_id = batch; });
     if (src === 'jira') $('#dwh-raw').innerHTML = '';
     this.rawRows = (this.rawRows || 0) + rows.length;
     $('#dwh-raw').insertAdjacentHTML('beforeend', this.table(name, `${rows.length} rows`, [['batch_id'], ['source'], ['load_ts'], ['payload', v => v.length > 60 ? v.slice(0, 60) + '…' : v]], rows, { limit: 2 }));
     $('#dwh-n-raw').textContent = this.rawRows + ' строк';
-    appendLog('INFO', 'dwh', `raw loaded: ${src} batch=${batch} rows=${rows.length}`);
+    appendLog('INFO', 'dwh', `raw loaded: ${src === 'deploy' ? 'bitbucket deployments' : src} batch=${batch} rows=${rows.length}`);
   },
   ods(phase) {
     if (phase === 'transform') { this.active('ods'); appendLog('INFO', 'dwh', 'ods transform: cast timestamps, normalize status (DONE/REOPENED), dedup by issue_key'); return this.flow(1); }
@@ -3599,23 +3808,25 @@ const DWH = {
     $('#dwh-ods').innerHTML =
       this.table('ods.jira_issues', `${o.jira.length} rows`, [['issue_key'], ['raw_status', null, 'dwh-dim', 'raw'], ['status', null, r => r.status === 'REOPENED' ? 'dwh-bad' : 'dwh-hl'], ['resolved_at', v => this.ts(v)], ['project_key']], reopenFirst) +
       this.table('ods.bitbucket_prs', `${o.bb.length} rows`, [['pr_id'], ['issue_key'], ['merged_at', v => this.ts(v)], ['target_branch']], o.bb, { limit: 2 }) +
-      this.table('ods.git_commits', `${o.git.length} rows`, [['commit_sha', v => v.slice(0, 7)], ['issue_key'], ['committed_at', v => this.ts(v)]], o.git, { limit: 2 });
-    $('#dwh-n-ods').textContent = (o.jira.length + o.bb.length + o.git.length) + ' строк';
-    appendLog('INFO', 'dwh', `ods loaded: jira=${o.jira.length} bitbucket=${o.bb.length} git=${o.git.length} (${o.dups} dup)`);
+      this.table('ods.git_commits', `${o.git.length} rows`, [['commit_sha', v => v.slice(0, 7)], ['issue_key'], ['committed_at', v => this.ts(v)]], o.git, { limit: 2 }) +
+      this.table('ods.bitbucket_deployments', `${o.dep.length} rows`, [['deploy_id'], ['pr_id'], ['environment'], ['deployed_at', v => this.ts(v)], ['result', null, r => r.result === 'ROLLED_BACK' ? 'dwh-bad' : 'dwh-hl']], [...o.dep].sort((x, y) => (y.result === 'ROLLED_BACK') - (x.result === 'ROLLED_BACK')), { limit: 2 });
+    $('#dwh-n-ods').textContent = (o.jira.length + o.bb.length + o.git.length + o.dep.length) + ' строк';
+    appendLog('INFO', 'dwh', `ods loaded: jira=${o.jira.length} bitbucket=${o.bb.length} git=${o.git.length} deployments=${o.dep.length} (${o.dups} dup)`);
   },
   dds(phase) {
     if (phase === 'join') { this.active('dds'); appendLog('INFO', 'dwh', 'dds join: issue_key across jira/bitbucket/git'); return this.flow(2); }
     const d = this.dds_ = this.dds_ || this.buildDds(this.ods_);
-    if (phase === 'enrich') { const s = d.fact[0]; appendLog('INFO', 'dwh', `dds enrich: lead_time_hours=${s.lead_time_hours}, is_failed_change=${s.is_failed_change} (${s.issue_key})`); return; }
+    if (phase === 'enrich') { const s = d.fact[0], nd = d.fact.filter(r => !r.deployed).length; appendLog('INFO', 'dwh', `dds enrich: lead_time_hours=${s.lead_time_hours} (коммит → production), is_failed_change=${s.is_failed_change} (${s.issue_key}); ${nd} задач без деплоя — lead time = null`); return; }
     const er = `<svg class="dwh-er" viewBox="0 0 252 108" aria-label="Связи справочников и факта"><path d="M41 30 V70 H55"/><path d="M126 30 V62"/><path d="M211 30 V70 H197"/>
       <rect x="2" y="6" width="78" height="24" rx="4"/><text x="41" y="22" text-anchor="middle">dim_employee</text>
       <rect x="87" y="6" width="78" height="24" rx="4"/><text x="126" y="22" text-anchor="middle">dim_project</text>
       <rect x="172" y="6" width="78" height="24" rx="4"/><text x="211" y="22" text-anchor="middle">dim_status</text>
       <rect class="f" x="55" y="62" width="142" height="36" rx="4"/><text x="126" y="78" text-anchor="middle">fact_issue_lifecycle</text><text x="126" y="91" text-anchor="middle" style="fill:var(--muted)">3 FK → справочники</text></svg>`;
-    const failedFirst = [d.fact[0], ...d.fact.filter(r => r.is_failed_change), ...d.fact.slice(1).filter(r => !r.is_failed_change)];
+    const pick = [d.fact[0], ...d.fact.filter(r => r.is_failed_change), d.fact.find(r => !r.deployed)];
+    const failedFirst = [...pick, ...d.fact.filter(r => !pick.includes(r))];
     $('#dwh-dds').innerHTML = `<div class="dwh-tcard dwh-new">${er}</div>` +
       this.table('fact_issue_lifecycle', `${d.fact.length} rows`, [['issue_sk'], ['issue_key'], ['project_sk'], ['employee_sk'], ['status_sk'], ['first_commit_at', (v, r) => this.ts(r.first)], ['resolved_at', (v, r) => this.ts(r.resolved)],
-        ['lead_time_hours', null, 'dwh-hl'], ['deployment_merged_at', (v, r) => r.merged ? this.ts(r.merged) : null], ['is_failed_change', v => String(v), r => r.is_failed_change ? 'dwh-bad' : '']], failedFirst) +
+        ['deployed_at', (v, r) => r.deployed ? this.ts(r.deployed) : null], ['lead_time_hours', null, r => r.deployed ? 'dwh-hl' : 'dwh-dim'], ['is_failed_change', v => String(v), r => r.is_failed_change ? 'dwh-bad' : '']], failedFirst) +
       this.table('dim_employee', `${d.dimEmp.length} rows`, [['employee_sk'], ['email']], d.dimEmp, { limit: 2 }) +
       this.table('dim_project · dim_status', `${d.dimProj.length} + ${d.dimStatus.length} rows`, [['project_sk'], ['project_key'], ['name']], d.dimProj, { limit: 2 });
     $('#dwh-n-dds').textContent = (d.fact.length + d.dimEmp.length + d.dimProj.length + d.dimStatus.length) + ' строк';
@@ -3627,7 +3838,7 @@ const DWH = {
     if (m === 0) {
       this.active('mart'); $('#dwh-mart').innerHTML = '';
       this.flow(3);
-      $('#dwh-mart').insertAdjacentHTML('beforeend', this.table('mart.lead_time_by_project_week', 'медиана и p90, ч', [['week_start'], ['project_key'], ['issues_closed'], ['med', v => v.toFixed(1), null, 'lead_time_median_h'], ['med2', (v, r) => r.p90.toFixed(1), null, 'lead_time_p90_h']], M.lt.map(r => Object.assign({ _cls: hl(r) }, r)), { limit: 4 }));
+      $('#dwh-mart').insertAdjacentHTML('beforeend', this.table('mart.lead_time_by_project_week', 'медиана и p90, ч', [['week_start'], ['project_key'], ['changes_deployed'], ['med', v => v.toFixed(1), null, 'lead_time_median_h'], ['med2', (v, r) => r.p90.toFixed(1), null, 'lead_time_p90_h']], M.lt.map(r => Object.assign({ _cls: hl(r) }, r)), { limit: 4 }));
       appendLog('INFO', 'dwh', 'mart built: lead_time_by_project_week');
     }
     if (m === 1) {
@@ -3656,14 +3867,14 @@ const DWH = {
   renderCards(d) {
     const box = $('#dwh-cards');
     if (!d) {
-      box.innerHTML = ['Lead Time median', 'Deploy Frequency', 'Change Failure Rate'].map(t => `<div class="dwh-card dwh-nodata"><div class="t">${t}</div><b>—</b><div class="w">нет данных</div></div>`).join('');
+      box.innerHTML = ['Lead Time for Changes', 'Deploy Frequency', 'Change Failure Rate'].map(t => `<div class="dwh-card dwh-nodata"><div class="t">${t}</div><b>—</b><div class="w">нет данных</div></div>`).join('');
       return;
     }
     const mx = Math.max(...d.perWeek);
     box.innerHTML =
-      `<div class="dwh-card"><div class="t">Lead Time median</div><b>${Math.round(d.leadMedian)} h</b><div class="w">неделя с ${d.week} · от первого коммита до resolved</div></div>` +
+      `<div class="dwh-card"><div class="t">Lead Time for Changes</div><b>${Math.round(d.leadMedian)} h</b><div class="w">медиана · коммит → production · ${d.leadN} изменений, неделя с ${d.week}</div></div>` +
       `<div class="dwh-card"><div class="t">Deploy Frequency</div><b>${d.deployMedian} / wk</b><div class="w">медиана за ${d.weeks.length} недели</div><div class="dwh-bars">${d.perWeek.map(v => `<i style="height:${v / mx * 100}%" title="${v}"></i>`).join('')}</div></div>` +
-      `<div class="dwh-card"><div class="t">Change Failure Rate</div><b>${d.cfr.toFixed(1)} %</b><div class="w">октябрь 2026 · ${d.tf} из ${d.tt} деплоев</div></div>`;
+      `<div class="dwh-card"><div class="t">Change Failure Rate</div><b>${d.cfr.toFixed(1)} %</b><div class="w">октябрь 2026 · ${d.tf} из ${d.tt} деплоев откачены</div></div>`;
   },
   ui() {
     for (let k = 1; k <= 5; k++) { const b = $('#dwh-b' + k); b.disabled = this.running || k !== this.stage + 1; b.classList.toggle('req-done', this.stage >= k); b.classList.toggle('primary', !this.running && k === this.stage + 1); }
@@ -3677,7 +3888,7 @@ const DWH = {
     $$('.dwh-col').forEach(c => c.classList.remove('dwh-active')); $$('.dwh-arrow').forEach(a => { a.classList.remove('dwh-live'); a.querySelectorAll('circle').forEach(c => c.remove()); });
     $('#dwh-dq').innerHTML = this.DQ.map(([q], i) => `<li class="req-chk" id="dwh-q${i}"><i></i><span>${esc(q)}<small>не проверено</small></span></li>`).join('');
     this.renderCards(null); this.ui();
-    appendLog('INFO', 'dwh', 'session started: sources jira, bitbucket, git registered');
+    appendLog('INFO', 'dwh', 'session started: sources jira, git, bitbucket (pull requests + deployments) registered');
   }
 };
 
